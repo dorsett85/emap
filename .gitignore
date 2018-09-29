@@ -1,0 +1,28 @@
+##### Django backend #####
+*.pyc
+__pycache__
+pyenv/
+/static
+/storage/*.key
+.DS_Store
+db.sqlite3
+
+# extensions to ignore
+*.log
+*.pot
+*.pyc
+*~
+
+# directories to ignore
+.idea/
+
+# ignore local settings
+pymodel/settings.py
+
+
+##### React frontend #####
+node_modules/
+frontend/dist/
+
+webpack-stats.json
+.env
