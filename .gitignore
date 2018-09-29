@@ -5,7 +5,6 @@ pyenv/
 /static
 /storage/*.key
 .DS_Store
-db.sqlite3
 
 # extensions to ignore
 *.log
