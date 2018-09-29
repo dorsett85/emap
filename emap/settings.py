@@ -25,7 +25,7 @@ SECRET_KEY = 'b!%m-++iv$4su==mgw@lsc@tmxb)+crqkwai3y&u-6ly@1_n)5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'emap.cphillipsdorsett.com']
 
 
 # Application definition
