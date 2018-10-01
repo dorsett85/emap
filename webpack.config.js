@@ -20,12 +20,17 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-          use: [
-            // fallback to style-loader in development
-            process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader,
-            "css-loader",
-            "sass-loader"
-          ]
+        use: [{
+          loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
+        }, {
+          loader: "css-loader",
+          options: {
+            modules: true,
+            localIdentName: '[path]_[name]_[hash]',
+          }
+        }, {
+          loader: "sass-loader"
+        }]
       },
     ]
   },
