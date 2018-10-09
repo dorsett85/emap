@@ -10,11 +10,26 @@ export default class LeftMainPanelSearch extends React.Component {
       searchInput: ''
     };
     this.handleInput = this.handleInput.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleInput(e) {
     const text = e.target.value;
     this.changeSearchText(text);
+  }
+
+  handleClick() {
+    fetch('/api/', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      credentials: 'include'
+    })
+    .then(response => {
+      console.log(response.json())
+    })
   }
 
   changeSearchText(text) {
@@ -29,6 +44,12 @@ export default class LeftMainPanelSearch extends React.Component {
         <input type={'text'} onInput={this.handleInput}></input>
         <div>
           {this.state.searchInput}
+        </div>
+        <button onClick={this.handleClick}>
+          Post Request
+        </button>
+        <div>
+          {this.state.buttonClick}
         </div>
       </div>
     )

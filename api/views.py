@@ -1,14 +1,9 @@
-from rest_framework import generics
+from django.http import JsonResponse
 
 from .models import Place
-from .serializers import PlaceSerializer
 
 
-class ListPlace(generics.ListCreateAPIView):
-    queryset = Place.objects.all()
-    serializer_class = PlaceSerializer
+def all_places(request):
+    print(request.is_ajax())
+    return JsonResponse('This is the data', safe=False)
 
-
-class DetailPlace(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Place.objects.all()
-    serializer_class = PlaceSerializer
