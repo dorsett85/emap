@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: path.join(__dirname, 'frontend/src/App'),
+  entry: path.join(__dirname, 'frontend/src/index'),
   output: {
     path: path.join(__dirname, 'frontend/dist'),
     filename: process.env.NODE_ENV !== 'production' ? 'main.js' : '[name]-[hash].js'
@@ -13,6 +13,7 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
+        include: path.resolve(__dirname, 'frontend/src'),
         exclude: /node_modules/,
         use: {
           loader: "babel-loader"
@@ -20,13 +21,14 @@ module.exports = {
       },
       {
         test: /\.scss$/,
+        include: path.resolve(__dirname, 'frontend/src'),
         use: [{
           loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
         }, {
           loader: "css-loader",
           options: {
             modules: true,
-            localIdentName: '[path]_[name]_[hash]',
+            localIdentName: '[name]_[hash]',
           }
         }, {
           loader: "sass-loader"

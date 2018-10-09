@@ -1,0 +1,17 @@
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% render_bundle 'main' 'css' %}
+    <title>E Map</title>
+</head>
+<body>
+
+<div id="react-app"></div>
+
+{% render_bundle 'main' 'js' %}
+
+</body>
+</html>
