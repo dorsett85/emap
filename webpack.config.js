@@ -1,13 +1,14 @@
 const path = require('path');
-const BundleTracker = require('webpack-bundle-tracker');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   entry: path.join(__dirname, 'frontend/src/index'),
   output: {
     path: path.join(__dirname, 'frontend/dist'),
-    filename: process.env.NODE_ENV !== 'production' ? 'main.js' : '[name]-[hash].js'
+    filename: process.env.NODE_ENV !== 'production' ? 'main.js' : '[name]-[hash].js',
+    publicPath: "/static/"
   },
   module: {
     rules: [
@@ -41,10 +42,9 @@ module.exports = {
       filename: "[name]-[hash].css",
       chunkFilename: "[id].css"
     }),
-    new CleanWebpackPlugin(['frontend/dist']),
-    new BundleTracker({
-      path: __dirname,
-      filename: 'webpack-stats.json'
-    })
+    new HtmlWebpackPlugin({
+      template: path.join(__dirname, 'frontend/src/index.html')
+    }),
+    new CleanWebpackPlugin(['frontend/dist'])
   ]
 };
