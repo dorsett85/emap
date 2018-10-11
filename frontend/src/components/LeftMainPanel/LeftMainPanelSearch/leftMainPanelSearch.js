@@ -1,6 +1,7 @@
 import React from 'react';
 
 import styles from './LeftMainPanelSearch.scss';
+import csrf from '../../../utils/getCsrfToken';
 
 
 export default class LeftMainPanelSearch extends React.Component {
@@ -20,10 +21,11 @@ export default class LeftMainPanelSearch extends React.Component {
 
   handleClick() {
     fetch('/api/', {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrf
       },
       credentials: 'include'
     })

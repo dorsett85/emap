@@ -1,0 +1,101 @@
+city,lat,lng,country,population
+Tokyo,35.685,139.7514,Japan,35676000
+New York,40.6943,-73.9249,United States,19164071
+Mexico City,19.4424,-99.131,Mexico,19028000
+Mumbai,19.017,72.857,India,18978000
+Sao Paulo,-23.5587,-46.625,Brazil,18845000
+Delhi,28.67,77.23,India,15926000
+Shanghai,31.2165,121.4365,China,14987000
+Kolkata,22.495,88.3247,India,14787000
+Dhaka,23.7231,90.4086,Bangladesh,12797394
+Buenos Aires,-34.6025,-58.3975,Argentina,12795000
+Los Angeles,34.114,-118.4068,United States,12740381
+Karachi,24.87,66.99,Pakistan,12130000
+Cairo,30.05,31.25,Egypt,11893000
+Rio de Janeiro,-22.925,-43.225,Brazil,11748000
+Osaka,34.75,135.4601,Japan,11294000
+Beijing,39.9289,116.3883,China,11106000
+Manila,14.6042,120.9822,Philippines,11100000
+Moscow,55.7522,37.6155,Russia,10452000
+Istanbul,41.105,29.01,Turkey,10061000
+Paris,48.8667,2.3333,France,9904000
+Seoul,37.5663,126.9997,"Korea, South",9796000
+Lagos,6.4433,3.3915,Nigeria,9466000
+Jakarta,-6.1744,106.8294,Indonesia,9125000
+Guangzhou,23.145,113.325,China,8829000
+Chicago,41.8373,-87.6861,United States,8639278
+London,51.5,-0.1167,United Kingdom,8567000
+Lima,-12.048,-77.0501,Peru,8012000
+Tehran,35.6719,51.4243,Iran,7873000
+Kinshasa,-4.3297,15.315,Congo (Kinshasa),7843000
+Bogota,4.5964,-74.0833,Colombia,7772000
+Shenzhen,22.5524,114.1221,China,7581000
+Wuhan,30.58,114.27,China,7243000
+Hong Kong,22.305,114.185,Hong Kong,7206000
+Tianjin,39.13,117.2,China,7180000
+Chennai,13.09,80.28,India,7163000
+Taipei,25.0358,121.5683,Taiwan,6900273
+Bangalore,12.97,77.56,India,6787000
+Bangkok,13.75,100.5166,Thailand,6704000
+Lahore,31.56,74.35,Pakistan,6577000
+Chongqing,29.565,106.595,China,6461000
+Hyderabad,17.4,78.48,India,6376000
+Miami,25.784,-80.2102,United States,6247425
+Santiago,-33.45,-70.667,Chile,5720000
+Dallas,32.7938,-96.7659,United States,5634307
+Philadelphia,40.0076,-75.134,United States,5591554
+Belo Horizonte,-19.915,-43.915,Brazil,5575000
+Madrid,40.4,-3.6834,Spain,5567000
+Houston,29.7871,-95.3936,United States,5424720
+Ahmedabad,23.0301,72.58,India,5375000
+Ho Chi Minh City,10.78,106.695,Vietnam,5314000
+Toronto,43.7,-79.42,Canada,5213000
+Washington,38.9047,-77.0163,United States,5191844
+Singapore,1.293,103.8558,Singapore,5183700
+Luanda,-8.8383,13.2344,Angola,5172900
+Atlanta,33.7627,-84.4231,United States,5080712
+Baghdad,33.3386,44.3939,Iraq,5054000
+Barcelona,41.3833,2.1834,Spain,4920000
+Haora,22.5804,88.3299,India,4841638
+Shenyeng,41.805,123.45,China,4787000
+Khartoum,15.5881,32.5342,Sudan,4754000
+Pune,18.53,73.85,India,4672000
+Sydney,-33.92,151.1852,Australia,4630000
+Boston,42.3189,-71.0838,United States,4556916
+St. Petersburg,59.939,30.316,Russia,4553000
+Chittagong,22.33,91.8,Bangladesh,4529000
+Dongguan,23.0489,113.7447,China,4528000
+Riyadh,24.6408,46.7727,Saudi Arabia,4465000
+Hanoi,21.0333,105.85,Vietnam,4378000
+Guadalajara,20.67,-103.33,Mexico,4198000
+Melbourne,-37.82,144.975,Australia,4170000
+Alexandria,31.2,29.95,Egypt,4165000
+Chengdu,30.67,104.07,China,4123000
+Rangoon,16.7834,96.1667,Burma,4088000
+Phoenix,33.5722,-112.0891,United States,4054083
+Xian,34.275,108.895,China,4009000
+Porto Alegre,-30.05,-51.2,Brazil,3917000
+Surat,21.2,72.84,India,3842000
+Hechi,23.0965,109.6091,China,3830000
+Abidjan,5.32,-4.04,C𴥠DӉvoire,3802000
+Brasilia,-15.7833,-47.9161,Brazil,3716996
+Ankara,39.9272,32.8644,Turkey,3716000
+Monterrey,25.67,-100.33,Mexico,3712000
+Yokohama,35.32,139.58,Japan,3697894
+Nanjing,32.05,118.78,China,3679000
+Montreal,45.5,-73.5833,Canada,3678000
+Guiyang,26.58,106.72,China,3662000
+Recife,-8.0756,-34.9156,Brazil,3651000
+Harbin,45.75,126.65,China,3621000
+Fortaleza,-3.75,-38.58,Brazil,3602319
+San Francisco,37.7561,-122.4429,United States,3548847
+Seattle,47.6217,-122.3238,United States,3541236
+Zhangzhou,24.5204,117.67,China,3531147
+Detroit,42.3834,-83.1024,United States,3520589
+Salvador,-12.97,-38.48,Brazil,3484000
+Busan,35.0951,129.01,"Korea, South",3480000
+Johannesburg,-26.17,28.03,South Africa,3435000
+Berlin,52.5218,13.4015,Germany,3406000
+Algiers,36.7631,3.0506,Algeria,3354000
+Rome,41.896,12.4833,Italy,3339000
+Pyongyang,39.0194,125.7547,"Korea, North",3300000
