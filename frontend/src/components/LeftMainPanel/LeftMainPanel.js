@@ -12,11 +12,13 @@ export default class LeftMainPanel extends React.Component {
   render() {
     return (
       <div className={styles.panelContainer}>
-        <div className={'body'}>
-          <LeftMainPanelSearch/>
-        </div>
-        <div className={'resizer'}>
-
+        <div className={styles.innerContainer}>
+          <div className={styles.header}>
+            <h1>World Cities 100</h1>
+          </div>
+          <div className={styles.body}>
+            <LeftMainPanelSearch/>
+          </div>
         </div>
       </div>
     )

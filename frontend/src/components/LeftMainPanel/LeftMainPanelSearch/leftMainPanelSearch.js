@@ -15,14 +15,19 @@ export default class LeftMainPanelSearch extends React.Component {
   }
 
   handleInput(e) {
-    const text = e.target.value;
-    this.changeSearchText(text);
+    this.setState({
+      searchInput: e.target.value
+    })
   }
 
-  handleClick() {
+  handleClick(e) {
+    e.preventDefault();
+
     fetch('/api/', {
       method: 'POST',
+      body: 'place=' + this.state.searchInput,
       headers: {
+        "content-type":"application/x-www-form-urlencoded",
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRFToken': csrf
@@ -30,28 +35,26 @@ export default class LeftMainPanelSearch extends React.Component {
       credentials: 'include'
     })
     .then(response => {
-      console.log(response.json())
-    })
-  }
+      response.json().then(data => {
+        this.setState({
+          searchRequest: data
+        })
+      })
+    });
 
-  changeSearchText(text) {
-    this.setState({
-      searchInput: text
-    })
   }
 
   render() {
     return (
       <div className={styles.searchContainer}>
-        <input type={'text'} onInput={this.handleInput}></input>
+        <form>
+          <input type={'text'} name='place' onInput={this.handleInput}/>
+          <button type='submit' onClick={this.handleClick}>
+            Post Request
+          </button>
+        </form>
         <div>
-          {this.state.searchInput}
-        </div>
-        <button onClick={this.handleClick}>
-          Post Request
-        </button>
-        <div>
-          {this.state.buttonClick}
+          {this.state.searchRequest}
         </div>
       </div>
     )
