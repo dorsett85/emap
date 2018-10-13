@@ -6,12 +6,15 @@ import csrf from '../../../utils/getCsrfToken';
 
 // Sub stateless components
 const SearchResults = props => {
-  if (!props.searchResults) {return null}
+  if (props.searchResults === null) {return null}
   let results;
-  if (typeof props.searchResults === 'string') {
-    results = props.searchResults
+  if (!props.searchResults) {
+    results = 'No matching search results'
   } else {
-    const li = props.searchResults.map((v, i) => <li key={i}>{v[0]}: {v[1]}</li>);
+    let li = [];
+    for (let k in props.searchResults) {
+      li.push(<li key={k}>{k}: {props.searchResults[k]}</li>)
+    }
     results = <ul>{li}</ul>;
   }
 
@@ -24,11 +27,8 @@ export default class LeftMainPanelSearch extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchInput: '',
-      searchResults: '',
+      searchInput: ''
     };
-    this.handleInput = this.handleInput.bind(this);
-    this.handleClick = this.handleClick.bind(this);
   }
 
   handleInput(e) {
@@ -37,7 +37,7 @@ export default class LeftMainPanelSearch extends React.Component {
     })
   }
 
-  handleClick(e) {
+  handleSubmit(e) {
     e.preventDefault();
 
     fetch('/api/', {
@@ -52,9 +52,7 @@ export default class LeftMainPanelSearch extends React.Component {
       credentials: 'include'
     }).then(response => {
       response.json().then(data => {
-        this.setState({
-          searchResults: data
-        })
+        this.props.updateSearchResults(data)
       })
     })
 
@@ -63,11 +61,11 @@ export default class LeftMainPanelSearch extends React.Component {
   render() {
     return (
       <div className={styles.searchContainer}>
-        <form>
-          <input type={'text'} name='place' onInput={this.handleInput}/>
-          <button type='submit' onClick={this.handleClick}>Find City</button>
+        <form onSubmit={this.handleSubmit.bind(this)}>
+          <input type={'text'} name='place' onInput={this.handleInput.bind(this)}/>
+          <button type='submit'>Find City</button>
         </form>
-        <SearchResults searchResults={this.state.searchResults}/>
+        <SearchResults searchResults={this.props.searchResults}/>
       </div>
     )
   }

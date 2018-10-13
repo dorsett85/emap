@@ -18,7 +18,10 @@ export default class LeftMainPanel extends React.Component {
             <span>Search for a BIG city</span>
           </div>
           <div className={styles.body}>
-            <LeftMainPanelSearch/>
+            <LeftMainPanelSearch
+              searchResults={this.props.searchResults}
+              updateSearchResults={this.props.updateSearchResults}
+            />
           </div>
         </div>
       </div>

@@ -7,15 +7,27 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      places: null
+      favoritePlaces: null,
+      searchResults: null
     }
+  }
+
+  updateSearchResults(data) {
+    this.setState({
+      searchResults: data
+    })
   }
 
   render() {
     return (
       <div>
-        <LeftMainPanel/>
-        <Map/>
+        <LeftMainPanel
+          searchResults={this.state.searchResults}
+          updateSearchResults={this.updateSearchResults.bind(this)}
+        />
+        <Map
+          searchResults={this.state.searchResults}
+        />
       </div>
     );
   }

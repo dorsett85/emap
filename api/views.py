@@ -15,10 +15,10 @@ def all_places(request):
         if rows:
             keys = [col[0] for col in cursor.description]
             vals = [val for val in rows[0]]
-            place = [[k, v] for k, v in zip(keys, vals)]
-            return JsonResponse(place, safe=False)
+            place = dict(zip(keys, vals))
+            return JsonResponse(place)
         else:
-            return JsonResponse('No matching search results', safe=False)
+            return JsonResponse('', safe=False)
 
     else:
         return HttpResponse('Must be an ajax request')
