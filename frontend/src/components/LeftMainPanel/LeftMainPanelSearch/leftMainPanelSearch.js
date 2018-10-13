@@ -4,11 +4,28 @@ import styles from './LeftMainPanelSearch.scss';
 import csrf from '../../../utils/getCsrfToken';
 
 
+// Sub stateless components
+const SearchResults = props => {
+  if (!props.searchResults) {return null}
+  let results;
+  if (typeof props.searchResults === 'string') {
+    results = props.searchResults
+  } else {
+    const li = props.searchResults.map((v, i) => <li key={i}>{v[0]}: {v[1]}</li>);
+    results = <ul>{li}</ul>;
+  }
+
+  return <div>{results}</div>;
+
+};
+
+
 export default class LeftMainPanelSearch extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchInput: ''
+      searchInput: '',
+      searchResults: '',
     };
     this.handleInput = this.handleInput.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -33,14 +50,13 @@ export default class LeftMainPanelSearch extends React.Component {
         'X-CSRFToken': csrf
       },
       credentials: 'include'
-    })
-    .then(response => {
+    }).then(response => {
       response.json().then(data => {
         this.setState({
-          searchRequest: data
+          searchResults: data
         })
       })
-    });
+    })
 
   }
 
@@ -49,13 +65,9 @@ export default class LeftMainPanelSearch extends React.Component {
       <div className={styles.searchContainer}>
         <form>
           <input type={'text'} name='place' onInput={this.handleInput}/>
-          <button type='submit' onClick={this.handleClick}>
-            Post Request
-          </button>
+          <button type='submit' onClick={this.handleClick}>Find City</button>
         </form>
-        <div>
-          {this.state.searchRequest}
-        </div>
+        <SearchResults searchResults={this.state.searchResults}/>
       </div>
     )
   }

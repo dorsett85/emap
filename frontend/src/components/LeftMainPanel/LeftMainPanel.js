@@ -15,6 +15,7 @@ export default class LeftMainPanel extends React.Component {
         <div className={styles.innerContainer}>
           <div className={styles.header}>
             <h1>World Cities 100</h1>
+            <span>Search for a BIG city</span>
           </div>
           <div className={styles.body}>
             <LeftMainPanelSearch/>
