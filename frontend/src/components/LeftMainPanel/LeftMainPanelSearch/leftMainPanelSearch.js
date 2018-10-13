@@ -1,7 +1,7 @@
 import React from 'react';
 
+import csrf from '../../../utils/getCsrfToken'
 import styles from './LeftMainPanelSearch.scss';
-import csrf from '../../../utils/getCsrfToken';
 
 
 // Sub stateless components

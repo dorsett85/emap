@@ -1,6 +1,6 @@
 import React from 'react';
-import LeftMainPanelSearch from './LeftMainPanelSearch/leftMainPanelSearch';
 
+import LeftMainPanelSearch from './LeftMainPanelSearch/leftMainPanelSearch';
 import styles from './LeftMainPanel.scss';
 
 

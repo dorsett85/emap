@@ -3,12 +3,19 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+
 module.exports = {
   entry: path.join(__dirname, 'frontend/src/index'),
   output: {
     path: path.join(__dirname, 'frontend/dist'),
     filename: process.env.NODE_ENV !== 'production' ? 'main.js' : '[name]-[hash].js',
     publicPath: "/static/"
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'frontend/dist'),
+    proxy: {
+      '**': 'http://127.0.0.1:8000/'
+    }
   },
   module: {
     rules: [
@@ -37,9 +44,12 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: [
-          'file-loader'
-        ]
+        use: {
+          loader: 'file-loader',
+          options: {
+            name: process.env.NODE_ENV !== 'production' ? '[name].[ext]' : '[name]-[hash].[ext]'
+          }
+        }
       }
     ]
   },
@@ -50,7 +60,12 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'frontend/src/index.html')
-    }),
-    new CleanWebpackPlugin(['frontend/dist'])
+    })
   ]
 };
+
+if (process.env.NODE_ENV === 'production') {
+  module.exports.plugins.push(
+    new CleanWebpackPlugin(['frontend/dist'])
+  )
+}
