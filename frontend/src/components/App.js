@@ -1,17 +1,19 @@
 import React from "react";
-import { hot } from 'react-hot-loader';
 
 import LeftMainPanel from './LeftMainPanel/LeftMainPanel';
 import Map from './Map/Map';
 
 
-class App extends React.Component {
+export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       favoritePlaces: null,
       searchResults: null
     }
+
+    // Bind methods
+    this.updateSearchResults = this.updateSearchResults.bind(this);
   }
 
   updateSearchResults(data) {
@@ -25,7 +27,7 @@ class App extends React.Component {
       <div>
         <LeftMainPanel
           searchResults={this.state.searchResults}
-          updateSearchResults={this.updateSearchResults.bind(this)}
+          updateSearchResults={this.updateSearchResults}
         />
         <Map
           searchResults={this.state.searchResults}
@@ -35,5 +37,3 @@ class App extends React.Component {
   }
 
 }
-
-export default hot(module)(App)
