@@ -1,6 +1,6 @@
 import React from 'react';
 
-import LeftMainPanelSearch from './LeftMainPanelSearch/leftMainPanelSearch';
+import PlaceSearchContainer from './PlaceSearch/PlaceSearchContainer';
 import styles from './LeftMainPanel.scss';
 
 
@@ -17,12 +17,10 @@ export default class LeftMainPanel extends React.Component {
             <h1>World Cities 100</h1>
             <span>Search for a BIG city</span>
           </div>
-          <div className={styles.body}>
-            <LeftMainPanelSearch
-              searchResults={this.props.searchResults}
-              updateSearchResults={this.props.updateSearchResults}
-            />
-          </div>
+          <PlaceSearchContainer
+            searchResults={this.props.searchResults}
+            updateSearchResults={this.props.updateSearchResults}
+          />
         </div>
       </div>
     )

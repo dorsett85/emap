@@ -1,10 +1,11 @@
 import React from "react";
+import { hot } from 'react-hot-loader';
 
 import LeftMainPanel from './LeftMainPanel/LeftMainPanel';
 import Map from './Map/Map';
 
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -33,4 +34,6 @@ export default class App extends React.Component {
     );
   }
 
-};
+}
+
+export default hot(module)(App)
