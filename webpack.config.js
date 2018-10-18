@@ -12,6 +12,12 @@ module.exports = {
     filename: process.env.NODE_ENV !== 'production' ? 'main.js' : '[name]-[hash].js',
     publicPath: "/static/"
   },
+  resolve: {
+    alias: {
+      assets: path.resolve(__dirname, 'frontend/src/assets/')
+    }
+  },
+  devtool: process.env.NODE_ENV !== 'production' ? 'inline-source-map' : false,
   devServer: {
     contentBase: path.join(__dirname, 'frontend/dist'),
     hotOnly: true,
@@ -32,6 +38,7 @@ module.exports = {
       {
         test: /\.scss$/,
         include: path.resolve(__dirname, 'frontend/src'),
+        exclude: path.resolve(__dirname, 'frontend/src/assets/css/bulma.scss'),
         use: [{
           loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
         }, {
@@ -40,6 +47,17 @@ module.exports = {
             modules: true,
             localIdentName: '[name]_[hash]',
           }
+        }, {
+          loader: "sass-loader"
+        }]
+      },
+      {
+        test: /\.scss$/,
+        include: path.resolve(__dirname, 'frontend/src/assets/css/bulma.scss'),
+        use: [{
+          loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
+        }, {
+          loader: "css-loader"
         }, {
           loader: "sass-loader"
         }]

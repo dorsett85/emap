@@ -1,7 +1,10 @@
 import React from "react";
 
-import LeftMainPanel from './LeftMainPanel/LeftMainPanel';
+import GamePanel from './GamePanel/GamePanel';
 import Map from './Map/Map';
+
+import 'assets/css/bulma.scss';
+import 'assets/css/styles.scss';
 
 
 export default class App extends React.Component {
@@ -10,7 +13,7 @@ export default class App extends React.Component {
     this.state = {
       favoritePlaces: null,
       searchResults: null
-    }
+    };
 
     // Bind methods
     this.updateSearchResults = this.updateSearchResults.bind(this);
@@ -25,7 +28,7 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <LeftMainPanel
+        <GamePanel
           searchResults={this.state.searchResults}
           updateSearchResults={this.updateSearchResults}
         />

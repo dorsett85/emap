@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {PlaceSearch} from "./PlaceSearch";
-import csrf from '../../../utils/getCsrfToken';
+import csrf from 'assets/utils/getCsrfToken';
 
 
 export default class PlaceSearchContainer extends React.Component {
