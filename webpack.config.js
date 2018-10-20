@@ -38,7 +38,6 @@ module.exports = {
       {
         test: /\.scss$/,
         include: path.resolve(__dirname, 'frontend/src'),
-        exclude: path.resolve(__dirname, 'frontend/src/assets/css/bulma.scss'),
         use: [{
           loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
         }, {
@@ -47,17 +46,6 @@ module.exports = {
             modules: true,
             localIdentName: '[name]_[hash]',
           }
-        }, {
-          loader: "sass-loader"
-        }]
-      },
-      {
-        test: /\.scss$/,
-        include: path.resolve(__dirname, 'frontend/src/assets/css/bulma.scss'),
-        use: [{
-          loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
-        }, {
-          loader: "css-loader"
         }, {
           loader: "sass-loader"
         }]

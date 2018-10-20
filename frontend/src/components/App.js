@@ -3,9 +3,7 @@ import React from "react";
 import GamePanel from './GamePanel/GamePanel';
 import Map from './Map/Map';
 
-import 'assets/css/bulma.scss';
 import 'assets/css/styles.scss';
-
 
 export default class App extends React.Component {
   constructor(props) {
