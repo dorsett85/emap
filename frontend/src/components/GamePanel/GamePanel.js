@@ -1,4 +1,8 @@
 import React from 'react';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 
 import NavigationContainer from './Navigation/NavigationContainer';
 import PlaceSearchContainer from './PlaceSearch/PlaceSearchContainer';
@@ -13,17 +17,27 @@ export default class GamePanel extends React.Component {
   render() {
     return (
       <div className={styles.panelContainer}>
-        <div className={styles.innerContainer}>
-          <div className={styles.header + ' has-text-centered'}>
-            <h3 className={'title is-3'}>World Geography</h3>
-            <h5 className={'subtitle'}>Test your knowledge</h5>
-          </div>
-          <NavigationContainer />
-          <PlaceSearchContainer
-            searchResults={this.props.searchResults}
-            updateSearchResults={this.props.updateSearchResults}
-          />
-        </div>
+
+        <AppBar position={'static'}>
+          <Toolbar variant={'dense'} className={styles.toolbar}>
+            <Typography variant="h6" color="inherit" className={styles.headerFont}>
+              World Geography Top 10's
+            </Typography>
+            <Typography variant={'subtitle1'} color={'inherit'} className={styles.headerFont}>
+              Test your knowledge
+            </Typography>
+          </Toolbar>
+        </AppBar>
+
+        <NavigationContainer />
+
+        <Divider/>
+
+        <PlaceSearchContainer
+          searchResults={this.props.searchResults}
+          updateSearchResults={this.props.updateSearchResults}
+        />
+
       </div>
     )
   }
