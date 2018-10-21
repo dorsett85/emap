@@ -43,7 +43,7 @@ export default class Map extends React.Component {
 
         // Clear other markers and fly to new location
         this.map
-          .eachLayer(layer => layer.place !== marker.city && layer.place !== undefined ? layer.remove() : '')
+          .eachLayer(layer => layer.place !== undefined ? layer.remove() : '')
           .flyTo([marker.lat, marker.lon]);
 
         // create new marker with a popup

@@ -4,10 +4,10 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
 import {SearchResults} from './SearchResults/SearchResults';
-import styles from './PlaceSearch.scss';
+import styles from './GamePlay.scss';
 
 
-export const PlaceSearch = props => (
+export const GamePlay = props => (
 
   <div className={styles.searchContainer}>
     <form onSubmit={props.onSubmit}>

@@ -1,19 +1,1 @@
-@import url('https://fonts.googleapis.com/css?family=Mali');
 
-.panelContainer {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 350px;
-  background-color: white;
-  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
-
-.toolbar {
-  flex-direction: column;
-}
-
-.headerFont {
-  font-family: 'Mali', sans-serif !important;
-}

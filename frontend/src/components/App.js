@@ -9,12 +9,20 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      favoritePlaces: null,
-      searchResults: null
+      searchResults: null,
+      selectedGame: '',
+      user: null
     };
 
     // Bind methods
     this.updateSearchResults = this.updateSearchResults.bind(this);
+    this.setGame = this.setGame.bind(this);
+  }
+
+  setGame(game) {
+    this.setState({
+      selectGame: game
+    })
   }
 
   updateSearchResults(data) {
@@ -29,6 +37,7 @@ export default class App extends React.Component {
         <GamePanel
           searchResults={this.state.searchResults}
           updateSearchResults={this.updateSearchResults}
+          selectGame={this.setGame}
         />
         <Map
           searchResults={this.state.searchResults}

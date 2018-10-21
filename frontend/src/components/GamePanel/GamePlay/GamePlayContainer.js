@@ -1,10 +1,10 @@
 import React from 'react';
 
-import {PlaceSearch} from "./PlaceSearch";
+import {GamePlay} from "./GamePlay";
 import csrf from 'assets/utils/getCsrfToken';
 
 
-export default class PlaceSearchContainer extends React.Component {
+export default class GamePlayContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -45,7 +45,7 @@ export default class PlaceSearchContainer extends React.Component {
 
   render() {
     return (
-      <PlaceSearch
+      <GamePlay
         onInput={this.handleInput}
         onSubmit={this.handleSubmit}
         searchResults={this.props.searchResults}

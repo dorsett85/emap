@@ -3,42 +3,64 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import {withStyles} from '@material-ui/core/styles';
 
-import NavigationContainer from './Navigation/NavigationContainer';
-import PlaceSearchContainer from './PlaceSearch/PlaceSearchContainer';
-import styles from './GamePanel.scss';
-
-
-export default class GamePanel extends React.Component {
-  constructor(props) {
-    super(props);
+const styles = theme => ({
+  panelContainer: {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    width: '350px',
+    backgroundColor: 'white',
+    boxShadow: '2px 2px 2px 2px rgba(0, 0, 0, 0.2)',
+    zIndex: 10
+  },
+  toolbar: {
+    flexDirection: 'column',
+  },
+  maliFont: {
+    fontFamily: 'Mali'
   }
+});
 
-  render() {
-    return (
-      <div className={styles.panelContainer}>
+import LoginContainer from './Login/LoginContainer';
+import GameSelectorContainer from "./GameSelector/GameSelectorContainer";
+import GamePlayContainer from './GamePlay/GamePlayContainer';
 
-        <AppBar position={'static'}>
-          <Toolbar variant={'dense'} className={styles.toolbar}>
-            <Typography variant="h6" color="inherit" className={styles.headerFont}>
-              World Geography Top 10's
-            </Typography>
-            <Typography variant={'subtitle1'} color={'inherit'} className={styles.headerFont}>
-              Test your knowledge
-            </Typography>
-          </Toolbar>
-        </AppBar>
 
-        <NavigationContainer />
+const GamePanel = props => {
+  const {classes} = props;
 
-        <Divider/>
+  return (
+    <div className={classes.panelContainer}>
 
-        <PlaceSearchContainer
-          searchResults={this.props.searchResults}
-          updateSearchResults={this.props.updateSearchResults}
-        />
+      <AppBar position={'static'}>
+        <Toolbar variant={'dense'} classes={{root: classes.toolbar}}>
+          <Typography variant="h4" color="inherit" classes={{root: classes.maliFont}}>
+            World Geography
+          </Typography>
+          <Typography variant={'subtitle1'} color={'inherit'} classes={{root: classes.maliFont}}>
+            Test your knowledge
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
-      </div>
-    )
-  }
-}
+      <LoginContainer />
+
+      <Divider/>
+
+      <GameSelectorContainer />
+
+      <Divider/>
+
+      <GamePlayContainer
+        searchResults={props.searchResults}
+        updateSearchResults={props.updateSearchResults}
+      />
+
+    </div>
+  );
+
+};
+
+export default withStyles(styles)(GamePanel)
