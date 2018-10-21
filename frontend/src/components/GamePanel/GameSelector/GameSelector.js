@@ -1,17 +1,15 @@
 import React from 'react';
-import FormControl from "@material-ui/core/FormControl/FormControl";
-import InputLabel from "@material-ui/core/InputLabel/InputLabel";
-import Select from "@material-ui/core/Select/Select";
-import MenuItem from '@material-ui/core/MenuItem';
-import OutlinedInput from "@material-ui/core/OutlinedInput/OutlinedInput";
 import {withStyles} from '@material-ui/core/styles';
+import ListItem from "@material-ui/core/ListItem/ListItem";
+import Avatar from "@material-ui/core/Avatar/Avatar";
+import SchoolIcon from "@material-ui/icons/School";
+import ListItemText from "@material-ui/core/ListItemText/ListItemText";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const styles = theme => ({
-  container: {
-    margin: '15px 15px 10px 15px',
-  },
-  formControl: {
-    width: '100%'
+  maliFont: {
+    fontFamily: 'Mali',
   }
 });
 
@@ -20,25 +18,35 @@ const GameSelector = props => {
   const {classes} = props;
 
   return (
-    <div className={classes.container}>
-      <FormControl variant={'outlined'} className={classes.formControl}>
-        <InputLabel htmlFor="selectGame">Select Game</InputLabel>
-        <Select
-          value={props.selectedGame}
-          onChange={props.onChange}
-          input={
-            <OutlinedInput labelWidth={90}/>
-          }
-          inputProps={{
-            name: 'selectedGame',
-            id: 'selectGame',
-          }}
+    <div>
+      <ListItem
+        button
+        aria-haspopup="true"
+        aria-controls="gameMenu"
+        aria-label="SelectGame"
+        onClick={props.onClickListItem}
+      >
+        <Avatar>
+          <SchoolIcon />
+        </Avatar>
+        <ListItemText primary="Select a game" secondary={props.selectedGame} classes={{primary: classes.maliFont}}/>
+      </ListItem>
+      <Menu
+          id="gameMenu"
+          anchorEl={props.anchorEl}
+          open={Boolean(props.anchorEl)}
+          onClose={props.onClose}
         >
-          <MenuItem value={10}>Cities - Top 10 Population</MenuItem>
-          <MenuItem value={20}>Cities - Top 10 Education</MenuItem>
-          <MenuItem value={30}>Cities - Top 10 Income</MenuItem>
-        </Select>
-      </FormControl>
+        {props.games.map((game, i) => (
+          <MenuItem
+            key={game}
+            selected={i === props.selectedIndex}
+            onClick={props.onMenuItemClick}
+          >
+            {game}
+          </MenuItem>
+        ))}
+        </Menu>
     </div>
 
   );
