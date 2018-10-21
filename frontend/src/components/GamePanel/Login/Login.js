@@ -1,21 +1,21 @@
 import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Button from "@material-ui/core/Button/Button";
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import PersonIcon from '@material-ui/icons/Person';
+import Collapse from '@material-ui/core/Collapse';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = theme => ({
-  container: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: '15px 15px 10px 15px',
-  },
-  selectGame: {
-    flexGrow: 1,
-    marginRight: theme.spacing.unit
-  },
   maliFont: {
     fontFamily: 'Mali'
+  },
+  button: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2
   }
 });
 
@@ -24,15 +24,43 @@ const Login = props => {
   const {classes} = props;
 
   return (
-    <div className={classes.container}>
-      <div>
-        <Typography classes={{root: classes.maliFont}}>
-          Track progress by logging in
-        </Typography>
-      </div>
-      <Button variant={'outlined'}>
-        Login
-      </Button>
+    <div>
+      <ListItem button onClick={props.onClick}>
+        <Avatar>
+          <PersonIcon/>
+        </Avatar>
+        <ListItemText
+          primary={'Login'}
+          secondary={'Track your progress'}
+          classes={{primary: classes.maliFont}}
+        />
+      </ListItem>
+      <Collapse in={props.expandLogin}>
+        <ListItem>
+          <div>
+            <TextField
+              id="username"
+              label="Username"
+              name={'username'}
+              fullWidth
+              value={props.username}
+              onInput={props.onInput}
+            />
+            <TextField
+              id="password"
+              label="Password"
+              name={'password'}
+              fullWidth
+              value={props.password}
+              onInput={props.onInput}
+            />
+            <Button type={'submit'} fullWidth variant={'contained'} classes={{root: classes.button}}>
+              Login
+            </Button>
+          </div>
+        </ListItem>
+      </Collapse>
+      <Divider inset component={'li'}/>
     </div>
   );
 
