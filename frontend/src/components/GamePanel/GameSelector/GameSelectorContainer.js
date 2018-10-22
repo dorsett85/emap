@@ -7,19 +7,19 @@ export default class GameSelectorContainer extends React.Component {
     super(props);
     this.state = {
       games: [
-        'Cities - Top 100 Population',
-        'Cities - Top 100 Area',
-        'Cities - Top 100 Income'
+        'Cities - Top 10 Population',
+        'Cities - Top 10 Area',
+        'Cities - Top 10 Education',
+        'Cities - Top 10 Income'
       ],
       selectedGame: null,
-      anchorEl: null,
+      expandGames: false,
     };
 
     // Bind methods
     this.getGames = this.getGames.bind(this);
-    this.handleClickListItem = this.handleClickListItem.bind(this);
-    this.handleMenuItemClick = this.handleMenuItemClick.bind(this);
-    this.handleClose = this.handleClose.bind(this);
+    this.handleSelectGameClick = this.handleSelectGameClick.bind(this);
+    this.handleCardClick = this.handleCardClick.bind(this);
   }
 
   getGames(game) {
@@ -28,19 +28,15 @@ export default class GameSelectorContainer extends React.Component {
     })
   }
 
-  handleClickListItem(e) {
-    this.setState({anchorEl: e.currentTarget});
+  handleSelectGameClick() {
+    this.setState({expandGames: !this.state.expandGames});
   }
 
-  handleMenuItemClick(e) {
+  handleCardClick(e, i) {
     this.setState({
-      selectedGame: e.currentTarget.textContent,
-      anchorEl: null
+      selectedGame: this.state.games[i]
     });
-  }
-
-  handleClose() {
-    this.setState({anchorEl: null});
+    this.handleSelectGameClick();
   }
 
   componentWillMount() {
@@ -51,12 +47,10 @@ export default class GameSelectorContainer extends React.Component {
     return (
       <GameSelector
         games={this.state.games}
+        expandGames={this.state.expandGames}
         selectedGame={this.state.selectedGame}
-        selectedIndex={this.state.selectedIndex}
-        anchorEl={this.state.anchorEl}
-        onClickListItem={this.handleClickListItem}
-        onMenuItemClick={this.handleMenuItemClick}
-        onClose={this.handleClose}
+        onSelectGameClick ={this.handleSelectGameClick}
+        onCardClick={this.handleCardClick}
       />
     )
   }

@@ -3,13 +3,40 @@ import {withStyles} from '@material-ui/core/styles';
 import ListItem from "@material-ui/core/ListItem/ListItem";
 import Avatar from "@material-ui/core/Avatar/Avatar";
 import SchoolIcon from "@material-ui/icons/School";
+import CityIcon from "@material-ui/icons/LocationCity";
+import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import CardActionArea from '@material-ui/core/CardActionArea';
 
 const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali',
+  },
+  gridDiv: {
+    padding: 10,
+    backgroundColor: '#EF9A9A'
+  },
+  card: {
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  },
+  cardContent: {
+    padding: 16,
+    '&:last-child': {
+      paddingBottom: 16
+    },
+  },
+  cardTextDiv: {
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  cardText: {
+    fontFamily: 'Mali',
+    marginLeft: 5,
   }
 });
 
@@ -24,29 +51,34 @@ const GameSelector = props => {
         aria-haspopup="true"
         aria-controls="gameMenu"
         aria-label="SelectGame"
-        onClick={props.onClickListItem}
+        onClick={props.onSelectGameClick}
       >
         <Avatar>
-          <SchoolIcon />
+          <SchoolIcon/>
         </Avatar>
         <ListItemText primary="Select a game" secondary={props.selectedGame} classes={{primary: classes.maliFont}}/>
       </ListItem>
-      <Menu
-          id="gameMenu"
-          anchorEl={props.anchorEl}
-          open={Boolean(props.anchorEl)}
-          onClose={props.onClose}
-        >
-        {props.games.map((game, i) => (
-          <MenuItem
-            key={game}
-            selected={i === props.selectedIndex}
-            onClick={props.onMenuItemClick}
-          >
-            {game}
-          </MenuItem>
-        ))}
-        </Menu>
+      <Collapse in={props.expandGames}>
+        <div className={classes.gridDiv}>
+          <Grid container spacing={8}>
+            {props.games.map((game, i) => (
+              <Grid item xs={6} key={i}>
+                <CardActionArea onClick={event => props.onCardClick(event, i)}>
+                  <Card classes={{root: classes.card}}>
+                    <CardContent classes={{root: classes.cardContent}}>
+                      <div className={classes.cardTextDiv}>
+                        <CityIcon/>
+                        <span className={classes.cardText}>{game}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </CardActionArea>
+              </Grid>
+            ))}
+          </Grid>
+        </div>
+
+      </Collapse>
     </div>
 
   );

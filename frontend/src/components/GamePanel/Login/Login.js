@@ -13,6 +13,9 @@ const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali'
   },
+  loginDropdown: {
+    backgroundColor: '#81D4FA'
+  },
   button: {
     marginTop: theme.spacing.unit * 2,
     marginBottom: theme.spacing.unit * 2
@@ -36,7 +39,7 @@ const Login = props => {
         />
       </ListItem>
       <Collapse in={props.expandLogin}>
-        <ListItem>
+        <ListItem classes={{root: classes.loginDropdown}}>
           <div>
             <TextField
               id="username"
