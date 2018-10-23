@@ -1,5 +1,6 @@
 import React from "react";
 
+// Custom components
 import GamePanel from './GamePanel/GamePanel';
 import Map from './Map/Map';
 
@@ -21,7 +22,7 @@ export default class App extends React.Component {
 
   setGame(game) {
     this.setState({
-      selectGame: game
+      selectedGame: game
     })
   }
 
@@ -37,7 +38,8 @@ export default class App extends React.Component {
         <GamePanel
           searchResults={this.state.searchResults}
           updateSearchResults={this.updateSearchResults}
-          selectGame={this.setGame}
+          setGame={this.setGame}
+          selectedGame={this.state.selectedGame}
         />
         <Map
           searchResults={this.state.searchResults}

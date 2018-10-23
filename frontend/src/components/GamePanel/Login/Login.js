@@ -3,18 +3,20 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import PersonIcon from '@material-ui/icons/Person';
-import Collapse from '@material-ui/core/Collapse';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import Popover from '@material-ui/core/Popover';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import {withStyles} from '@material-ui/core/styles';
 
 const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali'
   },
-  loginDropdown: {
-    backgroundColor: '#81D4FA'
+  loginPopover: {
+    width: 350
   },
   button: {
     marginTop: theme.spacing.unit * 2,
@@ -28,7 +30,12 @@ const Login = props => {
 
   return (
     <div>
-      <ListItem button onClick={props.onClick}>
+      <ListItem
+        button
+        aria-owns='loginPopover'
+        aria-haspopup="true"
+        onClick={props.onClick}
+      >
         <Avatar>
           <PersonIcon/>
         </Avatar>
@@ -38,31 +45,46 @@ const Login = props => {
           classes={{primary: classes.maliFont}}
         />
       </ListItem>
-      <Collapse in={props.expandLogin}>
-        <ListItem classes={{root: classes.loginDropdown}}>
-          <div>
-            <TextField
-              id="username"
-              label="Username"
-              name={'username'}
-              fullWidth
-              value={props.username}
-              onInput={props.onInput}
-            />
-            <TextField
-              id="password"
-              label="Password"
-              name={'password'}
-              fullWidth
-              value={props.password}
-              onInput={props.onInput}
-            />
-            <Button type={'submit'} fullWidth variant={'contained'} classes={{root: classes.button}}>
-              Login
-            </Button>
-          </div>
-        </ListItem>
-      </Collapse>
+      <Popover
+        id="loginPopover"
+        open={Boolean(props.anchorEl)}
+        anchorEl={props.anchorEl}
+        onClose={props.onClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <Card classes={{root: classes.loginPopover}}>
+          <CardContent>
+            <form onSubmit={props.onSubmit}>
+              <TextField
+                id="username"
+                label="Username"
+                name={'username'}
+                fullWidth
+                value={props.username}
+                onInput={props.onInput}
+              />
+              <TextField
+                id="password"
+                label="Password"
+                name={'password'}
+                fullWidth
+                value={props.password}
+                onInput={props.onInput}
+              />
+              <Button type={'submit'} fullWidth variant={'contained'} classes={{root: classes.button}}>
+                Login
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </Popover>
       <Divider inset component={'li'}/>
     </div>
   );

@@ -4,18 +4,19 @@ import ListItem from "@material-ui/core/ListItem/ListItem";
 import Avatar from "@material-ui/core/Avatar/Avatar";
 import SchoolIcon from "@material-ui/icons/School";
 import CityIcon from "@material-ui/icons/LocationCity";
-import Collapse from "@material-ui/core/Collapse";
 import ListItemText from "@material-ui/core/ListItemText/ListItemText";
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActionArea from '@material-ui/core/CardActionArea';
+import Popover from "@material-ui/core/Popover/Popover";
 
 const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali',
   },
   gridDiv: {
+    width: 350,
     padding: 10,
     backgroundColor: '#EF9A9A'
   },
@@ -48,18 +49,30 @@ const GameSelector = props => {
     <div>
       <ListItem
         button
+        aria-owns='gameMenuPopover'
         aria-haspopup="true"
-        aria-controls="gameMenu"
-        aria-label="SelectGame"
         onClick={props.onSelectGameClick}
       >
         <Avatar>
           <SchoolIcon/>
         </Avatar>
-        <ListItemText primary="Select a game" secondary={props.selectedGame} classes={{primary: classes.maliFont}}/>
+        <ListItemText primary="Select a game" classes={{primary: classes.maliFont}}/>
       </ListItem>
-      <Collapse in={props.expandGames}>
-        <div className={classes.gridDiv}>
+      <Popover
+        id="gameMenuPopover"
+        open={Boolean(props.anchorEl)}
+        anchorEl={props.anchorEl}
+        onClose={props.onClose}
+        anchorOrigin={{
+          vertical: 'center',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'center',
+          horizontal: 'left',
+        }}
+      >
+        <Card className={classes.gridDiv}>
           <Grid container spacing={8}>
             {props.games.map((game, i) => (
               <Grid item xs={6} key={i}>
@@ -76,9 +89,8 @@ const GameSelector = props => {
               </Grid>
             ))}
           </Grid>
-        </div>
-
-      </Collapse>
+        </Card>
+      </Popover>
     </div>
 
   );

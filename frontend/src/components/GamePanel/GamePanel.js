@@ -5,6 +5,11 @@ import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import {withStyles} from '@material-ui/core/styles';
 
+// Custom components
+import LoginContainer from './Login/LoginContainer';
+import GameSelectorContainer from "./GameSelector/GameSelectorContainer";
+import GamePlayContainer from './GamePlay/GamePlayContainer';
+
 const styles = theme => ({
   panelContainer: {
     position: 'absolute',
@@ -27,10 +32,6 @@ const styles = theme => ({
   }
 });
 
-import LoginContainer from './Login/LoginContainer';
-import GameSelectorContainer from "./GameSelector/GameSelectorContainer";
-import GamePlayContainer from './GamePlay/GamePlayContainer';
-
 
 const GamePanel = props => {
   const {classes} = props;
@@ -49,12 +50,15 @@ const GamePanel = props => {
 
       <List>
         <LoginContainer/>
-        <GameSelectorContainer/>
+        <GameSelectorContainer
+          setGame={props.setGame}
+        />
       </List>
 
       <Divider/>
 
       <GamePlayContainer
+        selectedGame={props.selectedGame}
         searchResults={props.searchResults}
         updateSearchResults={props.updateSearchResults}
       />
@@ -64,4 +68,4 @@ const GamePanel = props => {
 
 };
 
-export default withStyles(styles)(GamePanel)
+export default withStyles(styles)(GamePanel);

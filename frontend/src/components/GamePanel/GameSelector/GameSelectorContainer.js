@@ -12,31 +12,36 @@ export default class GameSelectorContainer extends React.Component {
         'Cities - Top 10 Education',
         'Cities - Top 10 Income'
       ],
-      selectedGame: null,
-      expandGames: false,
+      anchorEl: null,
     };
 
     // Bind methods
     this.getGames = this.getGames.bind(this);
     this.handleSelectGameClick = this.handleSelectGameClick.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
-  getGames(game) {
+  getGames(games) {
     this.setState({
-      selectedGame: game
+      games: games
     })
   }
 
-  handleSelectGameClick() {
-    this.setState({expandGames: !this.state.expandGames});
+  handleSelectGameClick(e) {
+    this.setState({
+      anchorEl: e.currentTarget});
   }
 
   handleCardClick(e, i) {
+    this.props.setGame(this.state.games[i]);
+    this.onClose();
+  }
+
+  onClose() {
     this.setState({
-      selectedGame: this.state.games[i]
-    });
-    this.handleSelectGameClick();
+      anchorEl: null
+    })
   }
 
   componentWillMount() {
@@ -47,10 +52,10 @@ export default class GameSelectorContainer extends React.Component {
     return (
       <GameSelector
         games={this.state.games}
-        expandGames={this.state.expandGames}
-        selectedGame={this.state.selectedGame}
-        onSelectGameClick ={this.handleSelectGameClick}
+        anchorEl={this.state.anchorEl}
+        onSelectGameClick={this.handleSelectGameClick}
         onCardClick={this.handleCardClick}
+        onClose={this.onClose}
       />
     )
   }

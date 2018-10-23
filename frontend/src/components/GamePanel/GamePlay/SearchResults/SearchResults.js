@@ -1,7 +1,7 @@
 import React from "react";
 
 
-export const SearchResults = props => {
+const SearchResults = props => {
   if (props.searchResults === null) {return null}
   let results;
   if (!props.searchResults) {
@@ -17,3 +17,5 @@ export const SearchResults = props => {
   return <div>{results}</div>;
 
 };
+
+export default SearchResults;

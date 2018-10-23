@@ -1,35 +1,57 @@
 import React from 'react';
 import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import {withStyles} from '@material-ui/core/styles';
 
-import {SearchResults} from './SearchResults/SearchResults';
-import styles from './GamePlay.scss';
+// Custom components
+import SearchResults from './SearchResults/SearchResults';
+
+const styles = theme => ({
+  maliFont: {
+    fontFamily: 'Mali'
+  },
+  gameDiv: {
+    padding: 10
+  },
+  gameForm: {
+    paddingTop: 15
+  }
+});
 
 
-export const GamePlay = props => (
+const GamePlay = props => {
+  const {classes} = props;
 
-  <div className={styles.searchContainer}>
-    <form onSubmit={props.onSubmit}>
-      <FormGroup>
-        <TextField
-          variant={'outlined'}
-          label={'Search for a BIG city'}
-          onInput={props.onInput}
-          placeholder={'Type a city'}
-          InputLabelProps={{
-            shrink: true,
-          }}
-        />
-        <Button
-          variant={'contained'}
-          type={'submit'}>
-          Find City
-        </Button>
-      </FormGroup>
+  return (
+    <div className={classes.gameDiv}>
+      <Typography variant={'h6'} align={'center'} classes={{root: classes.maliFont}}>
+        {props.selectedGame}
+      </Typography>
+      <form className={classes.gameForm} onSubmit={props.onSubmit}>
+        <FormGroup>
+          <TextField
+            variant={'outlined'}
+            label={'Search for a BIG city'}
+            onInput={props.onInput}
+            placeholder={'Type a city'}
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <Button
+            variant={'contained'}
+            type={'submit'}>
+            Find City
+          </Button>
+        </FormGroup>
 
-    </form>
-    <SearchResults searchResults={props.searchResults}/>
-  </div>
+      </form>
+      <SearchResults searchResults={props.searchResults}/>
+    </div>
+  )
 
-);
+};
+
+export default withStyles(styles)(GamePlay);
