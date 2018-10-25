@@ -16,7 +16,7 @@ pyenv/
 .idea/
 
 # ignore local settings
-pymodel/settings.py
+emap/settings.py
 
 
 ##### React frontend #####
