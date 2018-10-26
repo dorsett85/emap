@@ -1,5 +1,24 @@
 from django.db import connection
 from django.http import JsonResponse, HttpResponse
+from django.contrib.auth import authenticate, login, logout
+
+
+def login_user(request):
+    # return logout(request)
+    if request.is_ajax():
+        # if request.POST.get('logout'):
+        #     logout(request)
+        if request.user.is_active and request.user is not 'AnonymousUser':
+            return JsonResponse(request.user.username, safe=False)
+        else:
+            user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+            if user is not None:
+                login(request=request, user=user)
+                return JsonResponse(user.username, safe=False)
+            else:
+                JsonResponse('You must register before logging in')
+    else:
+        return HttpResponse('Must be an ajax request')
 
 
 def all_places(request):

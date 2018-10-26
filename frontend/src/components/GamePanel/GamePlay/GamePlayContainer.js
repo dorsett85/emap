@@ -36,11 +36,11 @@ export default class GamePlayContainer extends React.Component {
         'X-CSRFToken': csrf
       },
       credentials: 'include'
-    }).then(response => {
-      response.json().then(data => {
+    }).then(response => response.json())
+      .then(data => {
         this.props.updateSearchResults(data)
       })
-    })
+      .catch(error => console.log(error))
 
   }
 

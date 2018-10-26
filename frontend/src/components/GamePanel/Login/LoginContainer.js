@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Login from "./Login";
+import csrf from "assets/utils/getCsrfToken";
 
 export default class LoginContainer extends React.Component {
   constructor(props) {
@@ -39,6 +40,25 @@ export default class LoginContainer extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+
+    fetch('/api/login/', {
+      method: 'POST',
+      body: `username=${this.state.username}&password=${this.state.password}`,
+      headers: {
+        "content-type":"application/x-www-form-urlencoded",
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrf
+      },
+      credentials: 'include'
+    }).then(response => response.json())
+      .then(data => {
+        console.log(data);
+        this.props.setUser(data);
+        location.reload(); // Reload the page so the csrf token resets!!
+      })
+      .catch(error => console.log(error));
+
     // TODO add login submission
     this.setState({
       anchorEl: null
@@ -48,7 +68,7 @@ export default class LoginContainer extends React.Component {
   render() {
     return (
       <Login
-        loggedIn={this.state.loggedIn}
+        user={this.props.user}
         onClick={this.handleClick}
         onClose={this.handleClose}
         onInput={this.handleInput}

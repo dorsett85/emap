@@ -49,7 +49,10 @@ const GamePanel = props => {
       </Paper>
 
       <List>
-        <LoginContainer/>
+        <LoginContainer
+          user={props.user}
+          setUser={props.setUser}
+        />
         <GameSelectorContainer
           setGame={props.setGame}
         />

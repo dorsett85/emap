@@ -31,7 +31,7 @@ const Login = props => {
   return (
     <div>
       <ListItem
-        button
+        button={!props.user}
         aria-owns='loginPopover'
         aria-haspopup="true"
         onClick={props.onClick}
@@ -40,8 +40,8 @@ const Login = props => {
           <PersonIcon/>
         </Avatar>
         <ListItemText
-          primary={'Login'}
-          secondary={'Track your progress'}
+          primary={props.user ? props.user : 'Login'}
+          secondary={props.user ? '' : 'Track your progress'}
           classes={{primary: classes.maliFont}}
         />
       </ListItem>
