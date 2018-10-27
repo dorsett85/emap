@@ -16,6 +16,8 @@ const styles = theme => ({
     top: 10,
     left: 10,
     width: 350,
+    maxHeight: '95vh',
+    overflowY: 'auto',
     backgroundColor: 'white',
     boxShadow: theme.shadows[10],
     zIndex: 10

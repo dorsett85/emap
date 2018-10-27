@@ -23,10 +23,24 @@ export default class App extends React.Component {
   }
 
   setUser(user) {
-    console.log(user);
     this.setState({
       user: user
     })
+  }
+
+  checkUser() {
+    fetch('/api/check_user/', {
+      method: 'POST',
+      headers: {
+        "content-type":"application/x-www-form-urlencoded",
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': csrf
+      },
+      credentials: 'include'
+    }).then(response => response.json())
+      .then(this.setUser)
+      .catch(error => console.log(error));
   }
 
   setGame(game) {
@@ -42,23 +56,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    fetch('/api/login/', {
-      method: 'POST',
-      // body: `username=${this.state.username}&password=${this.state.password}`,
-      headers: {
-        "content-type":"application/x-www-form-urlencoded",
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    }).then(response => response.json())
-      .then(data => {
-        console.log(data);
-        this.setUser(data);
-        // location.reload(); // Reload the page so the csrf token resets!!
-      })
-      .catch(error => console.log(error));
+    this.checkUser()
   }
 
   render() {
