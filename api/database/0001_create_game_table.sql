@@ -1,0 +1,6 @@
+
+CREATE TABLE games (
+  ID int NOT NULL AUTO_INCREMENT,
+  description VARCHAR(500),
+  PRIMARY KEY (ID)
+);
