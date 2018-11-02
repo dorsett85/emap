@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
-# Copy development settings
-cp emap/development_settings.py emap/settings.py
+# Copy production settings
+cp emap/production_settings.py emap/settings.py
 
 # Create database and user owner
-psql -U postgres -f api/database/0001_create_emap_database.sql
+sudo -u postgres psql -f api/database/0001_create_emap_database.sql
 
 # Activate python virtual environment
-source pyenv/Scripts/activate
+source pyenv/bin/activate
 
 # Run migrations -- Adds Django specific user and authentication tables -- and create super user
 manage.py migrate
 python manage.py createsuperuser
 
 # Add fixture data
-manage.py loaddata worldcities100.json
+python manage.py loaddata worldcities100.json
 
 
 # Pause after completion to check for errors
