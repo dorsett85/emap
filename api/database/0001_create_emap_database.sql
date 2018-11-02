@@ -1,3 +1,4 @@
 -- Initial setup for api app
-CREATE USER clayton;
-CREATE DATABASE emap OWNER clayton;
+CREATE DATABASE emap;
+CREATE USER clayton WITH PASSWORD 'password';
+GRANT ALL PRIVILEGES ON DATABASE emap TO clayton;
