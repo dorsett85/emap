@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Copy production settings
-cp emap/production_settings.py emap/settings.py
+sudo cp emap/production_settings.py emap/settings.py
 
 # Create database and user owner
 sudo -u postgres psql -f api/database/0001_create_emap_database.sql
