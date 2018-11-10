@@ -17,7 +17,7 @@ elif [ $1 = '-p' ]; then
   settingEnv='production'
   sudo='sudo'
   psql='-u postgres psql'
-  pyenv='source pyenv/bin/activate'
+  pyenv='. pyenv/bin/activate'
 else
   echo 'Set argument to -d (development) or -p (production)'
 fi
