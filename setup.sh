@@ -8,11 +8,13 @@
 # Add appropriate variables for development vs production setup
 if [ -z ${1+x} ] || [ $1 = '-d' ]; then
   echo 'Running development setup'
+  settingEnv='development'
   sudo=''
   psql='psql -U postgres'
   pyenv='source pyenv/Scripts/activate'
 elif [ $1 = '-p' ]; then
   echo 'Running production setup'
+  settingEnv='production'
   sudo='sudo'
   psql='-u postgres psql'
   pyenv='source pyenv/bin/activate'
@@ -23,7 +25,7 @@ fi
 
 ##### Initialize settings and database now that development or production variables are set #####
 
-$sudo cp emap/development_settings.py emap/settings.py
+$sudo cp emap/${settingEnv}_settings.py emap/settings.py
 
 # Create database and user owner
 $sudo $psql -f api/database/0001_create_emap_database.sql
