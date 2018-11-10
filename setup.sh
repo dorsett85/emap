@@ -39,8 +39,3 @@ python manage.py createsuperuser
 
 # Add fixture data
 python manage.py loaddata worldcities100.json
-
-
-# Pause after completion to check for errors
-echo -e "\nDone"
-read
