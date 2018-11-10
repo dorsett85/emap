@@ -10,11 +10,11 @@ psql -U postgres -f api/database/0001_create_emap_database.sql
 source pyenv/Scripts/activate
 
 # Run migrations -- Adds Django specific user and authentication tables -- and create super user
-manage.py migrate
+python manage.py migrate
 python manage.py createsuperuser
 
 # Add fixture data
-manage.py loaddata worldcities100.json
+python manage.py loaddata worldcities100.json
 
 
 # Pause after completion to check for errors
