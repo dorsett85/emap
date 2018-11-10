@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 #####
 # Script to apply settings and setup the postgresql database in
