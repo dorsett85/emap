@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Destroy the emap database to rerun setup.sh
 if [ -z ${1+x} ] || [ $1 = '-d' ]; then
