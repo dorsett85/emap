@@ -24,7 +24,7 @@ fi
 $sudo cp emap/development_settings.py emap/settings.py
 
 # Create database and user owner
-$psql -f api/database/0001_create_emap_database.sql
+$sudo $psql -f api/database/0001_create_emap_database.sql
 
 # Activate python virtual environment
 source pyenv/Scripts/activate
