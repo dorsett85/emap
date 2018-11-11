@@ -33,9 +33,18 @@ export default class ajaxRequests {
     fetch(call.url, init)
       .then(response => response.json())
       .then(call.success)
-      .catch(error => call.error ? call.error : console.log(error));
+      .catch(error => call.error ? call.error(error) : console.log(error));
   }
 
+  /**
+   * Merge new ajax options
+   *
+   * This function will merge an object of new ajax options with existing options in place
+   *
+   * @param {Object} initOptions Current options
+   * @param {Object} newOptions  New options to add to current options
+   * @returns {*|void}
+   */
   static addOptions(initOptions, newOptions) {
     for (let key in newOptions) {
       if (newOptions.hasOwnProperty(key)) {
@@ -48,86 +57,102 @@ export default class ajaxRequests {
     }
   }
 
-  static getFetch(call) {
-    ajaxRequests.baseFetch({
-      ...call,
+  /**
+   * Base and additional options for post requests
+   *
+   * @param {Object} options Additional ajax options
+   * @returns {{
+   *   options: {
+   *     method: string,
+   *     headers: {
+   *       'content-type': string,
+   *       Accept: string,
+   *       'X-Requested-With': string,
+   *       'X-CSRFToken'
+   *     },
+   *     credentials: string
+   *   }
+   * }}
+   */
+  static postOptions(options = undefined) {
+    return {
       options: {
-        ...call.options,
-        method: 'GET'
+        ...options,
+        method: 'POST',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrf
+        },
+        credentials: 'include'
       }
-    });
+    };
   }
 
-  static postFetch(call) {
-    ajaxRequests.baseFetch({
-      ...call,
-      options: {
-        ...call.options,
-        method: 'POST'
-      }
-    });
-  }
-
+  /**
+   * Request the current user
+   *
+   * @param {Function} success
+   */
   static getUser(success) {
-    ajaxRequests.getFetch({
+    ajaxRequests.baseFetch({
       url: '/api/get_user/',
+      success: success,
+    });
+  }
+
+  /**
+   * Login request
+   *
+   * @param {string}   username
+   * @param {string}   password
+   * @param {Function} success
+   */
+  static login(username, password, success) {
+    ajaxRequests.baseFetch({
+      url: '/api/login/',
+      ...ajaxRequests.postOptions({
+        body: `username=${username}&password=${password}`
+      }),
       success: success
     });
   }
 
-  static login(username, password, success) {
-    fetch('/api/login/', {
-      method: 'POST',
-      body: `username=${username}&password=${password}`,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    })
-      .then(response => response.json())
-      .then(success)
-      .catch(error => console.log(error));
-  }
-
+  /**
+   * Logout request
+   *
+   * @param {Function} success
+   */
   static logout(success) {
-    fetch('/api/logout/', {
-      method: 'POST',
-      body: `logout=${true}`,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    })
-      .then(response => response.json())
-      .then(success)
-      .catch(error => console.log(error));
+    ajaxRequests.baseFetch({
+      url: '/api/logout/',
+      ...ajaxRequests.postOptions(),
+      success: success
+    });
   }
 
+  /**
+   * Request place information
+   *
+   * @param {string}   searchInput WHERE query for places table
+   * @param {Function} success
+   */
   static getPlace(searchInput, success) {
-    fetch('/api/', {
-      method: 'POST',
-      body: 'place=' + searchInput,
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    })
-      .then(response => response.json())
-      .then(success)
-      .catch(error => console.log(error));
+    ajaxRequests.baseFetch({
+      url: '/api/place/' + searchInput,
+      success: success
+    });
   }
 
+  /**
+   * Request game information
+   *
+   * @param {Function} success
+   */
   static getGames(success) {
-    ajaxRequests.getFetch({
-      url: '/api/get_games/',
+    ajaxRequests.baseFetch({
+      url: '/api/games/',
       success: success
     });
   }

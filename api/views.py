@@ -41,15 +41,13 @@ def logout_user(request):
     return JsonResponse(None, safe=False)
 
 
-def all_places(request):
+def get_place(request, name):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    user_search = request.POST.get('place')
-
     # Query the database
     cursor = connection.cursor()
-    cursor.execute('SELECT city, lat, lon, country, population FROM api_place WHERE city = %s', [user_search])
+    cursor.execute('SELECT city, lat, lon, country, population FROM api_place WHERE city = %s', [name])
 
     # Check if any matches are returned
     rows = cursor.fetchall()
