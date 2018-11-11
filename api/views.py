@@ -33,7 +33,6 @@ def register_user(request):
         return HttpResponse('Must be an ajax request')
 
 
-
 def logout_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
