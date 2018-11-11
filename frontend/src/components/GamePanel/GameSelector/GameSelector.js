@@ -74,7 +74,9 @@ const GameSelector = props => {
       >
         <Card className={classes.gridDiv}>
           <Grid container spacing={8}>
-            {props.games.map((game, i) => (
+            {props.games
+              .map(game => game.name)
+              .map((game, i) => (
               <Grid item xs={6} key={i}>
                 <CardActionArea onClick={event => props.onCardClick(event, i)}>
                   <Card classes={{root: classes.card}}>

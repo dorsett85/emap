@@ -1,17 +1,15 @@
 import React from 'react';
 
+// Custom components
 import GameSelector from "./GameSelector";
+
+import ajax from 'assets/utils/ajaxRequests';
 
 export default class GameSelectorContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      games: [
-        'Cities - Top 10 Population',
-        'Cities - Top 10 Area',
-        'Cities - Top 10 Education',
-        'Cities - Top 10 Income'
-      ],
+      games: [],
       anchorEl: null,
     };
 
@@ -34,7 +32,7 @@ export default class GameSelectorContainer extends React.Component {
   }
 
   handleCardClick(e, i) {
-    this.props.setGame(this.state.games[i]);
+    this.props.setGame(this.state.games[i].name);
     this.onClose();
   }
 
@@ -45,7 +43,7 @@ export default class GameSelectorContainer extends React.Component {
   }
 
   componentWillMount() {
-    // this.getGames('DATA')
+    ajax.getGames(this.getGames)
   }
 
   render() {

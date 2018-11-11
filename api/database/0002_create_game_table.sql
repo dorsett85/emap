@@ -1,7 +1,7 @@
 -- 0002_create_game_table.sql
 -- Created by Clayton on 11/2/2018
 
-CREATE TABLE game (
+CREATE TABLE api_game (
   ID serial primary key,
   name varchar not null,
   description varchar not null,
@@ -9,4 +9,4 @@ CREATE TABLE game (
   difficulty varchar CHECK (difficulty in ('easy', 'medium', 'hard'))
 );
 
-GRANT ALL PRIVILEGES ON TABLE game TO clayton;
+GRANT ALL PRIVILEGES ON TABLE api_game TO clayton;
