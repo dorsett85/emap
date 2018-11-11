@@ -27,9 +27,8 @@ export default class ajaxRequests {
 
     // Add additional fetch options
     if (call.options) {
-      ajaxRequests.addOptions(call.options, init);
+      ajaxRequests.addOptions(init, call.options);
     }
-    console.log(init);
 
     fetch(call.url, init)
       .then(response => response.json())
@@ -37,14 +36,14 @@ export default class ajaxRequests {
       .catch(error => call.error ? call.error : console.log(error));
   }
 
-  static addOptions(newOptions, initOptions) {
-    let options;
+  static addOptions(initOptions, newOptions) {
     for (let key in newOptions) {
-      console.log(newOptions[key]);
-      if (typeof key === 'object') {
-        return ajaxRequests.addOptions(newOptions[key], initOptions[key])
-      } else if (!initOptions.hasOwnProperty(key)) {
-        initOptions[key] = newOptions[key];
+      if (newOptions.hasOwnProperty(key)) {
+        if (typeof newOptions[key] === 'object') {
+          return ajaxRequests.addOptions(initOptions[key], newOptions[key]);
+        } else {
+          initOptions[key] = newOptions[key];
+        }
       }
     }
   }
@@ -52,14 +51,20 @@ export default class ajaxRequests {
   static getFetch(call) {
     ajaxRequests.baseFetch({
       ...call,
-      options: { method: 'GET', headers: {'fuck': 'this'} }
+      options: {
+        ...call.options,
+        method: 'GET'
+      }
     });
   }
 
   static postFetch(call) {
     ajaxRequests.baseFetch({
       ...call,
-      options: { method: 'POST' }
+      options: {
+        ...call.options,
+        method: 'POST'
+      }
     });
   }
 
