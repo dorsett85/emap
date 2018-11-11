@@ -1,7 +1,9 @@
 import React from 'react';
 
-import Login from "./Login";
-import csrf from "assets/utils/getCsrfToken";
+// Custom components
+import Login from './Login';
+
+import ajax from 'assets/utils/ajaxRequests';
 
 export default class LoginContainer extends React.Component {
   constructor(props) {
@@ -44,55 +46,31 @@ export default class LoginContainer extends React.Component {
   handleLoginSubmit(e) {
     e.preventDefault();
 
-    fetch('/api/login/', {
-      method: 'POST',
-      body: `username=${this.state.username}&password=${this.state.password}`,
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    }).then(response => response.json())
-      .then(data => {
-        if (data) {
-          // Backend at this point has logged in the user
-          this.setState({
-            anchorEl: null,
-            loginError: null
-          });
-          // need to reload the page so the csrf token resets!!
-          location.reload()
-        } else {
-          this.setState({
-            loginError: true
-          })
-        }
-      })
-      .catch(error => console.log(error));
+    ajax.login(this.state.username, this.state.password, data => {
+      if (data) {
+        // Backend at this point has logged in the user
+        this.setState({
+          anchorEl: null,
+          loginError: null
+        });
+        // need to reload the page so the csrf token resets!!
+        location.reload();
+      } else {
+        this.setState({
+          loginError: true
+        });
+      }
+    });
 
   }
 
   handleLogoutClick(e) {
     e.preventDefault();
 
-    fetch('/api/logout/', {
-      method: 'POST',
-      body: `logout=${true}`,
-      headers: {
-        "content-type": "application/x-www-form-urlencoded",
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    }).then(response => response.json())
-      .then(data => {
-        // Backend has logged out the user, reset to null on the frontend
-        this.props.setUser(data);
-      })
-      .catch(error => console.log(error));
+    ajax.logout(data => {
+      // Backend has logged out the user, reset to null on the frontend
+      this.props.setUser(data);
+    });
   }
 
   render() {
@@ -109,7 +87,7 @@ export default class LoginContainer extends React.Component {
         username={this.state.username}
         password={this.state.password}
       />
-    )
+    );
   }
 
 }

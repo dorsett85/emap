@@ -3,7 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 
 
-def check_user(request):
+def get_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
@@ -26,6 +26,12 @@ def login_user(request):
             return JsonResponse(user.username, safe=False)
         else:
             return JsonResponse(False, safe=False)
+
+
+def register_user(request):
+    if not request.is_ajax():
+        return HttpResponse('Must be an ajax request')
+
 
 
 def logout_user(request):

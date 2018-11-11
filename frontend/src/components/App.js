@@ -4,8 +4,8 @@ import React from "react";
 import GamePanel from './GamePanel/GamePanel';
 import Map from './Map/Map';
 
+import ajax from 'assets/utils/ajaxRequests';
 import 'assets/css/styles.scss';
-import csrf from "assets/utils/getCsrfToken";
 
 export default class App extends React.Component {
   constructor(props) {
@@ -28,21 +28,6 @@ export default class App extends React.Component {
     })
   }
 
-  checkUser() {
-    fetch('/api/check_user/', {
-      method: 'POST',
-      headers: {
-        "content-type":"application/x-www-form-urlencoded",
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    }).then(response => response.json())
-      .then(this.setUser)
-      .catch(error => console.log(error));
-  }
-
   setGame(game) {
     this.setState({
       selectedGame: game
@@ -56,7 +41,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    this.checkUser()
+    ajax.getUser(this.setUser)
   }
 
   render() {

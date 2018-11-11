@@ -2,7 +2,8 @@ import React from 'react';
 
 // Custom components
 import GamePlay from "./GamePlay";
-import csrf from 'assets/utils/getCsrfToken';
+
+import ajax from 'assets/utils/ajaxRequests';
 
 
 export default class GamePlayContainer extends React.Component {
@@ -26,21 +27,9 @@ export default class GamePlayContainer extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
 
-    fetch('/api/', {
-      method: 'POST',
-      body: 'place=' + this.state.searchInput,
-      headers: {
-        "content-type":"application/x-www-form-urlencoded",
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRFToken': csrf
-      },
-      credentials: 'include'
-    }).then(response => response.json())
-      .then(data => {
-        this.props.updateSearchResults(data)
-      })
-      .catch(error => console.log(error))
+    ajax.getPlace(this.state.searchInput, data => {
+      this.props.updateSearchResults(data)
+    })
 
   }
 

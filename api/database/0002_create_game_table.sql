@@ -7,4 +7,6 @@ CREATE TABLE game (
   description varchar not null,
   num_questions int,
   difficulty varchar CHECK (difficulty in ('easy', 'medium', 'hard'))
-)
+);
+
+GRANT ALL PRIVILEGES ON TABLE game TO clayton;

@@ -38,7 +38,7 @@ python manage.py migrate
 python manage.py createsuperuser
 
 # Now that the initial django tables have been created we can run the rest of our sql scripts
-$sudo $psql -f api/database/0002_create_game_table.sql
+$sudo $psql -d emap -f api/database/0002_create_game_table.sql
 
 # Add fixture data
 python manage.py loaddata worldcities100.json
