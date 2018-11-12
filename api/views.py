@@ -7,7 +7,7 @@ def get_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    return JsonResponse(request.user.username, safe=False)
+    return JsonResponse(request.user, safe=False)
 
     if request.user.is_active and request.user is not 'AnonymousUser':
         return JsonResponse(request.user.username, safe=False)
