@@ -96,19 +96,10 @@ export default class ajaxRequests {
    * @param {Function} success
    */
   static getUser(success) {
-    fetch('/api/get_user', {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json',
-      }
-    })
-      .then(response => response.json())
-      .then(success)
-      .catch(error => console.log(error));
-    // ajaxRequests.baseFetch({
-    //   url: '/api/get_user/',
-    //   success: success,
-    // });
+    ajaxRequests.baseFetch({
+      url: '/api/get_user/',
+      success: success,
+    });
   }
 
   /**
