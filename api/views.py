@@ -64,10 +64,7 @@ def get_games(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    # return JsonResponse('balls', safe=False, status=500)
-    import psycopg2
-    con = psycopg2.connect("host='localhost' dbname='emap' user='clayton' password='password'")
-    cursor = con.cursor()
+    cursor = connection.cursor()
     cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
     rows = cursor.fetchall()
     if rows:
