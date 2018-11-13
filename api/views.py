@@ -65,12 +65,14 @@ def get_games(request):
         return HttpResponse('Must be an ajax request')
 
     # return JsonResponse('balls', safe=False, status=500)
-    cursor = connection.cursor()
-    # cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
-    # rows = cursor.fetchall()
-    # if rows:
-    #     keys = [col[0] for col in cursor.description]
-    #     game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
-    #     return JsonResponse(game_list, safe=False)
-    # else:
-    #     return JsonResponse('', safe=False)
+    import psycopg2
+    con = psycopg2.connect("host='localhost' dbname='emap' user='clayton' password='password'")
+    cursor = con.cursor()
+    cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
+    rows = cursor.fetchall()
+    if rows:
+        keys = [col[0] for col in cursor.description]
+        game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
+        return JsonResponse(game_list, safe=False)
+    else:
+        return JsonResponse('', safe=False)
