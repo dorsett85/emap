@@ -63,7 +63,8 @@ def get_place(request, name):
 def get_games(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
-    return JsonResponse('', safe=False)
+
+    return JsonResponse('balls', safe=False, status=500)
     # cursor = connection.cursor()
     # cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
     # rows = cursor.fetchall()
