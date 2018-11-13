@@ -64,12 +64,12 @@ def get_games(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    cursor = connection.cursor()
-    cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
-    rows = cursor.fetchall()
-    if rows:
-        keys = [col[0] for col in cursor.description]
-        game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
-        return JsonResponse(game_list, safe=False)
-    else:
-        return JsonResponse('', safe=False)
+    # cursor = connection.cursor()
+    # cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
+    # rows = cursor.fetchall()
+    # if rows:
+    #     keys = [col[0] for col in cursor.description]
+    #     game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
+    #     return JsonResponse(game_list, safe=False)
+    # else:
+    #     return JsonResponse('', safe=False)
