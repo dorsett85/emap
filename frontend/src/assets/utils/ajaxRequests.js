@@ -151,18 +151,10 @@ export default class ajaxRequests {
    * @param {Function} success
    */
   static getGames(success) {
-    fetch('/api/games/', {
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-      }
-    })
-      .then(response => response.json())
-      .then(success)
-      .catch(error => console.log(error));
-    // ajaxRequests.baseFetch({
-    //   url: '/api/games/',
-    //   success: success
-    // });
+    ajaxRequests.baseFetch({
+      url: '/api/games/',
+      success: success
+    });
   }
 
 }

@@ -64,6 +64,7 @@ def get_games(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
+    print('\n\n\n\n Before segfault')
     print(request)
 
     cursor = connection.cursor()
