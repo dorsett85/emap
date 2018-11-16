@@ -38,11 +38,11 @@ python manage.py migrate
 python manage.py createsuperuser
 
 # Now that the django tables have been created we can create add our own tables and relations
-$sudo $psql -d emap -f api/database/0002_create_game_table.sql
+#$sudo $psql -d emap -f api/database/0002_create_game_table.sql
 
 # load in data
-$sudo $psql -d emap -c "\copy api_game(name, description, num_questions, difficulty) \
-  FROM 'api/database/data/games.csv' WITH DELIMITER ',' CSV HEADER"
+#$sudo $psql -d emap -c "\copy api_game(name, description, num_questions, difficulty) \
+#  FROM 'api/database/data/games.csv' WITH DELIMITER ',' CSV HEADER"
 
 # Add fixture data
 python manage.py loaddata worldcities100.json
