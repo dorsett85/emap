@@ -79,11 +79,10 @@ WSGI_APPLICATION = 'emap.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'elmer.db.elephantsql.com',
-        'PORT': '5432',
-        'NAME': 'qtowapyz',
-        'USER': 'qtowapyz',
-        'PASSWORD': 'VIXeXavKhIrpnA5mwPSg9yR1NiHlVKV_'
+        'NAME': 'emap',
+        'USER': 'clayton',
+        'PASSWORD': 'password',
+        'HOST': 'localhost'
     }
 }
 
