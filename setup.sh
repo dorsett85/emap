@@ -46,7 +46,7 @@ elif [ $1 = '-p' ]; then
 
   # Restore database built from development
   sudo -u postgres pg_restore -C -d postgres api/database/dump/emap.dump
-  
+
 else
   echo 'Set argument to -d (development) or -p (production)'
 fi
