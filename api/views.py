@@ -47,7 +47,7 @@ def get_place(request, name):
 
     # Query the database
     cursor = connection.cursor()
-    cursor.execute('SELECT city, lat, lon, country, population FROM api_place WHERE city = %s', [name])
+    cursor.execute('SELECT name, lat, lon, country, population FROM api_city WHERE name = %s', [name])
 
     # Check if any matches are returned
     rows = cursor.fetchall()

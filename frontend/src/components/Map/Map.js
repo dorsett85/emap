@@ -47,11 +47,11 @@ export default class Map extends React.Component {
           .flyTo([marker.lat, marker.lon]);
 
         // create new marker with a popup
-        let newPlace = L.marker([marker.lat, marker.lon]);
-        newPlace.place = marker.city;
-        newPlace
+        let newCity = L.marker([marker.lat, marker.lon]);
+        newCity.name = marker.name;
+        newCity
           .addTo(this.map)
-          .bindPopup(`<b>${marker.city}</b>`)
+          .bindPopup(`<b>${marker.name}</b>`)
           .openPopup();
       }
     }
