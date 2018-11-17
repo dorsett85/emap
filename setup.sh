@@ -16,13 +16,13 @@ if [ -z ${1+x} ] || [ $1 = '-d' ]; then
   # Activate python virtual environment
   source pyenv/Scripts/activate
 
-  # Run migrations -- Adds Django specific user and authentication tables -- and create super user
+  # Run migrations -- Adds Django specific user and authentication tables
   manage.py migrate
-  manage.py createsuperuser
 
   # Now that the django tables have been created we can create add our own tables and relations
   psql -U postgres -d emap -f api/database/migrations/0002_create_game_table.sql
   psql -U postgres -d emap -f api/database/migrations/0003_create_city_table.sql
+  psql -U postgres -d emap -f api/database/migrations/0004_create_user_game_table.sql
 
   # load in data
   psql -U postgres -d emap -c "\copy api_game(name, description, num_questions, difficulty) \
@@ -30,6 +30,9 @@ if [ -z ${1+x} ] || [ $1 = '-d' ]; then
 
   psql -U postgres -d emap -c "\copy api_city(name, lat, lon, country, population) \
     FROM 'api/database/data/worldcities100.csv' WITH DELIMITER ',' CSV HEADER"
+
+  # Create super user
+  manage.py createsuperuser
 
   # Dump database to setup on production
   pg_dump -U postgres -Fc emap > api/database/dump/emap.dump
