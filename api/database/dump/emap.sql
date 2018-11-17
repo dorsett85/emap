@@ -96,44 +96,6 @@ ALTER SEQUENCE public.api_game_id_seq OWNED BY public.api_game.id;
 
 
 --
--- Name: api_place; Type: TABLE; Schema: public; Owner: clayton
---
-
-CREATE TABLE public.api_place (
-    id integer NOT NULL,
-    city character varying(100) NOT NULL,
-    lat double precision NOT NULL,
-    lon double precision NOT NULL,
-    country character varying(100) NOT NULL,
-    population integer NOT NULL
-);
-
-
-ALTER TABLE public.api_place OWNER TO clayton;
-
---
--- Name: api_place_id_seq; Type: SEQUENCE; Schema: public; Owner: clayton
---
-
-CREATE SEQUENCE public.api_place_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.api_place_id_seq OWNER TO clayton;
-
---
--- Name: api_place_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: clayton
---
-
-ALTER SEQUENCE public.api_place_id_seq OWNED BY public.api_place.id;
-
-
---
 -- Name: auth_group; Type: TABLE; Schema: public; Owner: clayton
 --
 
@@ -491,13 +453,6 @@ ALTER TABLE ONLY public.api_game ALTER COLUMN id SET DEFAULT nextval('public.api
 
 
 --
--- Name: api_place id; Type: DEFAULT; Schema: public; Owner: clayton
---
-
-ALTER TABLE ONLY public.api_place ALTER COLUMN id SET DEFAULT nextval('public.api_place_id_seq'::regclass);
-
-
---
 -- Name: auth_group id; Type: DEFAULT; Schema: public; Owner: clayton
 --
 
@@ -681,14 +636,6 @@ COPY public.api_game (id, name, description, num_questions, difficulty) FROM std
 
 
 --
--- Data for Name: api_place; Type: TABLE DATA; Schema: public; Owner: clayton
---
-
-COPY public.api_place (id, city, lat, lon, country, population) FROM stdin;
-\.
-
-
---
 -- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: clayton
 --
 
@@ -733,10 +680,6 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 22	Can change session	6	change_session
 23	Can delete session	6	delete_session
 24	Can view session	6	view_session
-25	Can add place	7	add_place
-26	Can change place	7	change_place
-27	Can delete place	7	delete_place
-28	Can view place	7	view_place
 \.
 
 
@@ -745,7 +688,7 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 --
 
 COPY public.auth_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined) FROM stdin;
-1	pbkdf2_sha256$120000$sThSVmhZlHwM$HPTBh+Iw4Ed0sYJgEmVESYzf6hXhHaXsbWtZvHYYz7Y=	\N	t	clayton				t	t	2018-11-17 13:58:59.423295-05
+1	pbkdf2_sha256$120000$qa1ys9BcRf6R$fXcMMbfNpjlvnxca68HzRsEJHz5zv4A4OIs60pRtyHY=	\N	t	clayton				t	t	2018-11-17 14:06:01.679055-05
 \.
 
 
@@ -784,7 +727,6 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 4	auth	user
 5	contenttypes	contenttype
 6	sessions	session
-7	api	place
 \.
 
 
@@ -793,22 +735,21 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2018-11-17 13:58:49.070991-05
-2	auth	0001_initial	2018-11-17 13:58:49.99265-05
-3	admin	0001_initial	2018-11-17 13:58:50.180104-05
-4	admin	0002_logentry_remove_auto_add	2018-11-17 13:58:50.195671-05
-5	admin	0003_logentry_add_action_flag_choices	2018-11-17 13:58:50.195671-05
-6	api	0001_initial	2018-11-17 13:58:50.258218-05
-7	contenttypes	0002_remove_content_type_name	2018-11-17 13:58:50.289402-05
-8	auth	0002_alter_permission_name_max_length	2018-11-17 13:58:50.289402-05
-9	auth	0003_alter_user_email_max_length	2018-11-17 13:58:50.304994-05
-10	auth	0004_alter_user_username_opts	2018-11-17 13:58:50.320643-05
-11	auth	0005_alter_user_last_login_null	2018-11-17 13:58:50.320643-05
-12	auth	0006_require_contenttypes_0002	2018-11-17 13:58:50.336236-05
-13	auth	0007_alter_validators_add_error_messages	2018-11-17 13:58:50.336236-05
-14	auth	0008_alter_user_username_max_length	2018-11-17 13:58:50.398721-05
-15	auth	0009_alter_user_last_name_max_length	2018-11-17 13:58:50.398721-05
-16	sessions	0001_initial	2018-11-17 13:58:50.554935-05
+1	contenttypes	0001_initial	2018-11-17 14:05:52.224571-05
+2	auth	0001_initial	2018-11-17 14:05:53.302434-05
+3	admin	0001_initial	2018-11-17 14:05:53.521133-05
+4	admin	0002_logentry_remove_auto_add	2018-11-17 14:05:53.521133-05
+5	admin	0003_logentry_add_action_flag_choices	2018-11-17 14:05:53.536672-05
+6	contenttypes	0002_remove_content_type_name	2018-11-17 14:05:53.552322-05
+7	auth	0002_alter_permission_name_max_length	2018-11-17 14:05:53.567924-05
+8	auth	0003_alter_user_email_max_length	2018-11-17 14:05:53.567924-05
+9	auth	0004_alter_user_username_opts	2018-11-17 14:05:53.583578-05
+10	auth	0005_alter_user_last_login_null	2018-11-17 14:05:53.599159-05
+11	auth	0006_require_contenttypes_0002	2018-11-17 14:05:53.599159-05
+12	auth	0007_alter_validators_add_error_messages	2018-11-17 14:05:53.614779-05
+13	auth	0008_alter_user_username_max_length	2018-11-17 14:05:53.661701-05
+14	auth	0009_alter_user_last_name_max_length	2018-11-17 14:05:53.661701-05
+15	sessions	0001_initial	2018-11-17 14:05:53.911667-05
 \.
 
 
@@ -835,13 +776,6 @@ SELECT pg_catalog.setval('public.api_game_id_seq', 4, true);
 
 
 --
--- Name: api_place_id_seq; Type: SEQUENCE SET; Schema: public; Owner: clayton
---
-
-SELECT pg_catalog.setval('public.api_place_id_seq', 1, false);
-
-
---
 -- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: clayton
 --
 
@@ -859,7 +793,7 @@ SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 1, false);
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: clayton
 --
 
-SELECT pg_catalog.setval('public.auth_permission_id_seq', 28, true);
+SELECT pg_catalog.setval('public.auth_permission_id_seq', 24, true);
 
 
 --
@@ -894,14 +828,14 @@ SELECT pg_catalog.setval('public.django_admin_log_id_seq', 1, false);
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: clayton
 --
 
-SELECT pg_catalog.setval('public.django_content_type_id_seq', 7, true);
+SELECT pg_catalog.setval('public.django_content_type_id_seq', 6, true);
 
 
 --
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: clayton
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 16, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 15, true);
 
 
 --
@@ -918,14 +852,6 @@ ALTER TABLE ONLY public.api_city
 
 ALTER TABLE ONLY public.api_game
     ADD CONSTRAINT api_game_pkey PRIMARY KEY (id);
-
-
---
--- Name: api_place api_place_pkey; Type: CONSTRAINT; Schema: public; Owner: clayton
---
-
-ALTER TABLE ONLY public.api_place
-    ADD CONSTRAINT api_place_pkey PRIMARY KEY (id);
 
 
 --
