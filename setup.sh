@@ -5,6 +5,7 @@
 # development or production
 #####
 
+# Development
 if [ -z ${1+x} ] || [ $1 = '-d' ]; then
   echo 'Running development setup'
   cp emap/development_settings.py emap/settings.py
@@ -33,6 +34,7 @@ if [ -z ${1+x} ] || [ $1 = '-d' ]; then
   # Dump database to setup on production
   pg_dump -U postgres -Fc emap > api/database/dump/emap.dump
 
+# Production
 elif [ $1 = '-p' ]; then
   echo 'Running production setup'
   sudo cp emap/production_settings.py emap/settings.py
