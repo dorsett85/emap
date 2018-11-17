@@ -49,4 +49,4 @@ $sudo $psql -d emap -c "\copy api_city(name, lat, lon, country, population) \
   FROM 'api/database/data/worldcities100.csv' WITH DELIMITER ',' CSV HEADER"
 
 # Dump database to setup on production
-pg_dump
+pg_dumpall -U postgres > api/database/dump/emap.sql

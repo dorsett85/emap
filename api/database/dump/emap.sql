@@ -1,9 +1,76 @@
 --
+-- PostgreSQL database cluster dump
+--
+
+SET default_transaction_read_only = off;
+
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+
+--
+-- Roles
+--
+
+CREATE ROLE clayton;
+ALTER ROLE clayton WITH NOSUPERUSER INHERIT NOCREATEROLE NOCREATEDB LOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'md5d046a94192c91b83da9554f4415cf0c8';
+CREATE ROLE postgres;
+ALTER ROLE postgres WITH SUPERUSER INHERIT CREATEROLE CREATEDB LOGIN REPLICATION BYPASSRLS PASSWORD 'md59b4dde30c9db577d9ac991aa46add11d';
+
+
+
+
+
+
+\connect template1
+
+--
 -- PostgreSQL database dump
 --
 
 -- Dumped from database version 11.0
 -- Dumped by pg_dump version 11.0
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.0
+-- Dumped by pg_dump version 11.0
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Name: emap; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE emap WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'English_United States.1252' LC_CTYPE = 'English_United States.1252';
+
+
+ALTER DATABASE emap OWNER TO postgres;
+
+\connect emap
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1228,6 +1295,13 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
+-- Name: DATABASE emap; Type: ACL; Schema: -; Owner: postgres
+--
+
+GRANT ALL ON DATABASE emap TO clayton;
+
+
+--
 -- Name: TABLE api_city; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -1243,5 +1317,104 @@ GRANT ALL ON TABLE public.api_game TO clayton;
 
 --
 -- PostgreSQL database dump complete
+--
+
+\connect postgres
+
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.0
+-- Dumped by pg_dump version 11.0
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: game; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.game (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    description character varying NOT NULL,
+    num_questions integer,
+    difficulty character varying,
+    CONSTRAINT game_difficulty_check CHECK (((difficulty)::text = ANY ((ARRAY['easy'::character varying, 'medium'::character varying, 'hard'::character varying])::text[])))
+);
+
+
+ALTER TABLE public.game OWNER TO postgres;
+
+--
+-- Name: game_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.game_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.game_id_seq OWNER TO postgres;
+
+--
+-- Name: game_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.game_id_seq OWNED BY public.game.id;
+
+
+--
+-- Name: game id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.game ALTER COLUMN id SET DEFAULT nextval('public.game_id_seq'::regclass);
+
+
+--
+-- Data for Name: game; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.game (id, name, description, num_questions, difficulty) FROM stdin;
+\.
+
+
+--
+-- Name: game_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.game_id_seq', 1, false);
+
+
+--
+-- Name: game game_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.game
+    ADD CONSTRAINT game_pkey PRIMARY KEY (id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database cluster dump complete
 --
 
