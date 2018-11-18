@@ -43,12 +43,12 @@ export default class Map extends React.Component {
 
         // Clear other markers and fly to new location
         this.map
-          .eachLayer(layer => layer.place !== undefined ? layer.remove() : '')
+          .eachLayer(layer => layer.city !== undefined ? layer.remove() : '')
           .flyTo([marker.lat, marker.lon]);
 
         // create new marker with a popup
         let newCity = L.marker([marker.lat, marker.lon]);
-        newCity.name = marker.name;
+        newCity.city = marker.name;
         newCity
           .addTo(this.map)
           .bindPopup(`<b>${marker.name}</b>`)
