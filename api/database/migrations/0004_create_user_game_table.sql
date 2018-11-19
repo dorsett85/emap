@@ -8,6 +8,7 @@ CREATE TABLE api_user_game (
 );
 
 GRANT ALL PRIVILEGES ON TABLE api_user_game TO clayton;
+GRANT ALL PRIVILEGES ON TABLE api_user_game_id_seq TO clayton;
 
 -- Add rows when a new user is created that matches all of the games
 CREATE OR REPLACE FUNCTION add_user_games()
@@ -27,8 +28,7 @@ END;
 $BODY$
 language 'plpgsql';
 
--- TODO enable permissions so the trigger will fire from Django
--- CREATE TRIGGER trig_add_user_games
---   AFTER INSERT ON auth_user
---   FOR EACH ROW
---   EXECUTE PROCEDURE add_user_games();
+CREATE TRIGGER trig_add_user_games
+  AFTER INSERT ON auth_user
+  FOR EACH ROW
+  EXECUTE PROCEDURE add_user_games();
