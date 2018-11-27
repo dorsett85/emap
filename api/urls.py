@@ -9,7 +9,7 @@ urlpatterns = [
     path('logout/', views.logout_user),
 
     # Games api
-    path('games/', views.get_games),
+    path('games/<user>', views.get_games),
 
     # Place api
     path('place/<name>', views.get_place)

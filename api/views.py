@@ -47,7 +47,13 @@ def get_place(request, name):
 
     # Query the database
     cursor = connection.cursor()
-    cursor.execute('SELECT name, lat, lon, country, population FROM api_city WHERE name = %s', [name])
+    cursor.execute(
+        '''
+        SELECT name, lat, lon, country, population 
+        FROM api_city 
+        WHERE lower(name) = %s
+        ''', [name.lower()]
+    )
 
     # Check if any matches are returned
     rows = cursor.fetchall()
@@ -60,12 +66,35 @@ def get_place(request, name):
         return JsonResponse('', safe=False)
 
 
-def get_games(request):
+def get_games(request, user):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
     cursor = connection.cursor()
-    cursor.execute('SELECT name, description, num_questions, difficulty FROM api_game')
+
+    # Check which games to return based on user
+    if user == 'null':
+        cursor.execute(
+            '''
+            SELECT name, description, num_questions, difficulty 
+            FROM api_game
+            '''
+        )
+    else:
+        cursor.execute(
+            '''
+            SELECT ag.name, ag.description, ag.num_questions, ag.difficulty
+            FROM api_game AS ag
+            WHERE ag.id IN
+              (
+                SELECT aug.game_id
+                FROM api_user_game AS aug
+                  INNER JOIN auth_user au on aug.user_id = au.id
+                WHERE au.username = '%s'
+              );
+            ''', [user]
+        )
+
     rows = cursor.fetchall()
     if rows:
         keys = [col[0] for col in cursor.description]

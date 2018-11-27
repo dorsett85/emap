@@ -148,11 +148,12 @@ export default class ajaxRequests {
   /**
    * Request game information
    *
+   * @param {string}   user
    * @param {Function} success
    */
-  static getGames(success) {
+  static getGames(user, success) {
     ajaxRequests.baseFetch({
-      url: '/api/games/',
+      url: '/api/games/' + user,
       success: success
     });
   }
