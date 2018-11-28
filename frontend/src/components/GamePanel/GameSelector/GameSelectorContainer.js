@@ -43,7 +43,10 @@ export default class GameSelectorContainer extends React.Component {
   }
 
   componentWillMount() {
-    ajax.getGames(this.props.user, this.getGames)
+    ajax.getGames({
+      user: this.props.user,
+      success: data => this.getGames(data)
+    });
   }
 
   render() {

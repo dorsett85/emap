@@ -7,6 +7,7 @@ import {withStyles} from '@material-ui/core/styles';
 
 // Custom components
 import LoginContainer from './Login/LoginContainer';
+import RegisterContainer from './Register/RegisterContainer';
 import GameSelectorContainer from "./GameSelector/GameSelectorContainer";
 import GamePlayContainer from './GamePlay/GamePlayContainer';
 
@@ -55,6 +56,7 @@ const GamePanel = props => {
           user={props.user}
           setUser={props.setUser}
         />
+        {!props.user && <RegisterContainer />}
         <GameSelectorContainer
           user={props.user}
           setGame={props.setGame}

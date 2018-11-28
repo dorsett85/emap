@@ -1,6 +1,7 @@
 from django.db import connection
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 
 
 def get_user(request):
@@ -31,6 +32,18 @@ def login_user(request):
 def register_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
+
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+
+    if username and password:
+        User.objects.create_user(username=username, password=password)
+        user = authenticate(username=username, password=password)
+        login(request, user=user)
+        return JsonResponse(user.username, safe=False)
+
+    print('not valid')
+    return JsonResponse(False, safe=False)
 
 
 def logout_user(request):

@@ -1,29 +1,29 @@
 import React from 'react';
 
 // Custom components
-import Login from './Login';
+import Register from './Register';
 
 import ajax from 'assets/utils/ajaxRequests';
 
-export default class LoginContainer extends React.Component {
+export default class RegisterContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       anchorEl: null,
-      loginError: null,
+      registerError: null,
       username: '',
-      password: ''
+      password: '',
+      passwordConfirm: ''
     };
 
     // Bind methods
-    this.handleShowLoginClick = this.handleShowLoginClick.bind(this);
+    this.handleShowRegisterClick = this.handleShowRegisterClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleInput = this.handleInput.bind(this);
-    this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
-    this.handleLogoutClick = this.handleLogoutClick.bind(this);
+    this.handleRegisterSubmit = this.handleRegisterSubmit.bind(this);
   }
 
-  handleShowLoginClick(e) {
+  handleShowRegisterClick(e) {
     this.setState({
       anchorEl: e.currentTarget,
     });
@@ -32,21 +32,28 @@ export default class LoginContainer extends React.Component {
   handleClose = () => {
     this.setState({
       anchorEl: null,
-      loginError: null
+      registerError: null
     });
   };
 
   handleInput(e) {
     this.setState({
       [e.target.name]: e.target.value,
-      loginError: null
+      registerError: null
     });
   }
 
-  handleLoginSubmit(e) {
+  handleRegisterSubmit(e) {
     e.preventDefault();
 
-    ajax.login({
+    // Frontend validation
+    if (this.state.password !== this.state.passwordConfirm) {
+      return this.setState({
+        registerError: 'Password and confirmation do not match'
+      });
+    }
+
+    ajax.register({
       username: this.state.username,
       password: this.state.password,
       success: data => {
@@ -54,13 +61,13 @@ export default class LoginContainer extends React.Component {
           // Backend at this point has logged in the user
           this.setState({
             anchorEl: null,
-            loginError: null
+            registerError: null
           });
           // need to reload the page so the csrf token resets!!
           location.reload();
         } else {
           this.setState({
-            loginError: true
+            registerError: 'invalid'
           });
         }
       }
@@ -68,30 +75,18 @@ export default class LoginContainer extends React.Component {
 
   }
 
-  handleLogoutClick(e) {
-    e.preventDefault();
-
-    ajax.logout({
-      success: data => {
-        // Backend has logged out the user, reset to null on the frontend
-        this.props.setUser(data);
-      }
-    });
-  }
-
   render() {
     return (
-      <Login
-        user={this.props.user}
-        onShowLoginClick={this.handleShowLoginClick}
+      <Register
+        onShowRegisterClick={this.handleShowRegisterClick}
         onClose={this.handleClose}
         onInput={this.handleInput}
-        onLoginSubmit={this.handleLoginSubmit}
-        onLogoutClick={this.handleLogoutClick}
+        onRegisterSubmit={this.handleRegisterSubmit}
         anchorEl={this.state.anchorEl}
-        loginError={this.state.loginError}
+        registerError={this.state.registerError}
         username={this.state.username}
         password={this.state.password}
+        passwordConfirm={this.state.passwordConfirm}
       />
     );
   }

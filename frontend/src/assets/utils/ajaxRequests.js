@@ -91,6 +91,39 @@ export default class ajaxRequests {
   }
 
   /**
+   * Base and additional options for put requests
+   *
+   * @param {Object} options Additional ajax options
+   * @returns {{
+   *   options: {
+   *     method: string,
+   *     headers: {
+   *       'content-type': string,
+   *       Accept: string,
+   *       'X-Requested-With': string,
+   *       'X-CSRFToken'
+   *     },
+   *     credentials: string
+   *   }
+   * }}
+   */
+  static putOptions(options = undefined) {
+    return {
+      options: {
+        ...options,
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': csrf
+        },
+        credentials: 'include'
+      }
+    };
+  }
+
+  /**
    * Request the current user
    *
    * @param {Function} success
@@ -103,32 +136,58 @@ export default class ajaxRequests {
   }
 
   /**
-   * Login request
+   * Login user
    *
-   * @param {string}   username
-   * @param {string}   password
-   * @param {Function} success
+   * @param {Object}   request
+   * @param {string}   request.username
+   * @param {string}   request.password
+   * @param {function} request.success
+   * @param {function} request.error
    */
-  static login(username, password, success) {
+  static login(request) {
     ajaxRequests.baseFetch({
       url: '/api/login/',
       ...ajaxRequests.postOptions({
-        body: `username=${username}&password=${password}`
+        body: `username=${request.username}&password=${request.password}`
       }),
-      success: success
+      success: request.success,
+      error: request.error
+    });
+  }
+
+  /**
+   * Register user
+   *
+   * @param {Object}   request
+   * @param {string}   request.username
+   * @param {string}   request.password
+   * @param {function} request.success
+   * @param {function} request.error
+   */
+  static register(request) {
+    ajaxRequests.baseFetch({
+      url: '/api/register/',
+      ...ajaxRequests.postOptions({
+        body: `username=${request.username}&password=${request.password}`
+      }),
+      success: request.success,
+      error: request.error
     });
   }
 
   /**
    * Logout request
    *
-   * @param {Function} success
+   * @param {Object}   request
+   * @param {function} request.success
+   * @param {function} request.error
    */
-  static logout(success) {
+  static logout(request) {
     ajaxRequests.baseFetch({
       url: '/api/logout/',
       ...ajaxRequests.postOptions(),
-      success: success
+      success: request.success,
+      error: request.error
     });
   }
 
@@ -148,13 +207,16 @@ export default class ajaxRequests {
   /**
    * Request game information
    *
-   * @param {string}   user
-   * @param {Function} success
+   * @param {Object}   request
+   * @param {string}   request.user
+   * @param {function} request.success
+   * @param {function} request.error
    */
-  static getGames(user, success) {
+  static getGames(request) {
     ajaxRequests.baseFetch({
-      url: '/api/games/' + user,
-      success: success
+      url: '/api/games/' + request.user,
+      success: request.success,
+      error: request.error
     });
   }
 
