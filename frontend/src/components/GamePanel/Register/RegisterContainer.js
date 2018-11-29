@@ -49,7 +49,11 @@ export default class RegisterContainer extends React.Component {
     // Frontend validation
     if (this.state.password !== this.state.passwordConfirm) {
       return this.setState({
-        registerError: 'Password and confirmation do not match'
+        registerError: 'Passwords do not match'
+      });
+    } else if (this.state.username.length < 4 || this.state.password.length < 4) {
+      return this.setState({
+        registerError: 'Username and password must be at least 4 characters'
       });
     }
 
@@ -57,7 +61,7 @@ export default class RegisterContainer extends React.Component {
       username: this.state.username,
       password: this.state.password,
       success: data => {
-        if (data) {
+        if (data.user) {
           // Backend at this point has logged in the user
           this.setState({
             anchorEl: null,
@@ -65,9 +69,9 @@ export default class RegisterContainer extends React.Component {
           });
           // need to reload the page so the csrf token resets!!
           location.reload();
-        } else {
+        } else if (data.invalid) {
           this.setState({
-            registerError: 'invalid'
+            registerError: data.invalid
           });
         }
       }

@@ -33,17 +33,23 @@ def register_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
+    # Check if user exists
     username = request.POST.get('username')
     password = request.POST.get('password')
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM auth_user WHERE username = %s', [username])
+    user_exists = cursor.fetchall()
 
-    if username and password:
+    if not user_exists:
+
+        # Create, authenticate and login user
         User.objects.create_user(username=username, password=password)
         user = authenticate(username=username, password=password)
         login(request, user=user)
-        return JsonResponse(user.username, safe=False)
+        return JsonResponse({'user': user.username})
 
-    print('not valid')
-    return JsonResponse(False, safe=False)
+    else:
+        return JsonResponse({'invalid': 'Username already exists'})
 
 
 def logout_user(request):
