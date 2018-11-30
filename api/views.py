@@ -24,9 +24,9 @@ def login_user(request):
         user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
         if user is not None:
             login(request=request, user=user)
-            return JsonResponse(user.username, safe=False)
+            return JsonResponse({'user': user.username})
         else:
-            return JsonResponse(False, safe=False)
+            return JsonResponse({'invalid': 'Invalid username or password'})
 
 
 def register_user(request):

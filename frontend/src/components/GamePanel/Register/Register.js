@@ -10,7 +10,10 @@ import Popover from '@material-ui/core/Popover';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import {withStyles} from '@material-ui/core/styles';
+import Collapse from '@material-ui/core/Collapse';
+import Chip from '@material-ui/core/Chip';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   maliFont: {
@@ -25,12 +28,24 @@ const styles = theme => ({
   },
   registerError: {
     color: '#f44336'
+  },
+  registeredDiv: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  registeredChipIcon: {
+    color: theme.palette.common.white
+  },
+  registeredChipTxt: {
+    backgroundColor: '#4CAF50',
+    color: theme.palette.common.white,
+    fontSize: '14px'
   }
 });
 
 
 const Register = props => {
-  const {classes} = props;
+  const { classes } = props;
 
   return (
     <div>
@@ -45,7 +60,7 @@ const Register = props => {
         </Avatar>
         <ListItemText
           primary={'Register'}
-          classes={{primary: classes.maliFont}}
+          classes={{ primary: classes.maliFont }}
         />
       </ListItem>
       <Popover
@@ -62,7 +77,7 @@ const Register = props => {
           horizontal: 'left',
         }}
       >
-        <Card classes={{root: classes.registerPopover}}>
+        <Card classes={{ root: classes.registerPopover }}>
           <CardContent>
             <form onSubmit={props.onRegisterSubmit}>
               <TextField
@@ -89,7 +104,8 @@ const Register = props => {
                 value={props.passwordConfirm}
                 onInput={props.onInput}
               />
-              <Button type={'Register'} fullWidth variant={'contained'} classes={{root: classes.button}}>
+              <Button type={'Register'} fullWidth variant={'contained'}
+                      classes={{ root: classes.button }}>
                 Register
               </Button>
               {props.registerError && (
@@ -98,6 +114,17 @@ const Register = props => {
                 </FormHelperText>
               )}
             </form>
+            <Collapse
+              in={props.registered}
+            >
+              <div className={classes.registeredDiv}>
+                <Chip
+                icon={<CheckCircleIcon/>}
+                label={props.registeredMsg}
+                classes={{root: classes.registeredChipTxt, icon: classes.registeredChipIcon}}
+              />
+              </div>
+            </Collapse>
           </CardContent>
         </Card>
       </Popover>
@@ -107,4 +134,4 @@ const Register = props => {
 
 };
 
-export default withStyles(styles)(Register)
+export default withStyles(styles)(Register);

@@ -99,7 +99,7 @@ const Login = props => {
               </Button>
               {props.loginError && (
                 <FormHelperText className={classes.loginError}>
-                  Invalid username or password
+                  {props.loginError}
                 </FormHelperText>
               )}
             </form>

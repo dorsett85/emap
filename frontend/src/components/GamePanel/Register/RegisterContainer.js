@@ -10,6 +10,8 @@ export default class RegisterContainer extends React.Component {
     super(props);
     this.state = {
       anchorEl: null,
+      registered: null,
+      registeredMsg: '',
       registerError: null,
       username: '',
       password: '',
@@ -55,6 +57,10 @@ export default class RegisterContainer extends React.Component {
       return this.setState({
         registerError: 'Username and password must be at least 4 characters'
       });
+    } else if (this.state.username.length > 12 || this.state.password.length > 12) {
+      return this.setState({
+        registerError: 'Username and password must be less than 12 characters'
+      });
     }
 
     ajax.register({
@@ -62,13 +68,16 @@ export default class RegisterContainer extends React.Component {
       password: this.state.password,
       success: data => {
         if (data.user) {
-          // Backend at this point has logged in the user
+          // Backend at this point has logged in the user, but show a successfully registered message
           this.setState({
-            anchorEl: null,
-            registerError: null
+            registered: true,
+            registeredMsg: data.user + ' successfully registered'
           });
+
           // need to reload the page so the csrf token resets!!
-          location.reload();
+          setTimeout(() => {
+            location.reload()
+          }, 1500)
         } else if (data.invalid) {
           this.setState({
             registerError: data.invalid
@@ -87,6 +96,8 @@ export default class RegisterContainer extends React.Component {
         onInput={this.handleInput}
         onRegisterSubmit={this.handleRegisterSubmit}
         anchorEl={this.state.anchorEl}
+        registered={this.state.registered}
+        registeredMsg={this.state.registeredMsg}
         registerError={this.state.registerError}
         username={this.state.username}
         password={this.state.password}
