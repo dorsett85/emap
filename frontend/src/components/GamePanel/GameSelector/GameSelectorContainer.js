@@ -14,16 +14,9 @@ export default class GameSelectorContainer extends React.Component {
     };
 
     // Bind methods
-    this.getGames = this.getGames.bind(this);
     this.handleSelectGameClick = this.handleSelectGameClick.bind(this);
     this.handleCardClick = this.handleCardClick.bind(this);
     this.onClose = this.onClose.bind(this);
-  }
-
-  getGames(games) {
-    this.setState({
-      games: games
-    })
   }
 
   handleSelectGameClick(e) {
@@ -32,7 +25,7 @@ export default class GameSelectorContainer extends React.Component {
   }
 
   handleCardClick(e, i) {
-    this.props.setGame(this.state.games[i].name);
+    this.props.setGame(this.state.games[i]);
     this.onClose();
   }
 
@@ -45,7 +38,11 @@ export default class GameSelectorContainer extends React.Component {
   componentWillMount() {
     ajax.getGames({
       userId: this.props.user ? this.props.user.id : null,
-      success: data => this.getGames(data)
+      success: data => {
+        this.setState({
+          games: data
+        })
+      }
     });
   }
 

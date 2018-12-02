@@ -35,6 +35,16 @@ export default class Map extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+
+    // Clear the marker when a user logs in/out
+    if (prevProps.selectedGame !== this.props.selectedGame) {
+      this.map
+        .eachLayer(layer => {
+          if (layer.marker || layer.shape) {layer.remove();}
+        })
+    }
+
+    // Update search selections
     if (prevProps.searchResults !== this.props.searchResults) {
 
       // Check if there are search results
@@ -43,12 +53,14 @@ export default class Map extends React.Component {
 
         // Clear other markers and fly to new location
         this.map
-          .eachLayer(layer => layer.city !== undefined ? layer.remove() : '')
+          .eachLayer(layer => {
+            if (layer.marker) {layer.remove();}
+          })
           .flyTo([marker.lat, marker.lon]);
 
         // create new marker with a popup
         let newCity = L.marker([marker.lat, marker.lon]);
-        newCity.city = marker.name;
+        newCity.marker = {city: marker.name};
         newCity
           .addTo(this.map)
           .bindPopup(`<b>${marker.name}</b>`)

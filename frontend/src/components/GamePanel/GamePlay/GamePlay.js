@@ -3,7 +3,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 // Custom components
 import SearchResults from './SearchResults/SearchResults';
@@ -22,35 +22,47 @@ const styles = theme => ({
 
 
 const GamePlay = props => {
-  const {classes} = props;
+  const { classes } = props;
+
+  // Game specific rendering
+  const game = props.selectedGame.id === 1
+    ? (
+      <div>
+        <form className={classes.gameForm} onSubmit={props.onSubmit}>
+          <FormGroup>
+            <TextField
+              variant={'outlined'}
+              label={'Search for a BIG city'}
+              onInput={props.onInput}
+              placeholder={'Type a city'}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <Button
+              variant={'contained'}
+              type={'submit'}>
+              Find City
+            </Button>
+          </FormGroup>
+        </form>
+        <SearchResults searchResults={props.searchResults}/>
+      </div>
+    )
+    : (
+      <Typography variant={'subheading'} align={'center'} classes={{ root: classes.maliFont }}>
+        Under construction
+      </Typography>
+    );
 
   return (
     <div className={classes.gameDiv}>
-      <Typography variant={'h6'} align={'center'} classes={{root: classes.maliFont}}>
-        {props.selectedGame}
+      <Typography variant={'h6'} align={'center'} classes={{ root: classes.maliFont }}>
+        {props.selectedGame.name}
       </Typography>
-      <form className={classes.gameForm} onSubmit={props.onSubmit}>
-        <FormGroup>
-          <TextField
-            variant={'outlined'}
-            label={'Search for a BIG city'}
-            onInput={props.onInput}
-            placeholder={'Type a city'}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-          <Button
-            variant={'contained'}
-            type={'submit'}>
-            Find City
-          </Button>
-        </FormGroup>
-
-      </form>
-      <SearchResults searchResults={props.searchResults}/>
+      {game}
     </div>
-  )
+  );
 
 };
 

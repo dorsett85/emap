@@ -12,7 +12,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       searchResults: null,
-      selectedGame: '',
+      selectedGame: null,
       user: null
     };
 
@@ -56,6 +56,7 @@ export default class App extends React.Component {
           selectedGame={this.state.selectedGame}
         />
         <Map
+          selectedGame={this.state.selectedGame}
           searchResults={this.state.searchResults}
         />
       </div>

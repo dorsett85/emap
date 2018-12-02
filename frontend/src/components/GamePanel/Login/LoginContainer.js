@@ -71,6 +71,7 @@ export default class LoginContainer extends React.Component {
       success: data => {
         // Backend has logged out the user, reset to null on the frontend
         this.props.setUser(data);
+        this.props.setGame(null);
       }
     });
   }
