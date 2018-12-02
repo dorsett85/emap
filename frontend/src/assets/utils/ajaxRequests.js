@@ -192,19 +192,6 @@ export default class ajaxRequests {
   }
 
   /**
-   * Request place information
-   *
-   * @param {string}   searchInput WHERE query for places table
-   * @param {Function} success
-   */
-  static getPlace(searchInput, success) {
-    ajaxRequests.baseFetch({
-      url: '/api/place/' + searchInput,
-      success: success
-    });
-  }
-
-  /**
    * Request game information
    *
    * @param {Object}   request
@@ -214,9 +201,22 @@ export default class ajaxRequests {
    */
   static getGames(request) {
     ajaxRequests.baseFetch({
-      url: '/api/games/' + request.user,
+      url: '/api/games/' + request.userId,
       success: request.success,
       error: request.error
+    });
+  }
+
+  /**
+   * Request place information
+   *
+   * @param {string}   searchInput WHERE query for places table
+   * @param {Function} success
+   */
+  static getPlace(searchInput, success) {
+    ajaxRequests.baseFetch({
+      url: '/api/place/' + searchInput,
+      success: success
     });
   }
 

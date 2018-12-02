@@ -9,7 +9,7 @@ def get_user(request):
         return HttpResponse('Must be an ajax request')
 
     if request.user.is_active and request.user is not 'AnonymousUser':
-        return JsonResponse(request.user.username, safe=False)
+        return JsonResponse({'id': request.user.id, 'name': request.user.username})
     else:
         return JsonResponse(None, safe=False)
 
@@ -18,15 +18,12 @@ def login_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    if request.user.is_active and request.user is not 'AnonymousUser':
-        return JsonResponse(request.user.username, safe=False)
+    user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
+    if user is not None:
+        login(request=request, user=user)
+        return JsonResponse({'id': user.id, 'name': user.username})
     else:
-        user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
-        if user is not None:
-            login(request=request, user=user)
-            return JsonResponse({'user': user.username})
-        else:
-            return JsonResponse({'invalid': 'Invalid username or password'})
+        return JsonResponse({'invalid': 'Invalid username or password'})
 
 
 def register_user(request):
@@ -46,7 +43,7 @@ def register_user(request):
         User.objects.create_user(username=username, password=password)
         user = authenticate(username=username, password=password)
         login(request, user=user)
-        return JsonResponse({'user': user.username})
+        return JsonResponse({'id': user.id, 'name': user.username})
 
     else:
         return JsonResponse({'invalid': 'Username already exists'})
@@ -58,6 +55,45 @@ def logout_user(request):
 
     logout(request)
     return JsonResponse(None, safe=False)
+
+
+def get_games(request, user_id):
+    if not request.is_ajax():
+        return HttpResponse('Must be an ajax request')
+
+    cursor = connection.cursor()
+
+    # Check which games to return based on user
+    if user_id == 'null':
+        # TODO restrict game access to non-registered users
+        cursor.execute(
+            '''
+            SELECT name, description, num_questions, difficulty 
+            FROM api_game
+            '''
+        )
+    else:
+        cursor.execute(
+            '''
+            SELECT ag.name, ag.description, ag.num_questions, ag.difficulty
+            FROM api_game AS ag
+            WHERE ag.id IN
+              (
+                SELECT aug.game_id
+                FROM api_user_game AS aug
+                  INNER JOIN auth_user au on aug.user_id = au.id
+                WHERE au.id = '%s'
+              );
+            ''', [user_id]
+        )
+
+    rows = cursor.fetchall()
+    if rows:
+        keys = [col[0] for col in cursor.description]
+        game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
+        return JsonResponse(game_list, safe=False)
+    else:
+        return JsonResponse('', safe=False)
 
 
 def get_place(request, name):
@@ -81,43 +117,5 @@ def get_place(request, name):
         vals = [val for val in rows[0]]
         place = dict(zip(keys, vals))
         return JsonResponse(place)
-    else:
-        return JsonResponse('', safe=False)
-
-
-def get_games(request, user):
-    if not request.is_ajax():
-        return HttpResponse('Must be an ajax request')
-
-    cursor = connection.cursor()
-
-    # Check which games to return based on user
-    if user == 'null':
-        cursor.execute(
-            '''
-            SELECT name, description, num_questions, difficulty 
-            FROM api_game
-            '''
-        )
-    else:
-        cursor.execute(
-            '''
-            SELECT ag.name, ag.description, ag.num_questions, ag.difficulty
-            FROM api_game AS ag
-            WHERE ag.id IN
-              (
-                SELECT aug.game_id
-                FROM api_user_game AS aug
-                  INNER JOIN auth_user au on aug.user_id = au.id
-                WHERE au.username = '%s'
-              );
-            ''', [user]
-        )
-
-    rows = cursor.fetchall()
-    if rows:
-        keys = [col[0] for col in cursor.description]
-        game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
-        return JsonResponse(game_list, safe=False)
     else:
         return JsonResponse('', safe=False)

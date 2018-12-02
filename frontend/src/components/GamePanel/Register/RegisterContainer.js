@@ -67,11 +67,11 @@ export default class RegisterContainer extends React.Component {
       username: this.state.username,
       password: this.state.password,
       success: data => {
-        if (data.user) {
+        if (!data.invalid) {
           // Backend at this point has logged in the user, but show a successfully registered message
           this.setState({
             registered: true,
-            registeredMsg: data.user + ' successfully registered'
+            registeredMsg: data.name + ' successfully registered'
           });
 
           // need to reload the page so the csrf token resets!!

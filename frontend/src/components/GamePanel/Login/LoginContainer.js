@@ -50,7 +50,7 @@ export default class LoginContainer extends React.Component {
       username: this.state.username,
       password: this.state.password,
       success: data => {
-        if (data.user) {
+        if (!data.invalid) {
           // Backend at this point has logged in the user
           // need to reload the page so the csrf token resets!!
           location.reload();

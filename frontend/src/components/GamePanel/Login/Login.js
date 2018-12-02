@@ -52,7 +52,7 @@ const Login = props => {
           primary={props.user
             ? (
               <div className={classes.userDiv}>
-                <span>{props.user}</span>
+                <span>{props.user.name}</span>
                 <Button variant={'outlined'} onClick={props.onLogoutClick}>Logout</Button>
               </div>
             )
