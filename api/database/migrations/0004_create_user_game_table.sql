@@ -4,7 +4,8 @@
 CREATE TABLE api_user_game (
   ID SERIAL PRIMARY KEY,
   user_id INT REFERENCES auth_user(id),
-  game_id INT REFERENCES api_game(id)
+  game_id INT REFERENCES api_game(id),
+  last_played BOOLEAN DEFAULT FALSE
 );
 
 GRANT ALL PRIVILEGES ON TABLE api_user_game TO clayton;

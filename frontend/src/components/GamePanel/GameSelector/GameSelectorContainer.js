@@ -25,6 +25,8 @@ export default class GameSelectorContainer extends React.Component {
   }
 
   handleCardClick(e, i) {
+    // TODO Add as last selected game for this user
+
     this.props.setGame(this.state.games[i]);
     this.onClose();
   }

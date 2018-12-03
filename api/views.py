@@ -68,14 +68,14 @@ def get_games(request, user_id):
         # TODO restrict game access to non-registered users
         cursor.execute(
             '''
-            SELECT id, name, description, num_questions, difficulty 
+            SELECT id, name, title, description, num_answers, difficulty 
             FROM api_game
             '''
         )
     else:
         cursor.execute(
             '''
-            SELECT ag.id, ag.name, ag.description, ag.num_questions, ag.difficulty
+            SELECT ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
             FROM api_game AS ag
             WHERE ag.id IN
               (

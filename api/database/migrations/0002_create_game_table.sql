@@ -4,8 +4,9 @@
 CREATE TABLE api_game (
   ID serial primary key,
   name varchar not null,
+  title varchar not null,
   description varchar not null,
-  num_questions int,
+  num_answers int not null,
   difficulty varchar CHECK (difficulty in ('easy', 'medium', 'hard'))
 );
 

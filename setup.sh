@@ -23,9 +23,10 @@ if [ -z ${1+x} ] || [ $1 = '-d' ]; then
   psql -U postgres -d emap -f api/database/migrations/0002_create_game_table.sql
   psql -U postgres -d emap -f api/database/migrations/0003_create_city_table.sql
   psql -U postgres -d emap -f api/database/migrations/0004_create_user_game_table.sql
+  psql -U postgres -d emap -f api/database/migrations/0005_create_user_game_answer_table.sql
 
   # load in data
-  psql -U postgres -d emap -c "\copy api_game(name, description, num_questions, difficulty) \
+  psql -U postgres -d emap -c "\copy api_game(name, title, description, num_answers, difficulty) \
     FROM 'api/database/data/games.csv' WITH DELIMITER ',' CSV HEADER"
 
   psql -U postgres -d emap -c "\copy api_city(name, lat, lon, country, population) \

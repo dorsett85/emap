@@ -25,7 +25,7 @@ const GamePlay = props => {
   const { classes } = props;
 
   // Game specific rendering
-  const game = props.selectedGame.id === 1
+  const game = props.selectedGame.name === 'cityPopTop10'
     ? (
       <div>
         <form className={classes.gameForm} onSubmit={props.onSubmit}>
@@ -58,7 +58,7 @@ const GamePlay = props => {
   return (
     <div className={classes.gameDiv}>
       <Typography variant={'h6'} align={'center'} classes={{ root: classes.maliFont }}>
-        {props.selectedGame.name}
+        {props.selectedGame.title}
       </Typography>
       {game}
     </div>
