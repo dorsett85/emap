@@ -9,11 +9,11 @@ export default class ajaxRequests {
    * This base function sets up the initial fetch ajax request.  Options can be passed to
    * adjust the request as needed (e.g., GET vs POST)
    *
-   * @param {Object}   call         Options, and success & error functions
-   * @param {string}   call.url     API endpoint
-   * @param {Object}   call.options Options to add to the fetch request
-   * @param {Function} call.success Function called if request is successful
-   * @param {Function} call.error   Function called if request errors
+   * @param {Object}   call           Options, and success & error functions
+   * @param {string}   call.url       API endpoint
+   * @param {Object}   [call.options] Options to add to the fetch request
+   * @param {Function} call.success   Function called if request is successful
+   * @param {Function} [call.error]   Function called if request errors
    */
   static baseFetch(call) {
 
@@ -142,7 +142,7 @@ export default class ajaxRequests {
    * @param {string}   request.username
    * @param {string}   request.password
    * @param {function} request.success
-   * @param {function} request.error
+   * @param {function} [request.error]
    */
   static login(request) {
     ajaxRequests.baseFetch({
@@ -162,7 +162,7 @@ export default class ajaxRequests {
    * @param {string}   request.username
    * @param {string}   request.password
    * @param {function} request.success
-   * @param {function} request.error
+   * @param {function} [request.error]
    */
   static register(request) {
     ajaxRequests.baseFetch({
@@ -180,7 +180,7 @@ export default class ajaxRequests {
    *
    * @param {Object}   request
    * @param {function} request.success
-   * @param {function} request.error
+   * @param {function} [request.error]
    */
   static logout(request) {
     ajaxRequests.baseFetch({
@@ -194,14 +194,50 @@ export default class ajaxRequests {
   /**
    * Request game information
    *
-   * @param {Object}   request
-   * @param {string}   request.user
-   * @param {function} request.success
-   * @param {function} request.error
+   * @param {Object}      request
+   * @param {number|null} request.userId
+   * @param {function}    request.success
+   * @param {function}   [request.error]
    */
   static getGames(request) {
     ajaxRequests.baseFetch({
-      url: '/api/games/' + request.userId,
+      url: `/api/games/${request.userId}`,
+      success: request.success,
+      error: request.error
+    });
+  }
+
+  /**
+   * Get last game selected by user
+   *
+   * @param {Object}      request
+   * @param {number|null} request.userId
+   * @param {function}    request.success
+   * @param {function}    [request.error]
+   */
+  static getLastGame(request) {
+    ajaxRequests.baseFetch({
+      url: `/api/games/${request.userId}/get_last_played`,
+      success: request.success,
+      error: request.error
+    });
+  }
+
+  /**
+   * Set last game selected by user
+   *
+   * @param {Object}      request
+   * @param {number|null} request.userId
+   * @param {number}      request.gameId
+   * @param {function}    request.success
+   * @param {function}    [request.error]
+   */
+  static setLastGame(request) {
+    ajaxRequests.baseFetch({
+      url: `/api/games/${request.userId}/set_last_played`,
+      ...ajaxRequests.postOptions({
+        body: `gameId=${request.gameId}`
+      }),
       success: request.success,
       error: request.error
     });

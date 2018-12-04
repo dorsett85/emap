@@ -41,7 +41,18 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    ajax.getUser(this.setUser)
+
+    // Get current logged in user and check for their last selected game
+    ajax.getUser(user => {
+      this.setUser(user);
+      if (this.state.user) {
+        ajax.getLastGame({
+          userId: this.state.user.id,
+          success: this.setGame
+        })
+      }
+    });
+
   }
 
   render() {

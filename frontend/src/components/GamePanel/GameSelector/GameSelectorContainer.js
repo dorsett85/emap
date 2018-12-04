@@ -25,7 +25,12 @@ export default class GameSelectorContainer extends React.Component {
   }
 
   handleCardClick(e, i) {
-    // TODO Add as last selected game for this user
+    // Set as last selected game for this user
+    ajax.setLastGame({
+      userId: this.props.user ? this.props.user.id : null,
+      gameId: this.state.games[i].id,
+      success: () => {}
+    });
 
     this.props.setGame(this.state.games[i]);
     this.onClose();

@@ -75,7 +75,7 @@ def get_games(request, user_id):
     else:
         cursor.execute(
             '''
-            SELECT ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
+            SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
             FROM api_game AS ag
             WHERE ag.id IN
               (
@@ -94,6 +94,59 @@ def get_games(request, user_id):
         return JsonResponse(game_list, safe=False)
     else:
         return JsonResponse('', safe=False)
+
+
+def get_last_played(request, user_id):
+    if not request.is_ajax():
+        return HttpResponse('Must be an ajax request')
+
+    # If a user is logged in, get their last game
+    if user_id != 'null':
+        cursor = connection.cursor()
+        cursor.execute(
+            '''
+            SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
+            FROM api_game as ag
+            WHERE ag.id = 
+              (
+                SELECT aug.game_id 
+                FROM api_user_game AS aug
+                WHERE aug.user_id = %s and aug.last_played = true
+              )
+            ''', [user_id]
+        )
+
+        rows = cursor.fetchall()
+        if rows:
+            keys = [col[0] for col in cursor.description]
+            vals = [val for val in rows[0]]
+            place = dict(zip(keys, vals))
+            return JsonResponse(place)
+        else:
+            return JsonResponse('', safe=False)
+
+    else:
+        return JsonResponse('', safe=False)
+
+
+def set_last_played(request, user_id):
+    if not request.is_ajax():
+        return HttpResponse('Must be an ajax request')
+
+    # If a user is logged in, set their last game
+    if user_id != 'null':
+        cursor = connection.cursor()
+        cursor.execute(
+            '''
+            UPDATE api_user_game SET last_played = false
+            WHERE user_id = %(user_id)s;
+            
+            UPDATE api_user_game SET last_played = true
+            WHERE user_id = %(user_id)s and game_id = %(game_id)s;
+            ''', {'user_id': user_id, 'game_id': request.POST.get('gameId')}
+        )
+
+    return JsonResponse('', safe=False)
 
 
 def get_place(request, name):
