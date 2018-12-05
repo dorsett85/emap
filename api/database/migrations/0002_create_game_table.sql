@@ -3,7 +3,7 @@
 
 CREATE TABLE api_game (
   ID serial primary key,
-  name varchar not null,
+  name varchar not null UNIQUE,
   title varchar not null,
   description varchar not null,
   num_answers int not null,

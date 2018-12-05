@@ -45,11 +45,11 @@ export default class Map extends React.Component {
     }
 
     // Update search selections
-    if (prevProps.searchResults !== this.props.searchResults) {
+    if (prevProps.guessResults !== this.props.guessResults) {
 
       // Check if there are search results
-      if (this.props.searchResults) {
-        let marker = this.props.searchResults;
+      if (this.props.guessResults) {
+        let marker = this.props.guessResults;
 
         // Clear other markers and fly to new location
         this.map

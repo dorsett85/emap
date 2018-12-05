@@ -40,16 +40,16 @@ const Login = props => {
   return (
     <div>
       <ListItem
-        button={!props.user}
+        button={!props.user.id}
         aria-owns='loginPopover'
         aria-haspopup="true"
-        onClick={e => !props.user ? props.onShowLoginClick(e) : null}
+        onClick={e => !props.user.id ? props.onShowLoginClick(e) : null}
       >
         <Avatar>
           <PersonIcon/>
         </Avatar>
         <ListItemText
-          primary={props.user
+          primary={props.user.id
             ? (
               <div className={classes.userDiv}>
                 <span>{props.user.name}</span>
@@ -57,7 +57,7 @@ const Login = props => {
               </div>
             )
             : 'Login'}
-          secondary={props.user ? '' : 'Track your progress'}
+          secondary={props.user.id ? '' : 'Track your progress'}
           classes={{primary: classes.maliFont}}
         />
       </ListItem>

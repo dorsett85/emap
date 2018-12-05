@@ -82,7 +82,8 @@ DATABASES = {
         'NAME': 'emap',
         'USER': 'clayton',
         'PASSWORD': 'password',
-        'HOST': 'localhost'
+        'HOST': 'localhost',
+        'CONN_MAX_AGE': 60
     }
 }
 

@@ -11,7 +11,7 @@ def get_user(request):
     if request.user.is_active and request.user is not 'AnonymousUser':
         return JsonResponse({'id': request.user.id, 'name': request.user.username})
     else:
-        return JsonResponse(None, safe=False)
+        return JsonResponse({'id': None, 'name': None})
 
 
 def login_user(request):
@@ -54,7 +54,7 @@ def logout_user(request):
         return HttpResponse('Must be an ajax request')
 
     logout(request)
-    return JsonResponse(None, safe=False)
+    return JsonResponse({'id': None, 'name': None}, safe=False)
 
 
 def get_games(request, user_id):
@@ -77,13 +77,12 @@ def get_games(request, user_id):
             '''
             SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
             FROM api_game AS ag
-            WHERE ag.id IN
-              (
+            WHERE ag.id IN (
                 SELECT aug.game_id
                 FROM api_user_game AS aug
-                  INNER JOIN auth_user au on aug.user_id = au.id
+                    INNER JOIN auth_user au on aug.user_id = au.id
                 WHERE au.id = '%s'
-              );
+            )
             ''', [user_id]
         )
 
@@ -107,12 +106,11 @@ def get_last_played(request, user_id):
             '''
             SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
             FROM api_game as ag
-            WHERE ag.id = 
-              (
+            WHERE ag.id = (
                 SELECT aug.game_id 
                 FROM api_user_game AS aug
                 WHERE aug.user_id = %s and aug.last_played = true
-              )
+            )
             ''', [user_id]
         )
 
@@ -149,9 +147,60 @@ def set_last_played(request, user_id):
     return JsonResponse('', safe=False)
 
 
-def get_place(request, name):
+def game_guess(request, user_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
+
+    request_dict = {
+        'user_id': user_id,
+        'game_id': request.POST.get('gameId'),
+        'game_name': request.POST.get('gameName'),
+        'guess': request.POST.get('guess')
+    }
+
+    cursor = connection.cursor()
+
+    if request_dict['game_name'] == 'cityPopTop10':
+        cursor.execute(
+            '''
+            SELECT ac.name, auga.answer_id
+            FROM api_city as ac
+                LEFT JOIN api_user_game_answer AS auga
+                ON ac.id = auga.answer_id
+            ORDER BY ac.population DESC
+            LIMIT 10            
+            ''', request_dict
+        )
+    rows = cursor.fetchall()
+
+    if request_dict['guess'] in [row[0] for row in rows]:
+        if [row[1] for row in rows if row[0] == request_dict['guess']] is None:
+            cursor.execute(
+                '''
+                -- Add guess to the answers table
+                INSERT INTO api_user_game_answer(user_id, answer_id, game_id)
+                VALUES (
+                    %(user_id)s, 
+                    (
+                        SELECT id
+                        FROM api_city
+                        WHERE name = %(guess)s
+                    ), 
+                    %(game_id)s
+                );
+                
+                -- Return the progress of the users game
+                SELECT ac.name, ac.lat, ac.lon, ac.country, ac.population
+                FROM api_city as ac
+                    INNER JOIN (
+                        SELECT answer_id
+                        FROM api_user_game_answer as auga
+                        WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
+                    ) AS auga2
+                    ON ac.id = auga2.answer_id
+                ''', request_dict
+            )
+            rows = cursor.fetchall()
 
     # Query the database
     cursor = connection.cursor()
@@ -160,7 +209,7 @@ def get_place(request, name):
         SELECT name, lat, lon, country, population 
         FROM api_city 
         WHERE lower(name) = %s
-        ''', [name.lower()]
+        ''', [request_dict['guess'].lower()]
     )
 
     # Check if any matches are returned

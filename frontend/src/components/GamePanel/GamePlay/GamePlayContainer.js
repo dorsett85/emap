@@ -10,7 +10,7 @@ export default class GamePlayContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchInput: ''
+      guessInput: ''
     };
 
     // Bind methods
@@ -20,15 +20,19 @@ export default class GamePlayContainer extends React.Component {
 
   handleInput(e) {
     this.setState({
-      searchInput: e.target.value
+      guessInput: e.target.value
     })
   }
 
   handleSubmit(e) {
     e.preventDefault();
 
-    ajax.getPlace(this.state.searchInput, data => {
-      this.props.updateSearchResults(data)
+    ajax.submitGuess({
+      userId: this.props.user.id,
+      gameId: this.props.selectedGame.id,
+      gameName: this.props.selectedGame.name,
+      guess: this.state.guessInput,
+      success: this.props.updateGuessResults
     })
 
   }
@@ -39,7 +43,7 @@ export default class GamePlayContainer extends React.Component {
         onInput={this.handleInput}
         onSubmit={this.handleSubmit}
         selectedGame={this.props.selectedGame}
-        searchResults={this.props.searchResults}
+        guessResults={this.props.guessResults}
       />
     )
   }

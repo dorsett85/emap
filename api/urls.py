@@ -12,7 +12,5 @@ urlpatterns = [
     path('games/<user_id>', views.get_games),
     path('games/<user_id>/get_last_played', views.get_last_played),
     path('games/<user_id>/set_last_played', views.set_last_played),
-
-    # Place api
-    path('place/<str:name>', views.get_place)
+    path('games/<user_id>/guess', views.game_guess)
 ]

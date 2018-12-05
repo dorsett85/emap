@@ -11,13 +11,16 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchResults: null,
+      user: {
+        id: null,
+        name: null,
+      },
       selectedGame: null,
-      user: null
+      guessResults: null
     };
 
     // Bind methods
-    this.updateSearchResults = this.updateSearchResults.bind(this);
+    this.updateGuessResults = this.updateGuessResults.bind(this);
     this.setGame = this.setGame.bind(this);
     this.setUser = this.setUser.bind(this);
   }
@@ -34,9 +37,9 @@ export default class App extends React.Component {
     })
   }
 
-  updateSearchResults(data) {
+  updateGuessResults(data) {
     this.setState({
-      searchResults: data
+      guessResults: data
     })
   }
 
@@ -61,14 +64,14 @@ export default class App extends React.Component {
         <GamePanel
           user={this.state.user}
           setUser={this.setUser}
-          searchResults={this.state.searchResults}
-          updateSearchResults={this.updateSearchResults}
+          guessResults={this.state.guessResults}
+          updateGuessResults={this.updateGuessResults}
           setGame={this.setGame}
           selectedGame={this.state.selectedGame}
         />
         <Map
           selectedGame={this.state.selectedGame}
-          searchResults={this.state.searchResults}
+          guessResults={this.state.guessResults}
         />
       </div>
     );

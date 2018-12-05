@@ -27,7 +27,7 @@ export default class GameSelectorContainer extends React.Component {
   handleCardClick(e, i) {
     // Set as last selected game for this user
     ajax.setLastGame({
-      userId: this.props.user ? this.props.user.id : null,
+      userId: this.props.user.id,
       gameId: this.state.games[i].id,
       success: () => {}
     });
@@ -44,7 +44,7 @@ export default class GameSelectorContainer extends React.Component {
 
   componentWillMount() {
     ajax.getGames({
-      userId: this.props.user ? this.props.user.id : null,
+      userId: this.props.user.id,
       success: data => {
         this.setState({
           games: data

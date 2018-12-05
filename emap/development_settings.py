@@ -81,7 +81,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'emap',
         'USER': 'clayton',
-        'PASSWORD': 'password'
+        'PASSWORD': 'password',
+        'CONN_MAX_AGE': 60
     }
 }
 

@@ -246,13 +246,21 @@ export default class ajaxRequests {
   /**
    * Request place information
    *
-   * @param {string}   searchInput WHERE query for places table
-   * @param {Function} success
+   * @param {Object}      request
+   * @param {number|null} request.userId
+   * @param {number}      request.gameId
+   * @param {string}      request.gameName
+   * @param {string}      request.guess
+   * @param {function}    request.success
+   * @param {function}    [request.error]
    */
-  static getPlace(searchInput, success) {
+  static submitGuess(request) {
     ajaxRequests.baseFetch({
-      url: '/api/place/' + searchInput,
-      success: success
+      url: `/api/games/${request.userId}/guess`,
+      ...ajaxRequests.postOptions({
+        body: `gameId=${request.gameId}&gameName=${request.gameName}&guess=${request.guess}`
+      }),
+      success: request.success
     });
   }
 
