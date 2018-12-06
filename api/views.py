@@ -1,7 +1,8 @@
-from django.db import connection
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+
+from .Classes.QueryHelper import QueryHelper
 
 
 def get_user(request):
@@ -33,20 +34,16 @@ def register_user(request):
     # Check if user exists
     username = request.POST.get('username')
     password = request.POST.get('password')
-    cursor = connection.cursor()
-    cursor.execute('SELECT * FROM auth_user WHERE username = %s', [username])
-    user_exists = cursor.fetchall()
+    qh = QueryHelper('SELECT * FROM auth_user WHERE username = %s', [username])
 
-    if not user_exists:
-
-        # Create, authenticate and login user
-        User.objects.create_user(username=username, password=password)
-        user = authenticate(username=username, password=password)
-        login(request, user=user)
-        return JsonResponse({'id': user.id, 'name': user.username})
-
-    else:
+    if qh.rows:
         return JsonResponse({'invalid': 'Username already exists'})
+
+    # Create, authenticate and login user
+    User.objects.create_user(username=username, password=password)
+    user = authenticate(username=username, password=password)
+    login(request, user=user)
+    return JsonResponse({'id': user.id, 'name': user.username})
 
 
 def logout_user(request):
@@ -61,19 +58,17 @@ def get_games(request, user_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    cursor = connection.cursor()
-
     # Check which games to return based on user
     if user_id == 'null':
         # TODO restrict game access to non-registered users
-        cursor.execute(
+        qh = QueryHelper(
             '''
             SELECT id, name, title, description, num_answers, difficulty 
             FROM api_game
             '''
-        )
+        ).to_array()
     else:
-        cursor.execute(
+        qh = QueryHelper(
             '''
             SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
             FROM api_game AS ag
@@ -84,13 +79,10 @@ def get_games(request, user_id):
                 WHERE au.id = '%s'
             )
             ''', [user_id]
-        )
+        ).to_array()
 
-    rows = cursor.fetchall()
-    if rows:
-        keys = [col[0] for col in cursor.description]
-        game_list = [{key: val for key, val in zip(keys, row)} for row in rows]
-        return JsonResponse(game_list, safe=False)
+    if qh.results:
+        return JsonResponse(qh.results, safe=False)
     else:
         return JsonResponse('', safe=False)
 
@@ -101,8 +93,7 @@ def get_last_played(request, user_id):
 
     # If a user is logged in, get their last game
     if user_id != 'null':
-        cursor = connection.cursor()
-        cursor.execute(
+        qh = QueryHelper(
             '''
             SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
             FROM api_game as ag
@@ -112,14 +103,10 @@ def get_last_played(request, user_id):
                 WHERE aug.user_id = %s and aug.last_played = true
             )
             ''', [user_id]
-        )
+        ).to_dict()
 
-        rows = cursor.fetchall()
-        if rows:
-            keys = [col[0] for col in cursor.description]
-            vals = [val for val in rows[0]]
-            place = dict(zip(keys, vals))
-            return JsonResponse(place)
+        if qh.results:
+            return JsonResponse(qh.results)
         else:
             return JsonResponse('', safe=False)
 
@@ -133,8 +120,7 @@ def set_last_played(request, user_id):
 
     # If a user is logged in, set their last game
     if user_id != 'null':
-        cursor = connection.cursor()
-        cursor.execute(
+        QueryHelper(
             '''
             UPDATE api_user_game SET last_played = false
             WHERE user_id = %(user_id)s;
@@ -155,27 +141,24 @@ def game_guess(request, user_id):
         'user_id': user_id,
         'game_id': request.POST.get('gameId'),
         'game_name': request.POST.get('gameName'),
-        'guess': request.POST.get('guess')
+        'guess': request.POST.get('guess').lower()
     }
 
-    cursor = connection.cursor()
-
     if request_dict['game_name'] == 'cityPopTop10':
-        cursor.execute(
+        qh = QueryHelper(
             '''
-            SELECT ac.name, auga.answer_id
-            FROM api_city as ac
+            SELECT lower(ac.name) AS name, auga.answer_id
+            FROM api_city AS ac
                 LEFT JOIN api_user_game_answer AS auga
                 ON ac.id = auga.answer_id
             ORDER BY ac.population DESC
             LIMIT 10            
             ''', request_dict
-        )
-    rows = cursor.fetchall()
+        ).to_array()
 
-    if request_dict['guess'] in [row[0] for row in rows]:
-        if [row[1] for row in rows if row[0] == request_dict['guess']] is None:
-            cursor.execute(
+    if request_dict['guess'] in [row['name'] for row in qh.results]:
+        if next(row['answer_id'] for row in qh.results if row['name'] == request_dict['guess']) is None:
+            qh = QueryHelper(
                 '''
                 -- Add guess to the answers table
                 INSERT INTO api_user_game_answer(user_id, answer_id, game_id)
@@ -184,7 +167,7 @@ def game_guess(request, user_id):
                     (
                         SELECT id
                         FROM api_city
-                        WHERE name = %(guess)s
+                        WHERE lower(name) = %(guess)s
                     ), 
                     %(game_id)s
                 );
@@ -199,25 +182,18 @@ def game_guess(request, user_id):
                     ) AS auga2
                     ON ac.id = auga2.answer_id
                 ''', request_dict
-            )
-            rows = cursor.fetchall()
+            ).to_array()
 
     # Query the database
-    cursor = connection.cursor()
-    cursor.execute(
+    qh = QueryHelper(
         '''
         SELECT name, lat, lon, country, population 
         FROM api_city 
         WHERE lower(name) = %s
         ''', [request_dict['guess'].lower()]
-    )
+    ).to_dict()
 
-    # Check if any matches are returned
-    rows = cursor.fetchall()
-    if rows:
-        keys = [col[0] for col in cursor.description]
-        vals = [val for val in rows[0]]
-        place = dict(zip(keys, vals))
-        return JsonResponse(place)
+    if qh.results:
+        return JsonResponse(qh.results)
     else:
         return JsonResponse('', safe=False)
