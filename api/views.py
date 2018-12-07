@@ -34,7 +34,7 @@ def register_user(request):
     # Check if user exists
     username = request.POST.get('username')
     password = request.POST.get('password')
-    qh = QueryHelper('SELECT * FROM auth_user WHERE username = %s', [username])
+    qh = QueryHelper('SELECT * FROM auth_user WHERE username = %s', [username]).fetchall()
 
     if qh.rows:
         return JsonResponse({'invalid': 'Username already exists'})
@@ -66,7 +66,7 @@ def get_games(request, user_id):
             SELECT id, name, title, description, num_answers, difficulty 
             FROM api_game
             '''
-        ).to_array()
+        ).fetchall_array()
     else:
         qh = QueryHelper(
             '''
@@ -79,7 +79,7 @@ def get_games(request, user_id):
                 WHERE au.id = '%s'
             )
             ''', [user_id]
-        ).to_array()
+        ).fetchall_array()
 
     if qh.results:
         return JsonResponse(qh.results, safe=False)
@@ -103,7 +103,7 @@ def get_last_played(request, user_id):
                 WHERE aug.user_id = %s and aug.last_played = true
             )
             ''', [user_id]
-        ).to_dict()
+        ).fetchall_dict()
 
         if qh.results:
             return JsonResponse(qh.results)
@@ -154,7 +154,7 @@ def game_guess(request, user_id):
             ORDER BY ac.population DESC
             LIMIT 10            
             ''', request_dict
-        ).to_array()
+        ).fetchall_array()
 
     if request_dict['guess'] in [row['name'] for row in qh.results]:
         if next(row['answer_id'] for row in qh.results if row['name'] == request_dict['guess']) is None:
@@ -182,7 +182,7 @@ def game_guess(request, user_id):
                     ) AS auga2
                     ON ac.id = auga2.answer_id
                 ''', request_dict
-            ).to_array()
+            ).fetchall_array()
 
     # Query the database
     qh = QueryHelper(
@@ -191,7 +191,7 @@ def game_guess(request, user_id):
         FROM api_city 
         WHERE lower(name) = %s
         ''', [request_dict['guess'].lower()]
-    ).to_dict()
+    ).fetchall_dict()
 
     if qh.results:
         return JsonResponse(qh.results)
