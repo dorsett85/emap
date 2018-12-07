@@ -4,14 +4,14 @@
 # This script has several purposes and utilities:
 #
 # 1. Apply settings and setup the postgresql database in development or production
-#   - Run 'utils.sh setup -d' or 'utils.sh setup -p'
-#   - * Running 'utils.sh -p' will create the database using a db dump file
+#   - Run 'utils.sh setup -d' or 'sh utils.sh setup -p'
+#   - * Running 'sh utils.sh -p' will create the database using a db dump file
 # 2. Add database migrations
-#   - Run 'utils.sh migrate -d' or 'sudo utils.sh migrate -p'
+#   - Run 'utils.sh migrate -d' or 'sh utils.sh migrate -p'
 # 3. Drop the database and start from scratch
-#   - Run 'utils.sh dropdb -d' or 'utils.sh dropdb -p'
+#   - Run 'utils.sh dropdb -d' or 'sh utils.sh dropdb -p'
 # 4. Update settings file
-#   - Run 'utils.sh updatesettings -d' or 'utils.sh updatesettings -p'
+#   - Run 'utils.sh updatesettings -d' or 'sh utils.sh updatesettings -p'
 #
 #####
 
