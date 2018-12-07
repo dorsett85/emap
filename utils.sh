@@ -76,7 +76,7 @@ elif [ $1 = 'migrate' ]; then
         source pyenv/Scripts/activate
         python api/database/migrations/add_migrations.py
     elif [ $2 = '-p' ]; then # production
-        . pyenv/Scripts/activate
+        . pyenv/bin/activate
         python api/database/migrations/add_migrations.py
     else
         echo 'Set argument to -d (development) or -p (production)'
