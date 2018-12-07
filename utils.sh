@@ -75,7 +75,7 @@ elif [ $1 = 'migrate' ]; then
     if [ -z ${2+x} ] || [ $2 = '-d' ]; then # development
         source pyenv/Scripts/activate
         python api/database/migrations/add_migrations.py
-    elif [ $1 = '-p' ]; then # production
+    elif [ $2 = '-p' ]; then # production
         sudo -u postgres psql -c 'DROP DATABASE emap'
         sudo -u postgres psql -c 'DROP USER clayton'
     else
@@ -88,7 +88,7 @@ elif [ $1 = 'dropdb' ]; then
     if [ -z ${2+x} ] || [ $2 = '-d' ]; then # development
         psql -U postgres -c 'DROP DATABASE emap'
         psql -U postgres -c 'DROP USER clayton'
-    elif [ $1 = '-p' ]; then # production
+    elif [ $2 = '-p' ]; then # production
         sudo -u postgres psql -c 'DROP DATABASE emap'
         sudo -u postgres psql -c 'DROP USER clayton'
     else
@@ -100,7 +100,7 @@ elif [ $1 = 'dropdb' ]; then
 elif [ $1 = 'updatesettings' ]; then
     if [ -z ${2+x} ] || [ $2 = '-d' ]; then # development
         cp emap/development_settings.py emap/settings.py
-    elif [ $1 = '-p' ]; then # production
+    elif [ $2 = '-p' ]; then # production
         sudo cp emap/production_settings.py emap/settings.py
     else
         echo 'Set argument to -d (development) or -p (production)'
