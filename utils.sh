@@ -76,8 +76,8 @@ elif [ $1 = 'migrate' ]; then
         source pyenv/Scripts/activate
         python api/database/migrations/add_migrations.py
     elif [ $2 = '-p' ]; then # production
-        sudo -u postgres psql -c 'DROP DATABASE emap'
-        sudo -u postgres psql -c 'DROP USER clayton'
+        . pyenv/Scripts/activate
+        python api/database/migrations/add_migrations.py
     else
         echo 'Set argument to -d (development) or -p (production)'
     fi
