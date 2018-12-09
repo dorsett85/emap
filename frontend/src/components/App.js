@@ -22,6 +22,7 @@ export default class App extends React.Component {
     // Bind methods
     this.updateGuessResults = this.updateGuessResults.bind(this);
     this.setGame = this.setGame.bind(this);
+    this.setGameProgress = this.setGameProgress.bind(this);
     this.setUser = this.setUser.bind(this);
   }
 
@@ -37,6 +38,12 @@ export default class App extends React.Component {
     })
   }
 
+  setGameProgress(data) {
+    this.setState({
+      selectedGame: {...this.state.selectedGame, progress: data.progress}
+    })
+  }
+
   updateGuessResults(data) {
     this.setState({
       guessResults: data
@@ -45,13 +52,16 @@ export default class App extends React.Component {
 
   componentWillMount() {
 
-    // Get current logged in user and check for their last selected game
+    // Get current logged in user information
     ajax.getUser(user => {
-      this.setUser(user);
-      if (this.state.user) {
-        ajax.getLastGame({
-          userId: this.state.user.id,
-          success: this.setGame
+      this.setUser({id: user.id, name: user.name});
+      this.setGame(user.game);
+
+      // If a game is returned get the progress for that game
+      if (user.game) {
+        ajax.getGameProgress({
+          gameId: this.state.selectedGame.id,
+          success: this.setGameProgress
         })
       }
     });
@@ -67,6 +77,7 @@ export default class App extends React.Component {
           guessResults={this.state.guessResults}
           updateGuessResults={this.updateGuessResults}
           setGame={this.setGame}
+          setGameProgress={this.setGameProgress}
           selectedGame={this.state.selectedGame}
         />
         <Map

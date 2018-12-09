@@ -12,7 +12,7 @@ export default class ajaxRequests {
    * @param {Object}   call           Options, and success & error functions
    * @param {string}   call.url       API endpoint
    * @param {Object}   [call.options] Options to add to the fetch request
-   * @param {Function} call.success   Function called if request is successful
+   * @param {Function} [call.success] Function called if request is successful
    * @param {Function} [call.error]   Function called if request errors
    */
   static baseFetch(call) {
@@ -32,7 +32,7 @@ export default class ajaxRequests {
 
     fetch(call.url, init)
       .then(response => response.json())
-      .then(call.success)
+      .then(success => {if (call.success) {call.success(success)}})
       .catch(error => call.error ? call.error(error) : console.log(error));
   }
 
@@ -136,26 +136,6 @@ export default class ajaxRequests {
   }
 
   /**
-   * Login user
-   *
-   * @param {Object}   request
-   * @param {string}   request.username
-   * @param {string}   request.password
-   * @param {function} request.success
-   * @param {function} [request.error]
-   */
-  static login(request) {
-    ajaxRequests.baseFetch({
-      url: '/api/login/',
-      ...ajaxRequests.postOptions({
-        body: `username=${request.username}&password=${request.password}`
-      }),
-      success: request.success,
-      error: request.error
-    });
-  }
-
-  /**
    * Register user
    *
    * @param {Object}   request
@@ -167,6 +147,26 @@ export default class ajaxRequests {
   static register(request) {
     ajaxRequests.baseFetch({
       url: '/api/register/',
+      ...ajaxRequests.postOptions({
+        body: `username=${request.username}&password=${request.password}`
+      }),
+      success: request.success,
+      error: request.error
+    });
+  }
+
+  /**
+   * Login user
+   *
+   * @param {Object}   request
+   * @param {string}   request.username
+   * @param {string}   request.password
+   * @param {function} request.success
+   * @param {function} [request.error]
+   */
+  static login(request) {
+    ajaxRequests.baseFetch({
+      url: '/api/login/',
       ...ajaxRequests.postOptions({
         body: `username=${request.username}&password=${request.password}`
       }),
@@ -194,30 +194,29 @@ export default class ajaxRequests {
   /**
    * Request game information
    *
-   * @param {Object}      request
-   * @param {number|null} request.userId
-   * @param {function}    request.success
-   * @param {function}   [request.error]
+   * @param {Object}   request
+   * @param {function} request.success
+   * @param {function} [request.error]
    */
   static getGames(request) {
     ajaxRequests.baseFetch({
-      url: `/api/games/${request.userId}`,
+      url: `/api/games/`,
       success: request.success,
       error: request.error
     });
   }
 
   /**
-   * Get last game selected by user
+   * Request game progress
    *
-   * @param {Object}      request
-   * @param {number|null} request.userId
-   * @param {function}    request.success
-   * @param {function}    [request.error]
+   * @param {Object}   request
+   * @param {number}   request.gameId
+   * @param {function} request.success
+   * @param {function} [request.error]
    */
-  static getLastGame(request) {
+  static getGameProgress(request) {
     ajaxRequests.baseFetch({
-      url: `/api/games/${request.userId}/get_last_played`,
+      url: `/api/games/${request.gameId}/progress`,
       success: request.success,
       error: request.error
     });
@@ -227,14 +226,13 @@ export default class ajaxRequests {
    * Set last game selected by user
    *
    * @param {Object}      request
-   * @param {number|null} request.userId
    * @param {number}      request.gameId
-   * @param {function}    request.success
+   * @param {function}    [request.success]
    * @param {function}    [request.error]
    */
   static setLastGame(request) {
     ajaxRequests.baseFetch({
-      url: `/api/games/${request.userId}/set_last_played`,
+      url: `/api/games/set_last_played`,
       ...ajaxRequests.postOptions({
         body: `gameId=${request.gameId}`
       }),
@@ -247,7 +245,6 @@ export default class ajaxRequests {
    * Request place information
    *
    * @param {Object}      request
-   * @param {number|null} request.userId
    * @param {number}      request.gameId
    * @param {string}      request.gameName
    * @param {string}      request.guess
@@ -256,7 +253,7 @@ export default class ajaxRequests {
    */
   static submitGuess(request) {
     ajaxRequests.baseFetch({
-      url: `/api/games/${request.userId}/guess`,
+      url: `/api/games/guess`,
       ...ajaxRequests.postOptions({
         body: `gameId=${request.gameId}&gameName=${request.gameName}&guess=${request.guess}`
       }),

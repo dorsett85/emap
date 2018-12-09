@@ -9,8 +9,8 @@ urlpatterns = [
     path('logout/', views.logout_user),
 
     # Games api
-    path('games/<user_id>', views.get_games),
-    path('games/<user_id>/get_last_played', views.get_last_played),
-    path('games/<user_id>/set_last_played', views.set_last_played),
-    path('games/<user_id>/guess', views.game_guess)
+    path('games/', views.get_games),
+    path('games/<int:game_id>/progress', views.get_game_progress),
+    path('games/set_last_played', views.set_last_played),
+    path('games/guess', views.game_guess)
 ]

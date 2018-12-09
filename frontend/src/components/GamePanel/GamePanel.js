@@ -61,6 +61,7 @@ const GamePanel = props => {
         <GameSelectorContainer
           user={props.user}
           setGame={props.setGame}
+          setGameProgress={props.setGameProgress}
         />
       </List>
 

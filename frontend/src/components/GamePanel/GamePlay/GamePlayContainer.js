@@ -28,7 +28,6 @@ export default class GamePlayContainer extends React.Component {
     e.preventDefault();
 
     ajax.submitGuess({
-      userId: this.props.user.id,
       gameId: this.props.selectedGame.id,
       gameName: this.props.selectedGame.name,
       guess: this.state.guessInput,

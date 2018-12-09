@@ -9,10 +9,29 @@ def get_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    if request.user.is_active and request.user is not 'AnonymousUser':
-        return JsonResponse({'id': request.user.id, 'name': request.user.username})
+    # Instantiate response object
+    response = {
+        'id': None,
+        'name': None,
+        'game': None
+    }
+
+    if request.user.is_authenticated:
+        response['id'] = request.user.id
+        response['name'] = request.user.username
+
+        # Check user's last played game
+        last_played = QueryHelper.get_last_played(request.user.id).fetchall_dict()
+
+        if last_played.results:
+            response['game'] = last_played.results
+            return JsonResponse(response)
+        else:
+            return JsonResponse(response)
+
+    # No user logged in
     else:
-        return JsonResponse({'id': None, 'name': None})
+        return JsonResponse(response)
 
 
 def login_user(request):
@@ -54,112 +73,69 @@ def logout_user(request):
     return JsonResponse({'id': None, 'name': None}, safe=False)
 
 
-def get_games(request, user_id):
+def get_games(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
     # Check which games to return based on user
-    if user_id == 'null':
-        # TODO restrict game access to non-registered users
-        qh = QueryHelper(
-            '''
-            SELECT id, name, title, description, num_answers, difficulty 
-            FROM api_game
-            '''
-        ).fetchall_array()
+    if not request.user.is_authenticated:
+        games = QueryHelper.get_games().fetchall_array()
     else:
-        qh = QueryHelper(
-            '''
-            SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
-            FROM api_game AS ag
-            WHERE ag.id IN (
-                SELECT aug.game_id
-                FROM api_user_game AS aug
-                    INNER JOIN auth_user au on aug.user_id = au.id
-                WHERE au.id = '%s'
-            )
-            ''', [user_id]
-        ).fetchall_array()
+        games = QueryHelper.get_games(request.user.id).fetchall_array()
 
-    if qh.results:
-        return JsonResponse(qh.results, safe=False)
-    else:
-        return JsonResponse('', safe=False)
+    return JsonResponse({'games': games.results})
 
 
-def get_last_played(request, user_id):
+def get_game_progress(request, game_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    # If a user is logged in, get their last game
-    if user_id != 'null':
-        qh = QueryHelper(
-            '''
-            SELECT ag.id, ag.name, ag.title, ag.description, ag.num_answers, ag.difficulty
-            FROM api_game as ag
-            WHERE ag.id = (
-                SELECT aug.game_id 
-                FROM api_user_game AS aug
-                WHERE aug.user_id = %s and aug.last_played = true
-            )
-            ''', [user_id]
-        ).fetchall_dict()
+    if request.user.is_authenticated:
+        game_progress = QueryHelper.get_game_progress({'user_id': request.user.id, 'game_id': game_id}).fetchall_array()
 
-        if qh.results:
-            return JsonResponse(qh.results)
-        else:
-            return JsonResponse('', safe=False)
+        if game_progress.results:
+            return JsonResponse({'progress': game_progress.results})
 
-    else:
-        return JsonResponse('', safe=False)
+    # At this point the user is not logged in or has no game progress
+    return JsonResponse({'progress': None})
 
 
-def set_last_played(request, user_id):
+def set_last_played(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
     # If a user is logged in, set their last game
-    if user_id != 'null':
-        QueryHelper(
-            '''
-            UPDATE api_user_game SET last_played = false
-            WHERE user_id = %(user_id)s;
-            
-            UPDATE api_user_game SET last_played = true
-            WHERE user_id = %(user_id)s and game_id = %(game_id)s;
-            ''', {'user_id': user_id, 'game_id': request.POST.get('gameId')}
-        )
+    if request.user.is_authenticated:
+        QueryHelper.set_last_played({'user_id': request.user.id, 'game_id': request.POST.get('gameId')})
 
-    return JsonResponse('', safe=False)
+    return JsonResponse({'game_id': request.POST.get('gameId')})
 
 
-def game_guess(request, user_id):
+def game_guess(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
     request_dict = {
-        'user_id': user_id,
+        'user_id': request.user.id,
         'game_id': request.POST.get('gameId'),
         'game_name': request.POST.get('gameName'),
         'guess': request.POST.get('guess').lower()
     }
 
+    # Check which game the guess is for
     if request_dict['game_name'] == 'cityPopTop10':
-        qh = QueryHelper(
-            '''
+        qh = QueryHelper('''
             SELECT lower(ac.name) AS name, auga.answer_id
             FROM api_city AS ac
                 LEFT JOIN api_user_game_answer AS auga
                 ON ac.id = auga.answer_id
             ORDER BY ac.population DESC
             LIMIT 10            
-            ''', request_dict
-        ).fetchall_array()
+        ''', request_dict).fetchall_array()
 
     if request_dict['guess'] in [row['name'] for row in qh.results]:
         if next(row['answer_id'] for row in qh.results if row['name'] == request_dict['guess']) is None:
-            qh = QueryHelper(
-                '''
+            qh = QueryHelper('''
                 -- Add guess to the answers table
                 INSERT INTO api_user_game_answer(user_id, answer_id, game_id)
                 VALUES (
@@ -170,28 +146,15 @@ def game_guess(request, user_id):
                         WHERE lower(name) = %(guess)s
                     ), 
                     %(game_id)s
-                );
-                
-                -- Return the progress of the users game
-                SELECT ac.name, ac.lat, ac.lon, ac.country, ac.population
-                FROM api_city as ac
-                    INNER JOIN (
-                        SELECT answer_id
-                        FROM api_user_game_answer as auga
-                        WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
-                    ) AS auga2
-                    ON ac.id = auga2.answer_id
-                ''', request_dict
-            ).fetchall_array()
+                )
+            ''', request_dict)
 
     # Query the database
-    qh = QueryHelper(
-        '''
+    qh = QueryHelper('''
         SELECT name, lat, lon, country, population 
         FROM api_city 
         WHERE lower(name) = %s
-        ''', [request_dict['guess'].lower()]
-    ).fetchall_dict()
+    ''', [request_dict['guess'].lower()]).fetchall_dict()
 
     if qh.results:
         return JsonResponse(qh.results)

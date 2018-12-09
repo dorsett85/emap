@@ -24,11 +24,20 @@ const styles = theme => ({
 const GamePlay = props => {
   const { classes } = props;
 
+  const gameProgress = props.selectedGame.progress
+    ? `${props.selectedGame.progress.length}/${props.selectedGame.num_answers}`
+    : `0/${props.selectedGame.num_answers}`
+  ;
+
   // Game specific rendering
   const game = props.selectedGame.name === 'cityPopTop10'
     ? (
       <div>
         <form className={classes.gameForm} onSubmit={props.onSubmit}>
+          <Typography variant={'subheading'} align={'center'} classes={{ root: classes.maliFont }}>
+            Progress: {gameProgress}
+          </Typography>
+          <br/>
           <FormGroup>
             <TextField
               variant={'outlined'}
