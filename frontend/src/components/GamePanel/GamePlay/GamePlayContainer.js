@@ -31,7 +31,18 @@ export default class GamePlayContainer extends React.Component {
       gameId: this.props.selectedGame.id,
       gameName: this.props.selectedGame.name,
       guess: this.state.guessInput,
-      success: this.props.updateGuessResults
+      success: data => {
+
+        // TODO more functionality for dealing with the returned data object (e.g., result message)
+        this.props.updateGuessResults(data.results ? data.results : '');
+
+        // Update the progress if there's a new correct guess
+        ajax.getGameProgress({
+          gameId: this.props.selectedGame.id,
+          success: this.props.setGameProgress
+        })
+
+      }
     })
 
   }

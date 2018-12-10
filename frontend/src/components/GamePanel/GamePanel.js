@@ -71,6 +71,7 @@ const GamePanel = props => {
         <GamePlayContainer
           user={props.user}
           selectedGame={props.selectedGame}
+          setGameProgress={props.setGameProgress}
           guessResults={props.guessResults}
           updateGuessResults={props.updateGuessResults}
         />

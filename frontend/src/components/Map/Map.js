@@ -37,11 +37,13 @@ export default class Map extends React.Component {
   componentDidUpdate(prevProps, prevState) {
 
     // Clear the marker when a user logs in/out
-    if (prevProps.selectedGame !== this.props.selectedGame) {
-      this.map
-        .eachLayer(layer => {
-          if (layer.marker || layer.shape) {layer.remove();}
-        })
+    if (prevProps.selectedGame && this.props.selectedGame) {
+      if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
+        this.map
+          .eachLayer(layer => {
+            if (layer.marker || layer.shape) {layer.remove();}
+          })
+      }
     }
 
     // Update search selections

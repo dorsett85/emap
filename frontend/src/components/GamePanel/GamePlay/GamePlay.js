@@ -55,7 +55,7 @@ const GamePlay = props => {
             </Button>
           </FormGroup>
         </form>
-        <SearchResults searchResults={props.guessResults}/>
+        <SearchResults guessResults={props.guessResults}/>
       </div>
     )
     : (

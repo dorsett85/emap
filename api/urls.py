@@ -11,6 +11,6 @@ urlpatterns = [
     # Games api
     path('games/', views.get_games),
     path('games/<int:game_id>/progress', views.get_game_progress),
-    path('games/set_last_played', views.set_last_played),
-    path('games/guess', views.game_guess)
+    path('games/<int:game_id>/set_last_played', views.set_last_played),
+    path('games/<int:game_id>/guess', views.game_guess)
 ]

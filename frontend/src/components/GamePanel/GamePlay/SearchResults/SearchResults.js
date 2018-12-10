@@ -2,14 +2,14 @@ import React from "react";
 
 
 const SearchResults = props => {
-  if (props.searchResults === null) {return null}
+  if (props.guessResults === null) {return null}
   let results;
-  if (!props.searchResults) {
+  if (!props.guessResults) {
     results = 'No matching search results'
   } else {
     let li = [];
-    for (let k in props.searchResults) {
-      li.push(<li key={k}>{k}: {props.searchResults[k]}</li>)
+    for (let k in props.guessResults) {
+      li.push(<li key={k}>{k}: {props.guessResults[k]}</li>)
     }
     results = <ul>{li}</ul>;
   }

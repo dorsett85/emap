@@ -100,63 +100,73 @@ def get_game_progress(request, game_id):
     return JsonResponse({'progress': None})
 
 
-def set_last_played(request):
+def set_last_played(request, game_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
     # If a user is logged in, set their last game
     if request.user.is_authenticated:
-        QueryHelper.set_last_played({'user_id': request.user.id, 'game_id': request.POST.get('gameId')})
+        QueryHelper.set_last_played({'user_id': request.user.id, 'game_id': game_id})
 
-    return JsonResponse({'game_id': request.POST.get('gameId')})
+    return JsonResponse({'game_id': game_id})
 
 
-def game_guess(request):
+def game_guess(request, game_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    request_dict = {
-        'user_id': request.user.id,
-        'game_id': request.POST.get('gameId'),
-        'game_name': request.POST.get('gameName'),
-        'guess': request.POST.get('guess').lower()
+    game_name = request.POST.get('gameName')
+    user_guess = request.POST.get('guess')
+    user_id = request.user.id
+
+    # Instantiate object to return with guess results
+    guess_result = {
+        'results': None,
+        'msg': 'No matching search results'
     }
 
-    # Check which game the guess is for
-    if request_dict['game_name'] == 'cityPopTop10':
-        qh = QueryHelper('''
-            SELECT lower(ac.name) AS name, auga.answer_id
-            FROM api_city AS ac
-                LEFT JOIN api_user_game_answer AS auga
-                ON ac.id = auga.answer_id
-            ORDER BY ac.population DESC
-            LIMIT 10            
-        ''', request_dict).fetchall_array()
+    # If a user is logged in, process their guess
+    if request.user.is_authenticated:
 
-    if request_dict['guess'] in [row['name'] for row in qh.results]:
-        if next(row['answer_id'] for row in qh.results if row['name'] == request_dict['guess']) is None:
-            qh = QueryHelper('''
-                -- Add guess to the answers table
-                INSERT INTO api_user_game_answer(user_id, answer_id, game_id)
-                VALUES (
-                    %(user_id)s, 
-                    (
-                        SELECT id
-                        FROM api_city
-                        WHERE lower(name) = %(guess)s
-                    ), 
-                    %(game_id)s
-                )
-            ''', request_dict)
+        # Get answers for the selected game
+        game_answers = QueryHelper.get_all_game_answers({
+            'user_id': user_id,
+            'game_id': game_id,
+            'game_name': game_name
+        }).fetchall_array()
+
+        # Check if the guess is in the answers and if it's already been guessed
+        if user_guess.lower() in [row['answer'] for row in game_answers.results]:
+            for row in game_answers.results:
+                if row['answer_id'] is None and row['answer'] == user_guess.lower():
+                    QueryHelper.add_user_game_answer({
+                        'user_id': user_id,
+                        'answer_id': row['id'],
+                        'game_id': game_id
+                    })
+                    guess_result.update({
+                        'msg': 'Nice guess',
+                        'new': True
+                    })
+                    break
+            else:
+                guess_result.update({
+                    'msg': f"You've already guessed {game_name}",
+                    'new': False
+                })
 
     # Query the database
     qh = QueryHelper('''
         SELECT name, lat, lon, country, population 
         FROM api_city 
         WHERE lower(name) = %s
-    ''', [request_dict['guess'].lower()]).fetchall_dict()
+    ''', [user_guess.lower()]).fetchall_dict()
 
     if qh.results:
-        return JsonResponse(qh.results)
+        guess_result.update({
+            'msg': 'Nice guess',
+            'results': qh.results
+        })
+        return JsonResponse(guess_result)
     else:
-        return JsonResponse('', safe=False)
+        return JsonResponse(guess_result)

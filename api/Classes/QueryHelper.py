@@ -69,6 +69,31 @@ class QueryHelper:
         ''', query_input)
 
     @classmethod
+    def get_all_game_answers(cls, query_input):
+        if query_input['game_name'] == "cityPopTop10":
+            return cls('''
+                SELECT ac.id, lower(ac.name) AS answer, auga2.answer_id -- Make sure to rename the column as answer!!
+                FROM api_city AS ac
+                    LEFT JOIN (
+                        SELECT answer_id
+                        FROM api_user_game_answer AS auga
+                        WHERE auga.user_id = %(user_id)s AND auga.game_id = %(game_id)s
+                    ) AS auga2
+                    ON ac.id = auga2.answer_id
+                ORDER BY ac.population DESC
+                LIMIT 10            
+            ''', query_input)
+        else:
+            return None
+
+    @classmethod
+    def add_user_game_answer(cls, query_input):
+        return cls('''
+            INSERT INTO api_user_game_answer(user_id, answer_id, game_id)
+            VALUES (%(user_id)s, %(answer_id)s, %(game_id)s)
+        ''', query_input)
+
+    @classmethod
     def get_game_progress(cls, query_input):
         return cls('''
             SELECT ac.name, ac.lat, ac.lon, ac.country, ac.population

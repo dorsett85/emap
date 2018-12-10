@@ -232,10 +232,8 @@ export default class ajaxRequests {
    */
   static setLastGame(request) {
     ajaxRequests.baseFetch({
-      url: `/api/games/set_last_played`,
-      ...ajaxRequests.postOptions({
-        body: `gameId=${request.gameId}`
-      }),
+      url: `/api/games/${request.gameId}/set_last_played`,
+      ...ajaxRequests.postOptions(),
       success: request.success,
       error: request.error
     });
@@ -253,9 +251,9 @@ export default class ajaxRequests {
    */
   static submitGuess(request) {
     ajaxRequests.baseFetch({
-      url: `/api/games/guess`,
+      url: `/api/games/${request.gameId}/guess`,
       ...ajaxRequests.postOptions({
-        body: `gameId=${request.gameId}&gameName=${request.gameName}&guess=${request.guess}`
+        body: `gameName=${request.gameName}&guess=${request.guess}`
       }),
       success: request.success
     });
