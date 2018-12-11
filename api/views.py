@@ -139,6 +139,8 @@ def game_guess(request, game_id):
         if user_guess.lower() in [row['answer'] for row in game_answers.results]:
             for row in game_answers.results:
                 if row['answer_id'] is None and row['answer'] == user_guess.lower():
+
+                    # Add answer to the database if it hasn't been guessed
                     QueryHelper.add_user_game_answer({
                         'user_id': user_id,
                         'answer_id': row['id'],

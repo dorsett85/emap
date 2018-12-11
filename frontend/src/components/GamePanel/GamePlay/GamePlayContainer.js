@@ -1,7 +1,9 @@
 import React from 'react';
 
 // Custom components
-import GamePlay from "./GamePlay";
+import GamePlay from './GamePlay';
+import CitiesPop from './CitiesPop';
+import GamePlayTemp from './GamePlayTemp';
 
 import ajax from 'assets/utils/ajaxRequests';
 
@@ -10,6 +12,7 @@ export default class GamePlayContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      gameComponent: this.setGameComponent(),
       guessInput: ''
     };
 
@@ -18,10 +21,23 @@ export default class GamePlayContainer extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  setGameComponent() {
+    // Render the appropriate game
+    const game = props => {
+      switch (this.props.selectedGame.name) {
+        case 'cityPopTop10':
+          return <CitiesPop {...props} />;
+        default:
+          return <GamePlayTemp {...props} />;
+      }
+    };
+    return game;
+  }
+
   handleInput(e) {
     this.setState({
       guessInput: e.target.value
-    })
+    });
   }
 
   handleSubmit(e) {
@@ -40,21 +56,27 @@ export default class GamePlayContainer extends React.Component {
         ajax.getGameProgress({
           gameId: this.props.selectedGame.id,
           success: this.props.setGameProgress
-        })
+        });
 
       }
-    })
+    });
 
   }
 
   render() {
+    const Game = this.state.gameComponent;
     return (
       <GamePlay
-        onInput={this.handleInput}
-        onSubmit={this.handleSubmit}
         selectedGame={this.props.selectedGame}
-        guessResults={this.props.guessResults}
-      />
-    )
+      >
+        <Game
+          onInput={this.handleInput}
+          onSubmit={this.handleSubmit}
+          selectedGame={this.props.selectedGame}
+          guessResults={this.props.guessResults}
+        />
+      </GamePlay>
+
+    );
   }
 }
