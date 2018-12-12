@@ -5,9 +5,6 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 
-// TODO try putting an scss style inside a root class of component
-import style from 'assets/css/styles.scss'
-
 const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali'
@@ -22,12 +19,8 @@ const CitiesPop = props => {
   const { classes } = props;
 
   // Process the rendering for the result of a guess
-  let results;
-  if (props.guessResults === null) {
-    results = null;
-  } else if (!props.guessResults) {
-    results = 'No matching search results';
-  } else {
+  let results = null;
+  if (props.guessResults) {
     let li = [];
     for (let k in props.guessResults) {
       if (props.guessResults.hasOwnProperty(k)) {
@@ -66,6 +59,11 @@ const CitiesPop = props => {
           </Button>
         </FormGroup>
       </form>
+      {props.guessMessage && (
+        <Typography variant={'subheading'}>
+          {props.guessMessage}
+        </Typography>
+      )}
       {results}
     </div>
   );

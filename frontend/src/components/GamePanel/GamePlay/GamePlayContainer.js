@@ -13,7 +13,8 @@ export default class GamePlayContainer extends React.Component {
     super(props);
     this.state = {
       gameComponent: this.setGameComponent(),
-      guessInput: ''
+      guessInput: '',
+      guessMessage: ''
     };
 
     // Bind methods
@@ -23,7 +24,7 @@ export default class GamePlayContainer extends React.Component {
 
   setGameComponent() {
     // Render the appropriate game
-    const game = props => {
+    return props => {
       switch (this.props.selectedGame.name) {
         case 'cityPopTop10':
           return <CitiesPop {...props} />;
@@ -31,7 +32,6 @@ export default class GamePlayContainer extends React.Component {
           return <GamePlayTemp {...props} />;
       }
     };
-    return game;
   }
 
   handleInput(e) {
@@ -49,17 +49,33 @@ export default class GamePlayContainer extends React.Component {
       guess: this.state.guessInput,
       success: data => {
 
-        // TODO more functionality for dealing with the returned data object (e.g., result message)
+        // Update the guess results and add a message for the guess
         this.props.updateGuessResults(data.results ? data.results : '');
+        this.setState({
+          guessMessage: data.msg
+        });
 
         // Update the progress if there's a new correct guess
-        ajax.getGameProgress({
-          gameId: this.props.selectedGame.id,
-          success: this.props.setGameProgress
-        });
+        if (data.new) {
+          ajax.getGameProgress({
+            gameId: this.props.selectedGame.id,
+            success: this.props.setGameProgress
+          });
+        }
 
       }
     });
+
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+
+    // Remove the guess message on user change and game change
+    if (prevProps.selectedGame !== this.props.selectedGame) {
+      this.setState({
+        guessMessage: ''
+      })
+    }
 
   }
 
@@ -74,6 +90,7 @@ export default class GamePlayContainer extends React.Component {
           onSubmit={this.handleSubmit}
           selectedGame={this.props.selectedGame}
           guessResults={this.props.guessResults}
+          guessMessage={this.state.guessMessage}
         />
       </GamePlay>
 

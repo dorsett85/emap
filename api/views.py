@@ -70,7 +70,7 @@ def logout_user(request):
         return HttpResponse('Must be an ajax request')
 
     logout(request)
-    return JsonResponse({'id': None, 'name': None}, safe=False)
+    return JsonResponse({'id': None, 'name': None})
 
 
 def get_games(request):
@@ -121,8 +121,7 @@ def game_guess(request, game_id):
 
     # Instantiate object to return with guess results
     guess_result = {
-        'results': None,
-        'msg': 'No matching search results'
+        'results': None
     }
 
     # If a user is logged in, process their guess
@@ -153,8 +152,7 @@ def game_guess(request, game_id):
                     break
             else:
                 guess_result.update({
-                    'msg': f"You've already guessed {game_name}",
-                    'new': False
+                    'msg': f"You've already guessed {user_guess}",
                 })
 
     # Query the database
@@ -166,9 +164,11 @@ def game_guess(request, game_id):
 
     if qh.results:
         guess_result.update({
-            'msg': 'Nice guess',
             'results': qh.results
         })
         return JsonResponse(guess_result)
     else:
+        guess_result.update({
+            'msg': 'No matching search results',
+        })
         return JsonResponse(guess_result)
