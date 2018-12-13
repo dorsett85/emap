@@ -30,18 +30,9 @@ const CitiesPop = props => {
     results = <ul>{li}</ul>;
   }
 
-  const gameProgress = props.selectedGame.progress
-    ? `${props.selectedGame.progress.length}/${props.selectedGame.num_answers}`
-    : `0/${props.selectedGame.num_answers}`
-  ;
-
   return (
     <div>
       <form className={classes.gameForm} onSubmit={props.onSubmit}>
-        <Typography variant={'subheading'} align={'center'} classes={{ root: classes.maliFont }}>
-          Progress: {gameProgress}
-        </Typography>
-        <br/>
         <FormGroup>
           <TextField
             variant={'outlined'}

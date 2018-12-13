@@ -34,14 +34,39 @@ export default class Map extends React.Component {
     this.map.zoomControl.setPosition('topright');
   }
 
+  clearMap() {
+    this.map.eachLayer(layer => {
+      if (layer.marker || layer.shape) {layer.remove();}
+    })
+  }
+
+  addGameProgress() {
+    if (this.props.gameProgress.length) {
+      this.props.gameProgress.forEach((v, i, a) => {
+        if (v.map_type === 'marker') {
+
+          let marker = L.marker([v.lat, v.lon]);
+          marker.marker = {city: v.name};
+          marker
+            .addTo(this.map)
+            .bindPopup(`<b>${v.name}</b>`);
+
+          // Fly to the last marker
+          if (i === a.length - 1) {
+            this.map.flyTo([v.lat, v.lon]);
+            marker.openPopup();
+          }
+
+        }
+      })
+    }
+  }
+
   componentDidUpdate(prevProps, prevState) {
 
     // Clear the markers on user change and game change
-    if (prevProps.selectedGame !== this.props.selectedGame) {
-      this.map
-        .eachLayer(layer => {
-          if (layer.marker || layer.shape) {layer.remove();}
-        })
+    if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
+      this.clearMap();
     }
 
     // Update search selections

@@ -50,7 +50,7 @@ export default class GamePlayContainer extends React.Component {
       success: data => {
 
         // Update the guess results and add a message for the guess
-        this.props.updateGuessResults(data.results ? data.results : '');
+        this.props.updateGuessResults(data.results);
         this.setState({
           guessMessage: data.msg
         });
@@ -59,7 +59,7 @@ export default class GamePlayContainer extends React.Component {
         if (data.new) {
           ajax.getGameProgress({
             gameId: this.props.selectedGame.id,
-            success: this.props.setGameProgress
+            success: data => this.props.setGameProgress(data.progress)
           });
         }
 
@@ -71,7 +71,7 @@ export default class GamePlayContainer extends React.Component {
   componentDidUpdate(prevProps, prevState) {
 
     // Remove the guess message on user change and game change
-    if (prevProps.selectedGame !== this.props.selectedGame) {
+    if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
       this.setState({
         guessMessage: ''
       })
@@ -84,11 +84,13 @@ export default class GamePlayContainer extends React.Component {
     return (
       <GamePlay
         selectedGame={this.props.selectedGame}
+        gameProgress={this.props.gameProgress}
       >
         <Game
           onInput={this.handleInput}
           onSubmit={this.handleSubmit}
           selectedGame={this.props.selectedGame}
+          gameProgress={this.props.gameProgress}
           guessResults={this.props.guessResults}
           guessMessage={this.state.guessMessage}
         />

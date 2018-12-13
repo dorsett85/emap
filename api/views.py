@@ -9,29 +9,24 @@ def get_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    # Instantiate response object
-    response = {
-        'id': None,
-        'name': None,
-        'game': None
-    }
-
     if request.user.is_authenticated:
-        response['id'] = request.user.id
-        response['name'] = request.user.username
+        response = {
+            'id': request.user.id,
+            'name': request.user.username
+        }
 
         # Check user's last played game
         last_played = QueryHelper.get_last_played(request.user.id).fetchall_dict()
 
         if last_played.results:
-            response['game'] = last_played.results
+            response['last_played'] = last_played.results
             return JsonResponse(response)
         else:
             return JsonResponse(response)
 
     # No user logged in
     else:
-        return JsonResponse(response)
+        return JsonResponse({})
 
 
 def login_user(request):
@@ -70,7 +65,7 @@ def logout_user(request):
         return HttpResponse('Must be an ajax request')
 
     logout(request)
-    return JsonResponse({'id': None, 'name': None})
+    return JsonResponse({})
 
 
 def get_games(request):
@@ -97,7 +92,7 @@ def get_game_progress(request, game_id):
             return JsonResponse({'progress': game_progress.results})
 
     # At this point the user is not logged in or has no game progress
-    return JsonResponse({'progress': None})
+    return JsonResponse({'progress': []})
 
 
 def set_last_played(request, game_id):

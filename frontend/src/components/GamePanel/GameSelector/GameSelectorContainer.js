@@ -34,7 +34,7 @@ export default class GameSelectorContainer extends React.Component {
         // Once the game is set, set its progress
         ajax.getGameProgress({
           gameId: data.game_id,
-          success: this.props.setGameProgress
+          success: data => this.props.setGameProgress(data.progress)
         })
       }
     });

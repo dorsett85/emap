@@ -11,12 +11,10 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
-        id: null,
-        name: null,
-      },
-      selectedGame: null,
-      guessResults: null
+      user: {},
+      selectedGame: {},
+      gameProgress: [],
+      guessResults: {}
     };
 
     // Bind methods
@@ -40,7 +38,7 @@ export default class App extends React.Component {
 
   setGameProgress(data) {
     this.setState({
-      selectedGame: {...this.state.selectedGame, progress: data.progress}
+      gameProgress: data
     })
   }
 
@@ -54,15 +52,17 @@ export default class App extends React.Component {
 
     // Get current logged in user information
     ajax.getUser(user => {
-      this.setUser({id: user.id, name: user.name});
-      this.setGame(user.game);
+      this.setUser(user);
+      if (user.id) {
+        this.setGame(user.last_played);
 
-      // If a game is returned get the progress for that game
-      if (user.game) {
-        ajax.getGameProgress({
-          gameId: this.state.selectedGame.id,
-          success: this.setGameProgress
-        })
+        // If a game is returned get the progress for that game
+        if (user.last_played) {
+          ajax.getGameProgress({
+            gameId: this.state.selectedGame.id,
+            success: data => this.setGameProgress(data.progress)
+          })
+        }
       }
     });
 
@@ -74,14 +74,17 @@ export default class App extends React.Component {
         <GamePanel
           user={this.state.user}
           setUser={this.setUser}
-          guessResults={this.state.guessResults}
-          updateGuessResults={this.updateGuessResults}
           setGame={this.setGame}
           setGameProgress={this.setGameProgress}
           selectedGame={this.state.selectedGame}
+          gameProgress={this.state.gameProgress}
+          guessResults={this.state.guessResults}
+          updateGuessResults={this.updateGuessResults}
         />
         <Map
+          user={this.state.user}
           selectedGame={this.state.selectedGame}
+          gameProgress={this.state.gameProgress}
           guessResults={this.state.guessResults}
         />
       </div>
