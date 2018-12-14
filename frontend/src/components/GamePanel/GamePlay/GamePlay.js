@@ -15,7 +15,7 @@ const GamePlay = props => {
   const { classes } = props;
 
   // Show a progress subheader
-  const gameProgress = `${props.gameProgress.length}/${props.selectedGame.num_answers}`;
+  const gameProgress = `${props.selectedGame.progress.length}/${props.selectedGame.num_answers}`;
 
   return (
     <div className={classes.gameDiv}>

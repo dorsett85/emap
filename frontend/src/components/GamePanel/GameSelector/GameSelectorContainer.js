@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Custom components
-import GameSelector from "./GameSelector";
+import GameSelector from './GameSelector';
 
 import ajax from 'assets/utils/ajaxRequests';
 
@@ -21,30 +21,44 @@ export default class GameSelectorContainer extends React.Component {
 
   handleSelectGameClick(e) {
     this.setState({
-      anchorEl: e.currentTarget});
+      anchorEl: e.currentTarget
+    });
   }
 
   handleCardClick(e, i) {
-    // Set as last selected game for this user
-    ajax.setLastGame({
-      gameId: this.state.games[i].id,
-      success: data => {
-        this.props.setGame(this.state.games[i]);
 
-        // Once the game is set, set its progress
-        ajax.getGameProgress({
-          gameId: data.game_id,
-          success: data => this.props.setGameProgress(data.progress)
-        })
-      }
-    });
+    // Check if the clicked on game is different
+    if (this.state.games[i].id !== this.props.selectedGame.id) {
+
+      // Remove the guess result
+      this.props.updateGuessResults({data: {}});
+
+      // Set the clicked on game with its progress
+      ajax.getGameProgress({
+        gameId: this.state.games[i].id,
+        success: data => {
+          this.props.setGame({
+            ...this.state.games[i],
+            ...data
+          });
+
+          // Set as last selected game for this user
+          ajax.setLastGame({
+            gameId: this.state.games[i].id
+          });
+
+        }
+      });
+
+    }
+
     this.onClose();
   }
 
   onClose() {
     this.setState({
       anchorEl: null
-    })
+    });
   }
 
   componentWillMount() {
@@ -52,7 +66,7 @@ export default class GameSelectorContainer extends React.Component {
       success: data => {
         this.setState({
           games: data.games
-        })
+        });
       }
     });
   }
@@ -66,7 +80,7 @@ export default class GameSelectorContainer extends React.Component {
         onCardClick={this.handleCardClick}
         onClose={this.onClose}
       />
-    )
+    );
   }
 
 }

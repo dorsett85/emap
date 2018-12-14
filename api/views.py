@@ -16,10 +16,10 @@ def get_user(request):
         }
 
         # Check user's last played game
-        last_played = QueryHelper.get_last_played(request.user.id).fetchall_dict()
+        last_played = QueryHelper.get_last_played(request.user.id).fetchall_dict().results
 
-        if last_played.results:
-            response['last_played'] = last_played.results
+        if last_played:
+            response['last_played'] = last_played
             return JsonResponse(response)
         else:
             return JsonResponse(response)
@@ -86,10 +86,13 @@ def get_game_progress(request, game_id):
         return HttpResponse('Must be an ajax request')
 
     if request.user.is_authenticated:
-        game_progress = QueryHelper.get_game_progress({'user_id': request.user.id, 'game_id': game_id}).fetchall_array()
+        game_progress = QueryHelper.get_game_progress({
+            'user_id': request.user.id,
+            'game_id': game_id
+        }).fetchall_array().results
 
-        if game_progress.results:
-            return JsonResponse({'progress': game_progress.results})
+        if game_progress:
+            return JsonResponse({'progress': game_progress})
 
     # At this point the user is not logged in or has no game progress
     return JsonResponse({'progress': []})
@@ -116,7 +119,7 @@ def game_guess(request, game_id):
 
     # Instantiate object to return with guess results
     guess_result = {
-        'results': None
+        'data': {}
     }
 
     # If a user is logged in, process their guess
@@ -152,14 +155,14 @@ def game_guess(request, game_id):
 
     # Query the database
     qh = QueryHelper('''
-        SELECT name, lat, lon, country, population 
+        SELECT id, name, lat, lon, country, population 
         FROM api_city 
         WHERE lower(name) = %s
     ''', [user_guess.lower()]).fetchall_dict()
 
     if qh.results:
         guess_result.update({
-            'results': qh.results
+            'data': qh.results
         })
         return JsonResponse(guess_result)
     else:

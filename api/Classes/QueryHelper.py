@@ -96,7 +96,7 @@ class QueryHelper:
     @classmethod
     def get_game_progress(cls, query_input):
         return cls('''
-            SELECT ac.name, ac.lat, ac.lon, ac.country, ac.population, 'marker' AS map_type
+            SELECT ac.id, ac.name, ac.lat, ac.lon, ac.country, ac.population, 'marker' AS map_type
                 FROM api_city as ac
                     INNER JOIN (
                         SELECT answer_id

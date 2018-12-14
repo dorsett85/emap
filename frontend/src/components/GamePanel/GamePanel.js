@@ -56,13 +56,14 @@ const GamePanel = props => {
           user={props.user}
           setUser={props.setUser}
           setGame={props.setGame}
-          setGameProgress={props.setGameProgress}
+          updateGuessResults={props.updateGuessResults}
         />
         {!props.user.id && <RegisterContainer />}
         <GameSelectorContainer
           user={props.user}
           setGame={props.setGame}
-          setGameProgress={props.setGameProgress}
+          selectedGame={props.selectedGame}
+          updateGuessResults={props.updateGuessResults}
         />
       </List>
 
@@ -72,7 +73,6 @@ const GamePanel = props => {
         <GamePlayContainer
           user={props.user}
           selectedGame={props.selectedGame}
-          gameProgress={props.gameProgress}
           setGameProgress={props.setGameProgress}
           guessResults={props.guessResults}
           updateGuessResults={props.updateGuessResults}

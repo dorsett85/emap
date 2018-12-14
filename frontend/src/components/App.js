@@ -13,8 +13,9 @@ export default class App extends React.Component {
     this.state = {
       user: {},
       selectedGame: {},
-      gameProgress: [],
-      guessResults: {}
+      guessResults: {
+        data: {}
+      }
     };
 
     // Bind methods
@@ -33,12 +34,12 @@ export default class App extends React.Component {
   setGame(game) {
     this.setState({
       selectedGame: game
-    })
+    });
   }
 
   setGameProgress(data) {
     this.setState({
-      gameProgress: data
+      selectedGame: {...this.state.selectedGame, ...data}
     })
   }
 
@@ -53,16 +54,15 @@ export default class App extends React.Component {
     // Get current logged in user information
     ajax.getUser(user => {
       this.setUser(user);
-      if (user.id) {
-        this.setGame(user.last_played);
 
-        // If a game is returned get the progress for that game
-        if (user.last_played) {
-          ajax.getGameProgress({
-            gameId: this.state.selectedGame.id,
-            success: data => this.setGameProgress(data.progress)
-          })
-        }
+      // If a user and game is returned get the progress for that game
+      if (user.id && user.last_played) {
+        ajax.getGameProgress({
+          gameId: user.last_played.id,
+          success: data => {
+            this.setGame({...user.last_played, ...data});
+          }
+        })
       }
     });
 
@@ -77,14 +77,12 @@ export default class App extends React.Component {
           setGame={this.setGame}
           setGameProgress={this.setGameProgress}
           selectedGame={this.state.selectedGame}
-          gameProgress={this.state.gameProgress}
           guessResults={this.state.guessResults}
           updateGuessResults={this.updateGuessResults}
         />
         <Map
           user={this.state.user}
           selectedGame={this.state.selectedGame}
-          gameProgress={this.state.gameProgress}
           guessResults={this.state.guessResults}
         />
       </div>

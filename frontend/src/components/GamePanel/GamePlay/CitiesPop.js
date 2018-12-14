@@ -20,11 +20,11 @@ const CitiesPop = props => {
 
   // Process the rendering for the result of a guess
   let results = null;
-  if (props.guessResults) {
+  if (Object.keys(props.guessResults.data).length) {
     let li = [];
-    for (let k in props.guessResults) {
-      if (props.guessResults.hasOwnProperty(k)) {
-        li.push(<li key={k}>{k}: {props.guessResults[k]}</li>);
+    for (let k in props.guessResults.data) {
+      if (props.guessResults.data.hasOwnProperty(k)) {
+        li.push(<li key={k}>{k}: {props.guessResults.data[k]}</li>);
       }
     }
     results = <ul>{li}</ul>;
