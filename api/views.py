@@ -155,7 +155,7 @@ def game_guess(request, game_id):
 
     # Query the database
     qh = QueryHelper('''
-        SELECT id, name, lat, lon, country, population 
+        SELECT id, name, lat, lon, country, population, 'marker' as map_type
         FROM api_city 
         WHERE lower(name) = %s
     ''', [user_guess.lower()]).fetchall_dict()
