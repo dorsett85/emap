@@ -60,26 +60,12 @@ export default class Map extends React.Component {
 
       // Instantiate array of markers
       const answerLayers = [];
-      this.props.selectedGame.progress.forEach((v, i, a) => {
-        if (v.map_type === 'marker') {
+      this.props.selectedGame.progress.forEach(v => {
 
-          let layer = L.marker([v.lat, v.lon]);
-          layer.marker = true;
-          layer.id = v.id;
-          layer
-            .addTo(this.map)
-            .bindPopup(Map.popupInfo(v, ['country', 'population']));
+        // Add layer to the map and list of answer layers
+        const layer = this.addLayer(v);
+        answerLayers.push(layer);
 
-          // Fly to the last marker
-          if (i === a.length - 1) {
-            this.map.flyTo([v.lat, v.lon]);
-            layer.openPopup();
-          }
-
-          // Add to list of markers
-          answerLayers.push(layer);
-
-        }
       });
 
       // Update the markers state
@@ -100,7 +86,7 @@ export default class Map extends React.Component {
 
       newLayer
         .addTo(this.map)
-        .bindPopup(Map.popupInfo(layer, ['country', 'population']))
+        .bindPopup(Map.popupInfo(layer, ['country', 'population', 'rank']))
         .openPopup();
       this.map.flyTo([layer.lat, layer.lon]);
     }

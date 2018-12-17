@@ -96,12 +96,16 @@ class QueryHelper:
     @classmethod
     def get_game_progress(cls, query_input):
         return cls('''
-            SELECT ac.id, ac.name, ac.lat, ac.lon, ac.country, ac.population, 'marker' AS map_type
-                FROM api_city as ac
-                    INNER JOIN (
-                        SELECT answer_id
-                        FROM api_user_game_answer as auga
-                        WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
-                    ) AS auga2
-                    ON ac.id = auga2.answer_id
+            SELECT ac.id, ac.name, ac.lat, ac.lon, ac.country, ac.population, 'marker' AS map_type, ac.rank
+            FROM (
+                SELECT id, name, lat, lon, country, population, 
+                       rank() OVER (ORDER BY population DESC) AS rank
+                FROM api_city
+            ) as ac
+                INNER JOIN (
+                    SELECT answer_id
+                    FROM api_user_game_answer as auga
+                    WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
+                ) AS auga2
+                ON ac.id = auga2.answer_id
         ''', query_input)

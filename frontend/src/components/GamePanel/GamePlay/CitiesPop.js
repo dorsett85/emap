@@ -3,7 +3,6 @@ import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -16,13 +15,36 @@ const styles = theme => ({
     fontFamily: 'Mali'
   },
   gameForm: {
-    paddingTop: 15
+    paddingTop: 15,
+    paddingBottom: 10
   },
-  tableContainer: {
-    paddingTop: 10,
-    flexGrow: 1
+  table: {
+    marginTop: 10
+  },
+  tableHead: {
+    backgroundColor: theme.palette.common.black
+  },
+  tableHeadCell: {
+    color: theme.palette.common.white
+  },
+  oddTableRow: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.background.default,
+    }
   }
 });
+
+const TableRowSm = withStyles({
+  root: {
+    height: '35px'
+  }
+})(TableRow);
+
+const TableCellSm = withStyles({
+  root: {
+    padding: '8px'
+  }
+})(TableCell);
 
 
 const CitiesPop = props => {
@@ -33,28 +55,26 @@ const CitiesPop = props => {
   let table;
   if (progress.length) {
     table = (
-      <Grid container className={classes.tableContainer}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>City</TableCell>
-              <TableCell>Country</TableCell>
-              <TableCell>Population</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {progress.map(row => {
-              return (
-                <TableRow key={row.id}>
-                  <TableCell component={'th'} scope={'row'}>{row.name}</TableCell>
-                  <TableCell>{row.country}</TableCell>
-                  <TableCell numeric>{row.population}</TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </Grid>
+      <Table className={classes.table}>
+        <TableHead className={classes.tableHead}>
+          <TableRowSm>
+            <TableCellSm className={classes.tableHeadCell}>City</TableCellSm>
+            <TableCellSm className={classes.tableHeadCell}>Population</TableCellSm>
+            <TableCellSm className={classes.tableHeadCell}>Rank</TableCellSm>
+          </TableRowSm>
+        </TableHead>
+        <TableBody>
+          {progress.map(row => {
+            return (
+              <TableRowSm className={classes.oddTableRow} key={row.id}>
+                <TableCellSm component={'th'} scope={'row'}>{row.name}</TableCellSm>
+                <TableCellSm>{row.population}</TableCellSm>
+                <TableCellSm>{row.rank}</TableCellSm>
+              </TableRowSm>
+            );
+          })}
+        </TableBody>
+      </Table>
     );
   }
 

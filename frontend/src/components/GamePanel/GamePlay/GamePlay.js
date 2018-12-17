@@ -23,13 +23,11 @@ const GamePlay = props => {
         {props.selectedGame.title}
       </Typography>
       <Typography variant={'subheading'} align={'center'} classes={{ root: classes.maliFont }}>
-          Progress: {gameProgress}
-        </Typography>
-      <div>
-        {props.children}
-      </div>
+        Progress: {gameProgress}
+      </Typography>
+      {props.children}
     </div>
-  )
+  );
 };
 
 export default withStyles(styles)(GamePlay);
