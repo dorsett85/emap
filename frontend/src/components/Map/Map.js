@@ -19,7 +19,7 @@ export default class Map extends React.Component {
     ajax.getMapToken(token => {
       mapboxgl.accessToken = token.map_token;
       this.map = new mapboxgl.Map({
-        container: 'lMap',
+        container: 'map',
         style: 'mapbox://styles/mapbox/satellite-streets-v10',
         center: [0, 20],
         zoom: 1.75
@@ -68,10 +68,20 @@ export default class Map extends React.Component {
 
     // Create map layer depending on type
     if (layer.map_type === 'marker') {
-      const options = answer ? {} : {color: '#d61d1d'};
-      newLayer = new mapboxgl.Marker(options)
+
+      // Set up marker and popup options
+      const markerOptions = {
+        color: answer ? styles.answerColor : styles.nonAnswerColor
+      };
+      const popupOptions = {
+        answer: answer,
+        info: ['country', 'population', 'rank']
+      };
+
+      // Create layer
+      newLayer = new mapboxgl.Marker(markerOptions)
         .setLngLat([layer.lon, layer.lat])
-        .setPopup(Map.popupInfo(layer, ['country', 'population', 'rank']));
+        .setPopup(Map.popupInfo(layer, popupOptions));
 
     } else {
 
@@ -88,20 +98,32 @@ export default class Map extends React.Component {
 
   }
 
-  static popupInfo(layer, info) {
+  static popupInfo(layer, options) {
 
-    // Add info to an array of <li> elements
+    // Add info to an array of <p> elements
     const popupInfo = [];
     for (const k in layer) {
-      if (layer.hasOwnProperty(k) && info.includes(k)) {
-        popupInfo.push(`<li>${k}: ${layer[k]}</li>`);
+      if (layer.hasOwnProperty(k) && options.info.includes(k)) {
+        popupInfo.push(`<p>${k}: ${layer[k]}</p>`);
       }
     }
-    return new mapboxgl.Popup({ offset: 25 })
-      .setHTML(`
-        <b>${layer.name}</b>
-        <ul>${popupInfo.join('')}</ul>
-      `);
+
+    // Create html content
+    const html = `
+      <div class="popup-title">
+        <span>${layer.name}</span>
+      </div>
+      <div class="popup-content">
+        ${popupInfo.join('')}
+      </div>
+    `;
+
+    // Return new popup
+    return new mapboxgl.Popup({
+      offset: 25,
+      closeButton: false,
+      className: options.answer ? styles.mapPopupAnswer : styles.mapPopupNonAnswer
+    }).setHTML(html);
   }
 
   popupToggle(layer) {
@@ -157,7 +179,7 @@ export default class Map extends React.Component {
   }
 
   render() {
-    return <div id={'lMap'} className={styles.mapContainer}></div>;
+    return <div id={'map'} className={styles.mapContainer}></div>;
   }
 
 }

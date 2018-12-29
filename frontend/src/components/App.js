@@ -6,8 +6,8 @@ import Map from './Map/Map';
 
 import ajax from 'assets/utils/ajaxRequests';
 import 'assets/css/styles.scss';
-// TODO Add support for
-// import 'assets/css/third_party.css';
+import 'assets/css/third_party.css';
+
 
 export default class App extends React.Component {
   constructor(props) {

@@ -1,6 +1,63 @@
-.mapContainer {
+// Map container layout
+:global(#map).mapContainer {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 100%;
 }
+
+// Map popup styling
+$answer-color: #76FF03;
+$nonanswer-color: #FF1744;
+:export {
+  answerColor: $answer-color;
+  nonAnswerColor: $nonanswer-color
+}
+
+@mixin popup($title-background) {
+  :global(.mapboxgl-popup-content) {
+    padding: 0;
+
+    :global(.popup-title) {
+      padding: {
+        top: 4px;
+        bottom: 4px;
+      };
+      border: {
+        top-left-radius: 3px;
+        top-right-radius: 3px;
+      };
+      background-color: $title-background;
+      text-align: center;
+
+      span {
+        font: {
+          size: 20px;
+          family: 'Mali';
+          weight: bold;
+        };
+      }
+    }
+
+    :global(.popup-content) {
+      padding: 5px 8px;
+
+      p {
+        font-size: 13px;
+        margin: 0;
+      }
+
+    }
+  }
+}
+
+// Css for answer popups
+.mapPopupAnswer {
+  @include popup($answer-color)
+}
+
+// Css for non answer popups
+.mapPopupNonAnswer {
+  @include popup($nonanswer-color)
+}
+
