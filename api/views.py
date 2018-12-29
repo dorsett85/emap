@@ -13,7 +13,6 @@ def get_map_token(request):
 
 
 def get_user(request):
-    print(settings.MAPBOX_TOKEN)
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
