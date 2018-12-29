@@ -35,6 +35,16 @@ module.exports = {
           loader: "babel-loader"
         }
       },
+      // TODO Add ability to add unmodified third party css
+      // {
+      //   test: /\.css$/,
+      //   include: path.resolve(__dirname, 'frontend/src/assets/css/third_party.css'),
+      //   use: [{
+      //     loader: process.env.NODE_ENV !== 'production' ? 'style-loader' : MiniCssExtractPlugin.loader
+      //   }, {
+      //     loader: 'css-loader',
+      //   }]
+      // },
       {
         test: /\.scss$/,
         include: path.resolve(__dirname, 'frontend/src'),

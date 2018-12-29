@@ -38,8 +38,8 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
-    "leaflet": "^1.3.4",
-    "leaflet-css": "^0.1.0",
+    "@mapbox/maki": "^6.0.0",
+    "mapbox-gl": "^0.52.0",
     "prop-types": "^15.6.2"
   }
 }

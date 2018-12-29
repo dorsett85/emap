@@ -1,11 +1,19 @@
+from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-from .Classes.QueryHelper import QueryHelper
+from .Classes.QueryHelper import QueryHelper as QH
+
+
+def get_map_token(request):
+    if not request.is_ajax():
+        return HttpResponse('Must be an ajax request')
+    return JsonResponse({'map_token': settings.MAPBOX_TOKEN})
 
 
 def get_user(request):
+    print(settings.MAPBOX_TOKEN)
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
@@ -16,7 +24,7 @@ def get_user(request):
         }
 
         # Check user's last played game
-        last_played = QueryHelper.get_last_played(request.user.id).fetchall_dict().results
+        last_played = QH.get_last_played(request.user.id).fetchall_dict().results
 
         if last_played:
             response['last_played'] = last_played
@@ -48,7 +56,7 @@ def register_user(request):
     # Check if user exists
     username = request.POST.get('username')
     password = request.POST.get('password')
-    qh = QueryHelper('SELECT * FROM auth_user WHERE username = %s', [username]).fetchall()
+    qh = QH('SELECT * FROM auth_user WHERE username = %s', [username]).fetchall()
 
     if qh.rows:
         return JsonResponse({'invalid': 'Username already exists'})
@@ -74,9 +82,9 @@ def get_games(request):
 
     # Check which games to return based on user
     if not request.user.is_authenticated:
-        games = QueryHelper.get_games().fetchall_array()
+        games = QH.get_games().fetchall_array()
     else:
-        games = QueryHelper.get_games(request.user.id).fetchall_array()
+        games = QH.get_games(request.user.id).fetchall_array()
 
     return JsonResponse({'games': games.results})
 
@@ -86,7 +94,7 @@ def get_game_progress(request, game_id):
         return HttpResponse('Must be an ajax request')
 
     if request.user.is_authenticated:
-        game_progress = QueryHelper.get_game_progress({
+        game_progress = QH.get_game_progress({
             'user_id': request.user.id,
             'game_id': game_id
         }).fetchall_array().results
@@ -104,7 +112,7 @@ def set_last_played(request, game_id):
 
     # If a user is logged in, set their last game
     if request.user.is_authenticated:
-        QueryHelper.set_last_played({'user_id': request.user.id, 'game_id': game_id})
+        QH.set_last_played({'user_id': request.user.id, 'game_id': game_id})
 
     return JsonResponse({'game_id': game_id})
 
@@ -126,7 +134,7 @@ def game_guess(request, game_id):
     if request.user.is_authenticated:
 
         # Get answers for the selected game
-        game_answers = QueryHelper.get_all_game_answers({
+        game_answers = QH.get_all_game_answers({
             'user_id': user_id,
             'game_id': game_id,
             'game_name': game_name
@@ -138,7 +146,7 @@ def game_guess(request, game_id):
                 if row['answer_id'] is None and row['answer'] == user_guess.lower():
 
                     # Add answer to the database if it hasn't been guessed
-                    QueryHelper.add_user_game_answer({
+                    QH.add_user_game_answer({
                         'user_id': user_id,
                         'answer_id': row['id'],
                         'game_id': game_id
@@ -154,7 +162,7 @@ def game_guess(request, game_id):
                 })
 
     # Query the database
-    qh = QueryHelper('''
+    qh = QH('''
         SELECT id, name, lat, lon, country, population, 'marker' as map_type
         FROM api_city 
         WHERE lower(name) = %s

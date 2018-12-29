@@ -8,6 +8,9 @@ urlpatterns = [
     path('login/', views.login_user),
     path('logout/', views.logout_user),
 
+    # Map api
+    path('map/token', views.get_map_token),
+
     # Games api
     path('games/', views.get_games),
     path('games/<int:game_id>/progress', views.get_game_progress),

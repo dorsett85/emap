@@ -124,6 +124,17 @@ export default class ajaxRequests {
   }
 
   /**
+   * Get Mapbox token
+   *
+   */
+  static getMapToken(success) {
+    ajaxRequests.baseFetch({
+      url: '/api/map/token',
+      success: success,
+    });
+  }
+
+  /**
    * Request the current user
    *
    * @param {Function} success

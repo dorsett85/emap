@@ -1,20 +1,7 @@
 import React from 'react';
-import L from 'leaflet';
-import 'leaflet-css';
+import mapboxgl from 'mapbox-gl';
 
-// stupid hack so that leaflet's images work after going through webpack
-import marker from 'leaflet/dist/images/marker-icon.png';
-import marker2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-delete L.Icon.Default.prototype._getIconUrl;
-
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: marker2x,
-  iconUrl: marker,
-  shadowUrl: markerShadow
-});
-
+import ajax from '../../assets/utils/ajaxRequests';
 import styles from './Map.scss';
 
 
@@ -22,151 +9,148 @@ export default class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      answerLayers: [],
-      lastNonAnswerLayer: {}
+      layers: []
     };
   }
 
   componentDidMount() {
-    this.map = L.map('lMap', {
-      center: [30, -70],
-      zoom: 3,
-      layers: [
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        })
-      ]
+
+    // Get the Mapbox token
+    ajax.getMapToken(token => {
+      mapboxgl.accessToken = token.map_token;
+      this.map = new mapboxgl.Map({
+        container: 'lMap',
+        style: 'mapbox://styles/mapbox/satellite-streets-v10',
+        center: [0, 20],
+        zoom: 1.75
+      });
+
+      this.map.on('load', () => {
+        this.addGameProgress(this.state.layers)
+      });
+
     });
-    this.map.zoomControl.setPosition('topright');
+
   }
 
-  clearMap() {
+  resetMap() {
+    // Remove old layers
+    if (this.state.layers.length) {
+      this.state.layers.forEach(layer => layer.remove());
+    }
 
-    // Remove all of the marker and shape layers and reset the answer layers to empty
-    this.map.eachLayer(layer => {
-      if (layer.marker || layer.shape) {
-        layer.remove();
-      }
-    });
+    // Repopulate layers if a selected game has progress
+    const layers = [];
+    if (this.props.selectedGame.id && this.props.selectedGame.progress.length) {
+      this.props.selectedGame.progress.forEach(layer => {
+        layers.push(Map.newLayer(layer));
+      });
+      this.addGameProgress(layers);
+    }
+
+    // Reset the layer state
     this.setState({
-      answerLayers: []
-    });
+      layers: layers
+    })
 
   }
 
-  addGameProgress() {
-    if (this.props.selectedGame.progress.length) {
-
-      // Instantiate array of markers
-      const answerLayers = [];
-      this.props.selectedGame.progress.forEach(v => {
-
-        // Add layer to the map and list of answer layers
-        const layer = this.addLayer(v);
-        answerLayers.push(layer);
-
-      });
-
-      // Update the markers state
-      this.setState({
-        answerLayers: answerLayers
-      });
+  addGameProgress(layers) {
+    if (layers.length && this.map.loaded()) {
+      layers.forEach(layer => {
+        layer.addTo(this.map);
+      })
     }
   }
 
-  addLayer(layer) {
+  static newLayer(layer, answer = true) {
     let newLayer;
 
-    // Create and add layer based on its map type
+    // Create map layer depending on type
     if (layer.map_type === 'marker') {
-      newLayer = L.marker([layer.lat, layer.lon]);
-      newLayer.marker = true;
-      newLayer.id = layer.id;
+      const options = answer ? {} : {color: '#d61d1d'};
+      newLayer = new mapboxgl.Marker(options)
+        .setLngLat([layer.lon, layer.lat])
+        .setPopup(Map.popupInfo(layer, ['country', 'population', 'rank']));
 
-      newLayer
-        .addTo(this.map)
-        .bindPopup(Map.popupInfo(layer, ['country', 'population', 'rank']))
-        .openPopup();
-      this.map.flyTo([layer.lat, layer.lon]);
+    } else {
+
+      //TODO add other map type layers
+
     }
+
+    // Add an id, map type, and answer property for later reference
+    newLayer.id = layer.id;
+    newLayer[layer.map_type] = true;
+    newLayer.answer = answer;
 
     return newLayer;
 
   }
 
   static popupInfo(layer, info) {
+
+    // Add info to an array of <li> elements
     const popupInfo = [];
     for (const k in layer) {
       if (layer.hasOwnProperty(k) && info.includes(k)) {
         popupInfo.push(`<li>${k}: ${layer[k]}</li>`);
       }
     }
-    return `
-      <b>${layer.name}</b>
-      <ul>${popupInfo.join('')}</ul>
-    `;
+    return new mapboxgl.Popup({ offset: 25 })
+      .setHTML(`
+        <b>${layer.name}</b>
+        <ul>${popupInfo.join('')}</ul>
+      `);
   }
 
-  removeLastNonAnswerLayer() {
-    if (Object.keys(this.state.lastNonAnswerLayer).length) {
-      this.map.removeLayer(this.state.lastNonAnswerLayer);
-    }
+  popupToggle(layer) {
+    // Close other popups before opening the current one
+    this.state.layers.forEach(l => {
+      if (l._popup.isOpen()) {l.togglePopup();}
+    });
+    if (!layer._popup.isOpen()) {layer.togglePopup();}
   }
 
   componentDidUpdate(prevProps, prevState) {
 
-    // Clear the markers on user change or game change
+    // Reset layers on user change or game change
     if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
-      this.clearMap();
-
-      // Add the game progress if there's a selected game
-      if (this.props.selectedGame.id) {
-        this.addGameProgress();
-      }
+      this.resetMap();
     }
 
     // Check guess results and update
     if (Object.keys(this.props.guessResults.data).length) {
       if (prevProps.guessResults.data.id !== this.props.guessResults.data.id) {
 
-        let layer = this.props.guessResults.data;
-        const existingAnswerLayer = this.state.answerLayers.filter(v => v.id === layer.id)[0];
+        // Remove old non answer layers
+        const nonAnswerLayers = this.state.layers.filter(layer => !layer.answer);
+        if (nonAnswerLayers.length) {nonAnswerLayers.forEach(layer => layer.remove());}
+
+        // Get data from existing layer if it exists, and remove old non answer layers
+        const layerData = this.props.guessResults.data;
+        let currentLayer = this.state.layers.filter(v => v.id === layerData.id)[0];
 
         // Check for existing marker
-        if (existingAnswerLayer) {
+        if (!currentLayer) {
 
-          existingAnswerLayer.openPopup();
-          this.map.flyTo([
-            existingAnswerLayer._latlng.lat,
-            existingAnswerLayer._latlng.lng
-          ]);
-
-        } else if (this.props.guessResults.new) {
-
-          // create new marker with a popup
-          const newLayer = this.addLayer(layer);
-
-          // Remove last non answer layer from the map if it exists and Add the new one to the
-          // existing markers
-          this.removeLastNonAnswerLayer();
-          this.setState({
-            answerLayers: [...this.state.answerLayers, newLayer],
-            lastNonAnswerLayer: {}
-          });
-
-        } else {
-
-          // This is now not an answer for the game, but add it
-          let newLayer = this.addLayer(layer);
-
-          // Remove last non answer layer from the map if it exists and set the new one
-          this.removeLastNonAnswerLayer();
-          this.setState({
-            lastNonAnswerLayer: newLayer
-          });
+          // Check if the new guess is an answer to differentiate color
+          const isAnswer = this.props.guessResults.hasOwnProperty('new');
+          currentLayer = Map.newLayer(layerData, isAnswer).addTo(this.map);
 
         }
+
+        // Open only the current layers popup and fly to it's location
+        this.popupToggle(currentLayer);
+        this.map.flyTo({
+          center: currentLayer.getLngLat()
+        });
+
+        // Set the layer state so it only includes answers and the current layer
+        const answerLayers = this.state.layers.filter(layer => layer.answer);
+        this.setState({
+          layers: [...answerLayers, currentLayer]
+        })
 
       }
     }
