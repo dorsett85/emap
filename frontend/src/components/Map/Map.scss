@@ -1,5 +1,5 @@
 // Map container layout
-:global(#map).mapContainer {
+#map.mapContainer {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -14,11 +14,11 @@ $nonanswer-color: #FF1744;
   nonAnswerColor: $nonanswer-color
 }
 
-@mixin popup($title-background) {
+%popup {
   :global(.mapboxgl-popup-content) {
     padding: 0;
 
-    :global(.popup-title) {
+    .popupTitle {
       padding: {
         top: 4px;
         bottom: 4px;
@@ -27,7 +27,6 @@ $nonanswer-color: #FF1744;
         top-left-radius: 3px;
         top-right-radius: 3px;
       };
-      background-color: $title-background;
       text-align: center;
 
       span {
@@ -39,7 +38,7 @@ $nonanswer-color: #FF1744;
       }
     }
 
-    :global(.popup-content) {
+    .popupContent {
       padding: 5px 8px;
 
       p {
@@ -51,13 +50,25 @@ $nonanswer-color: #FF1744;
   }
 }
 
+@mixin title-background($title-background) {
+  :global(.mapboxgl-popup-content) {
+    .popupTitle {
+      background-color: $title-background;
+    }
+  }
+}
+
+.mapPopupAnswer, .mapPopupNonAnswer {
+  @extend %popup
+}
+
 // Css for answer popups
 .mapPopupAnswer {
-  @include popup($answer-color)
+  @include title-background($answer-color)
 }
 
 // Css for non answer popups
 .mapPopupNonAnswer {
-  @include popup($nonanswer-color)
+  @include title-background($nonanswer-color)
 }
 

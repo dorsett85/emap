@@ -1,7 +1,7 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 
-import ajax from '../../assets/utils/ajaxRequests';
+import ajax from 'assets/utils/ajaxRequests';
 import styles from './Map.scss';
 
 
@@ -19,7 +19,7 @@ export default class Map extends React.Component {
     ajax.getMapToken(token => {
       mapboxgl.accessToken = token.map_token;
       this.map = new mapboxgl.Map({
-        container: 'map',
+        container: styles.map,
         style: 'mapbox://styles/mapbox/satellite-streets-v10',
         center: [0, 20],
         zoom: 1.75
@@ -110,17 +110,17 @@ export default class Map extends React.Component {
 
     // Create html content
     const html = `
-      <div class="popup-title">
+      <div class="${styles.popupTitle}">
         <span>${layer.name}</span>
       </div>
-      <div class="popup-content">
+      <div class="${styles.popupContent}">
         ${popupInfo.join('')}
       </div>
     `;
 
     // Return new popup
     return new mapboxgl.Popup({
-      offset: 25,
+      offset: 36,
       closeButton: false,
       className: options.answer ? styles.mapPopupAnswer : styles.mapPopupNonAnswer
     }).setHTML(html);
@@ -179,7 +179,7 @@ export default class Map extends React.Component {
   }
 
   render() {
-    return <div id={'map'} className={styles.mapContainer}></div>;
+    return <div id={styles.map} className={styles.mapContainer}></div>;
   }
 
 }
