@@ -23,7 +23,7 @@ def get_user(request):
         }
 
         # Check user's last played game
-        last_played = QH.get_last_played(request.user.id).fetchall_dict().results
+        last_played = QH.get_last_played(request.user.id).fetchall_dict()
 
         if last_played:
             response['last_played'] = last_played
@@ -57,7 +57,7 @@ def register_user(request):
     password = request.POST.get('password')
     qh = QH('SELECT * FROM auth_user WHERE username = %s', [username]).fetchall()
 
-    if qh.rows:
+    if qh:
         return JsonResponse({'invalid': 'Username already exists'})
 
     # Create, authenticate and login user
@@ -85,7 +85,7 @@ def get_games(request):
     else:
         games = QH.get_games(request.user.id).fetchall_array()
 
-    return JsonResponse({'games': games.results})
+    return JsonResponse({'games': games})
 
 
 def get_game_progress(request, game_id):
@@ -96,7 +96,7 @@ def get_game_progress(request, game_id):
         game_progress = QH.get_game_progress({
             'user_id': request.user.id,
             'game_id': game_id
-        }).fetchall_array().results
+        }).fetchall_array()
 
         if game_progress:
             return JsonResponse({'progress': game_progress})
@@ -140,8 +140,8 @@ def game_guess(request, game_id):
         }).fetchall_array()
 
         # Check if the guess is in the answers and if it's already been guessed
-        if user_guess.lower() in [row['answer'] for row in game_answers.results]:
-            for row in game_answers.results:
+        if user_guess.lower() in [row['answer'] for row in game_answers]:
+            for row in game_answers:
                 if row['answer_id'] is None and row['answer'] == user_guess.lower():
 
                     # Add answer to the database if it hasn't been guessed
@@ -167,9 +167,9 @@ def game_guess(request, game_id):
         WHERE lower(name) = %s
     ''', [user_guess.lower()]).fetchall_dict()
 
-    if qh.results:
+    if qh:
         guess_result.update({
-            'data': qh.results
+            'data': qh
         })
         return JsonResponse(guess_result)
     else:

@@ -10,22 +10,20 @@ class QueryHelper:
 
     def fetchall(self):
         self.rows = self.cursor.fetchall()
-        return self
+        return self.rows
 
     def fetchall_array(self):
-        self.fetchall()
-        if self.rows:
+        if self.fetchall():
             keys = [col[0] for col in self.cursor.description]
             self.results = [{key: val for key, val in zip(keys, row)} for row in self.rows]
-        return self
+        return self.results
 
     def fetchall_dict(self):
-        self.fetchall()
-        if self.rows:
+        if self.fetchall():
             keys = [col[0] for col in self.cursor.description]
             vals = [val for val in self.rows[0]]
             self.results = dict(zip(keys, vals))
-        return self
+        return self.results
 
     @classmethod
     def get_games(cls, user_id=None):
