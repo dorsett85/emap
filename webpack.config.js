@@ -80,7 +80,8 @@ module.exports = {
       chunkFilename: "[id].css"
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, 'frontend/src/index.html')
+      template: path.join(__dirname, 'frontend/src/index.html'),
+      favicon: path.join(__dirname, 'frontend/src/assets/img/favicon.ico')
     }),
     new webpack.HotModuleReplacementPlugin()
   ]
