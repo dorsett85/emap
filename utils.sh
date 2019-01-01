@@ -30,7 +30,7 @@ if [ $1 = 'setup' ]; then
         source pyenv/Scripts/activate
 
         # Run migrations -- Adds Django specific user and authentication tables
-        manage.py migrate
+        python manage.py migrate
 
         # Now that the django tables have been created we can create add our own tables and relations
         psql -U postgres -d emap -f api/database/base_setup/0002_create_game_table.sql
@@ -47,7 +47,7 @@ if [ $1 = 'setup' ]; then
         FROM 'api/database/data/worldcities100.csv' WITH DELIMITER ',' CSV HEADER"
 
         # Create super user
-        manage.py createsuperuser
+        python manage.py createsuperuser
 
         # Dump database to setup on production
         pg_dump -U postgres -Fc emap > api/database/dump/emap.dump
