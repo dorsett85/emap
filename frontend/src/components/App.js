@@ -21,10 +21,10 @@ export default class App extends React.Component {
     };
 
     // Bind methods
-    this.updateGuessResults = this.updateGuessResults.bind(this);
+    this.setUser = this.setUser.bind(this);
     this.setGame = this.setGame.bind(this);
     this.setGameProgress = this.setGameProgress.bind(this);
-    this.setUser = this.setUser.bind(this);
+    this.updateGuessResults = this.updateGuessResults.bind(this);
   }
 
   setUser(user) {
