@@ -130,51 +130,53 @@ def game_guess(request, game_id):
         'data': {}
     }
 
-    # If a user is logged in, process their guess
-    if request.user.is_authenticated:
-
-        # Get answers for the selected game
-        game_answers = QH.get_all_game_answers({
-            'user_id': user_id,
-            'game_id': game_id,
-            'game_name': game_name
-        }).fetchall_array()
-
-        # Check if the guess is in the answers and if it's already been guessed
-        if user_guess.lower() in [row['answer'] for row in game_answers]:
-            for row in game_answers:
-                if row['answer_id'] is None and row['answer'] == user_guess.lower():
-
-                    # Add answer to the database if it hasn't been guessed
-                    QH.add_user_game_answer({
-                        'user_id': user_id,
-                        'answer_id': row['id'],
-                        'game_id': game_id
-                    })
-                    guess_result.update({
-                        'msg': 'Nice guess',
-                        'new': True
-                    })
-                    break
-            else:
-                guess_result.update({
-                    'msg': f"You've already guessed {user_guess}",
-                })
-
-    # Query the database
+    # Check if there is any result in the database
     qh = QH('''
         SELECT id, name, lat, lon, country, population, 'marker' as map_type
         FROM api_city 
         WHERE lower(name) = %s
     ''', [user_guess.lower()]).fetchall_dict()
 
-    if qh:
-        guess_result.update({
-            'data': qh
-        })
-        return JsonResponse(guess_result)
-    else:
+    if not qh:
         guess_result.update({
             'msg': 'No matching search results',
         })
         return JsonResponse(guess_result)
+
+    # There is now data for the guess, process it and send back an appropriate message
+    guess_result.update({
+        'data': qh
+    })
+
+    # Get answers for the selected game to see if a guess matches
+    game_answers = QH.get_all_game_answers({
+        'user_id': user_id,
+        'game_id': game_id,
+        'game_name': game_name
+    }).fetchall_array()
+
+    # Check if the guess is in the answers and if it's already been guessed
+    if user_guess.lower() in [row['answer'] for row in game_answers]:
+        for row in game_answers:
+            if row['answer_id'] is None and row['answer'] == user_guess.lower():
+                # Add answer to the database if it hasn't been guessed
+                QH.add_user_game_answer({
+                    'user_id': user_id,
+                    'answer_id': row['id'],
+                    'game_id': game_id
+                })
+                guess_result.update({
+                    'msg': 'Nice guess',
+                    'new': True
+                })
+                break
+        else:
+            guess_result.update({
+                'msg': f"You've already guessed {user_guess}",
+            })
+    else:
+        guess_result.update({
+            'msg': f"{user_guess} is not in the top 10",
+        })
+
+    return JsonResponse(guess_result)
