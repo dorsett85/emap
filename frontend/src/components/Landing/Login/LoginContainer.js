@@ -20,7 +20,6 @@ export default class LoginContainer extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleInput = this.handleInput.bind(this);
     this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
-    this.handleLogoutClick = this.handleLogoutClick.bind(this);
   }
 
   handleShowLoginClick(e) {
@@ -64,28 +63,13 @@ export default class LoginContainer extends React.Component {
 
   }
 
-  handleLogoutClick(e) {
-    e.preventDefault();
-
-    ajax.logout({
-      success: data => {
-        // Backend has logged out the user, reset to null on the frontend
-        this.props.setUser(data);
-        this.props.setGame(data);
-        this.props.updateGuessResults({data: {}});
-      }
-    });
-  }
-
   render() {
     return (
       <Login
-        user={this.props.user}
         onShowLoginClick={this.handleShowLoginClick}
         onClose={this.handleClose}
         onInput={this.handleInput}
         onLoginSubmit={this.handleLoginSubmit}
-        onLogoutClick={this.handleLogoutClick}
         anchorEl={this.state.anchorEl}
         loginError={this.state.loginError}
         username={this.state.username}

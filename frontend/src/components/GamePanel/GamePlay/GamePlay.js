@@ -7,7 +7,10 @@ const styles = theme => ({
     fontFamily: 'Mali'
   },
   gameDiv: {
-    padding: 10
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 10,
+    width: '100%'
   }
 });
 
@@ -19,9 +22,6 @@ const GamePlay = props => {
 
   return (
     <div className={classes.gameDiv}>
-      <Typography variant={'h6'} align={'center'} classes={{ root: classes.maliFont }}>
-        {props.selectedGame.title}
-      </Typography>
       <Typography variant={'subheading'} align={'center'} classes={{ root: classes.maliFont }}>
         Progress: {gameProgress}
       </Typography>

@@ -1,11 +1,9 @@
 import React from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
+import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 import Popover from '@material-ui/core/Popover';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -13,11 +11,14 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import Collapse from '@material-ui/core/Collapse';
 import Chip from '@material-ui/core/Chip';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 
 const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali'
+  },
+  fab: {
+    margin: theme.spacing.unit * 2
   },
   registerPopover: {
     width: 350
@@ -45,39 +46,35 @@ const styles = theme => ({
 
 
 const Register = props => {
-  const { classes } = props;
+  const {classes} = props;
 
   return (
     <div>
-      <ListItem
-        button={true}
-        aria-owns='RegisterPopover'
-        aria-haspopup="true"
-        onClick={props.onShowRegisterClick}
-      >
-        <Avatar>
+      <Tooltip title="Register" aria-label="Register">
+        <Fab
+          className={classes.fab}
+          aria-owns='registerPopover'
+          aria-haspopup="true"
+          onClick={props.onShowRegisterClick}
+        >
           <PersonAddIcon/>
-        </Avatar>
-        <ListItemText
-          primary={'Register'}
-          classes={{ primary: classes.maliFont }}
-        />
-      </ListItem>
+        </Fab>
+      </Tooltip>
       <Popover
-        id="RegisterPopover"
+        id="registerPopover"
         open={Boolean(props.anchorEl)}
         anchorEl={props.anchorEl}
         onClose={props.onClose}
         anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'right',
+          vertical: 'bottom',
+          horizontal: 0,
         }}
         transformOrigin={{
-          vertical: 'center',
-          horizontal: 'left',
+          vertical: -5,
+          horizontal: 0
         }}
       >
-        <Card classes={{ root: classes.registerPopover }}>
+        <Card classes={{root: classes.registerPopover}}>
           <CardContent>
             <form onSubmit={props.onRegisterSubmit}>
               <TextField
@@ -105,7 +102,7 @@ const Register = props => {
                 onInput={props.onInput}
               />
               <Button type={'Register'} fullWidth variant={'contained'}
-                      classes={{ root: classes.button }}>
+                      classes={{root: classes.button}}>
                 Register
               </Button>
               {props.registerError && (
@@ -119,16 +116,15 @@ const Register = props => {
             >
               <div className={classes.registeredDiv}>
                 <Chip
-                icon={<CheckCircleIcon/>}
-                label={props.registeredMsg}
-                classes={{root: classes.registeredChipTxt, icon: classes.registeredChipIcon}}
-              />
+                  icon={<CheckCircleIcon/>}
+                  label={props.registeredMsg}
+                  classes={{root: classes.registeredChipTxt, icon: classes.registeredChipIcon}}
+                />
               </div>
             </Collapse>
           </CardContent>
         </Card>
       </Popover>
-      <Divider inset component={'li'}/>
     </div>
   );
 

@@ -21,12 +21,12 @@ export default class Map extends React.Component {
       this.map = new mapboxgl.Map({
         container: styles.map,
         style: 'mapbox://styles/mapbox/satellite-streets-v10',
-        center: [0, 20],
-        zoom: 1.75
+        center: [-30, 15],
+        zoom: 1.6
       });
 
       this.map.on('load', () => {
-        this.addGameProgress(this.state.layers)
+        this.addGameProgress(this.state.layers);
       });
 
     });

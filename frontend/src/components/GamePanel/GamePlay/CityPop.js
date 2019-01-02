@@ -47,7 +47,7 @@ const TableCellSm = withStyles({
 })(TableCell);
 
 
-const CitiesPop = props => {
+const CityPop = props => {
   const { classes } = props;
 
   // Construct the progress table
@@ -109,4 +109,4 @@ const CitiesPop = props => {
 
 };
 
-export default withStyles(styles)(CitiesPop);
+export default withStyles(styles)(CityPop);

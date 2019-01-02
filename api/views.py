@@ -16,24 +16,25 @@ def get_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
+    response = {
+        'set': True
+    }
+
     if request.user.is_authenticated:
-        response = {
+        response.update({
             'id': request.user.id,
             'name': request.user.username
-        }
+        })
 
         # Check user's last played game
         last_played = QH.get_last_played(request.user.id).fetchall_dict()
 
         if last_played:
-            response['last_played'] = last_played
-            return JsonResponse(response)
-        else:
-            return JsonResponse(response)
+            response.update({
+                'last_played': last_played
+            })
 
-    # No user logged in
-    else:
-        return JsonResponse({})
+    return JsonResponse(response)
 
 
 def login_user(request):
@@ -72,7 +73,7 @@ def logout_user(request):
         return HttpResponse('Must be an ajax request')
 
     logout(request)
-    return JsonResponse({})
+    return JsonResponse({'set': True})
 
 
 def get_games(request):

@@ -2,11 +2,16 @@ import React from "react";
 
 // Custom components
 import GamePanel from './GamePanel/GamePanel';
+import Landing from './Landing/Landing';
+import LoginContainer from "./Landing/Login/LoginContainer";
+import RegisterContainer from "./Landing/Register/RegisterContainer";
+import LogoutContainer from "./Landing/Logout/LogoutContainer";
 import Map from './Map/Map';
 
 import ajax from 'assets/utils/ajaxRequests';
 import 'assets/css/styles.scss';
 import 'assets/css/third_party.css';
+import GamePanelContainer from "./GamePanel/GamePanelContainer";
 
 
 export default class App extends React.Component {
@@ -73,15 +78,22 @@ export default class App extends React.Component {
   render() {
     return (
       <div>
-        <GamePanel
+        <GamePanelContainer
           user={this.state.user}
-          setUser={this.setUser}
           setGame={this.setGame}
           setGameProgress={this.setGameProgress}
           selectedGame={this.state.selectedGame}
           guessResults={this.state.guessResults}
           updateGuessResults={this.updateGuessResults}
         />
+        <Landing user={this.state.user}>
+          <LoginContainer />
+          <RegisterContainer />
+          <LogoutContainer
+            setUser={this.setUser}
+            setGame={this.setGame}
+          />
+        </Landing>
         <Map
           user={this.state.user}
           selectedGame={this.state.selectedGame}

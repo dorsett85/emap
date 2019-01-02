@@ -1,11 +1,9 @@
 import React from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import PersonIcon from '@material-ui/icons/Person';
+import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
+import PublicIcon from '@material-ui/icons/Public';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 import Popover from '@material-ui/core/Popover';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
@@ -16,10 +14,8 @@ const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali'
   },
-  userDiv: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+  fab: {
+    margin: theme.spacing.unit * 2
   },
   loginPopover: {
     width: 350
@@ -39,40 +35,28 @@ const Login = props => {
 
   return (
     <div>
-      <ListItem
-        button={!props.user.id}
-        aria-owns='loginPopover'
-        aria-haspopup="true"
-        onClick={e => !props.user.id ? props.onShowLoginClick(e) : null}
-      >
-        <Avatar>
-          <PersonIcon/>
-        </Avatar>
-        <ListItemText
-          primary={props.user.id
-            ? (
-              <div className={classes.userDiv}>
-                <span>{props.user.name}</span>
-                <Button variant={'outlined'} onClick={props.onLogoutClick}>Logout</Button>
-              </div>
-            )
-            : 'Login'}
-          secondary={props.user.id ? '' : 'Track your progress'}
-          classes={{primary: classes.maliFont}}
-        />
-      </ListItem>
+      <Tooltip title="Login" aria-label="Login">
+        <Fab
+          className={classes.fab}
+          aria-owns='loginPopover'
+          aria-haspopup="true"
+          onClick={props.onShowLoginClick}
+        >
+          <PublicIcon/>
+        </Fab>
+      </Tooltip>
       <Popover
         id="loginPopover"
         open={Boolean(props.anchorEl)}
         anchorEl={props.anchorEl}
         onClose={props.onClose}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: 'bottom',
+          horizontal: 0,
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+          vertical: -5,
+          horizontal: 0
         }}
       >
         <Card classes={{root: classes.loginPopover}}>
@@ -106,7 +90,6 @@ const Login = props => {
           </CardContent>
         </Card>
       </Popover>
-      <Divider inset component={'li'}/>
     </div>
   );
 

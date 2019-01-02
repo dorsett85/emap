@@ -1,26 +1,25 @@
 import React from 'react';
+import Slide from "@material-ui/core/Slide";
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CityIcon from "@material-ui/icons/LocationCity";
 import {withStyles} from '@material-ui/core/styles';
 
 // Custom components
-import LoginContainer from './Login/LoginContainer';
-import RegisterContainer from './Register/RegisterContainer';
-import GameSelectorContainer from "./GameSelector/GameSelectorContainer";
 import GamePlayContainer from './GamePlay/GamePlayContainer';
 
 const styles = theme => ({
   panelContainer: {
     position: 'absolute',
-    top: 10,
-    left: 10,
     width: 350,
-    maxHeight: '95vh',
+    height: '100vh',
     overflowY: 'auto',
     backgroundColor: 'white',
-    boxShadow: theme.shadows[10],
+    boxShadow: theme.shadows[15],
     zIndex: 10
   },
   paper: {
@@ -32,6 +31,16 @@ const styles = theme => ({
   },
   maliFont: {
     fontFamily: 'Mali'
+  },
+  gameExpansionPanelsDiv: {
+    paddingTop: 10
+  },
+  expandedGameTitle: {
+    fontWeight: 'bold'
+  },
+  expandedPanel: {
+    paddingLeft: 0,
+    paddingRight: 0
   }
 });
 
@@ -40,46 +49,55 @@ const GamePanel = props => {
   const {classes} = props;
 
   return (
-    <div className={classes.panelContainer}>
+    <Slide direction={'right'} in={Boolean(props.user.id)} mountOnEnter unmountOnExit>
+      <div className={classes.panelContainer}>
 
-      <Paper square classes={{root: classes.paper}}>
-        <Typography variant="h4" color="inherit" classes={{root: classes.maliFont}}>
-          World Geography
-        </Typography>
-        <Typography variant={'subtitle1'} color={'inherit'} classes={{root: classes.maliFont}}>
-          Test your knowledge
-        </Typography>
-      </Paper>
+        <Paper square classes={{root: classes.paper}}>
+          <Typography variant="h4" color="inherit" classes={{root: classes.maliFont}}>
+            World Geography
+          </Typography>
+          <Typography variant={'subtitle1'} color={'inherit'} classes={{root: classes.maliFont}}>
+            Test your knowledge
+          </Typography>
+        </Paper>
 
-      <List>
-        <LoginContainer
-          user={props.user}
-          setUser={props.setUser}
-          setGame={props.setGame}
-          updateGuessResults={props.updateGuessResults}
-        />
-        {!props.user.id && <RegisterContainer />}
-        <GameSelectorContainer
-          user={props.user}
-          setGame={props.setGame}
-          selectedGame={props.selectedGame}
-          updateGuessResults={props.updateGuessResults}
-        />
-      </List>
+        {/* TODO Add game search */}
 
-      <Divider/>
+        <div className={classes.gameExpansionPanelsDiv}>
+          {props.games.map(game => {
+            return (
+              <ExpansionPanel
+                key={game.id}
+                expanded={props.selectedGame.id === game.id}
+                onChange={props.handleGameClick(game.id)}
+              >
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
+                  <CityIcon/>&nbsp;&nbsp;
+                  <Typography
+                    className={props.selectedGame.id === game.id ? classes.expandedGameTitle : ''}
+                    variant={'subtitle1'}
+                  >
+                    {game.title}
+                  </Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails className={classes.expandedPanel}>
+                  {props.selectedGame.id === game.id && (
+                    <GamePlayContainer
+                      user={props.user}
+                      selectedGame={props.selectedGame}
+                      setGameProgress={props.setGameProgress}
+                      guessResults={props.guessResults}
+                      updateGuessResults={props.updateGuessResults}
+                    />
+                  )}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            )
+          })}
+        </div>
 
-      {props.selectedGame.id && (
-        <GamePlayContainer
-          user={props.user}
-          selectedGame={props.selectedGame}
-          setGameProgress={props.setGameProgress}
-          guessResults={props.guessResults}
-          updateGuessResults={props.updateGuessResults}
-        />
-      )}
-
-    </div>
+      </div>
+    </Slide>
   );
 
 };
