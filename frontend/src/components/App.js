@@ -1,7 +1,7 @@
 import React from "react";
 
 // Custom components
-import GamePanel from './GamePanel/GamePanel';
+import GamePanelContainer from "./GamePanel/GamePanelContainer";
 import Landing from './Landing/Landing';
 import LoginContainer from "./Landing/Login/LoginContainer";
 import RegisterContainer from "./Landing/Register/RegisterContainer";
@@ -11,7 +11,6 @@ import Map from './Map/Map';
 import ajax from 'assets/utils/ajaxRequests';
 import 'assets/css/styles.scss';
 import 'assets/css/third_party.css';
-import GamePanelContainer from "./GamePanel/GamePanelContainer";
 
 
 export default class App extends React.Component {

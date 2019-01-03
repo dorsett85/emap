@@ -145,10 +145,6 @@ export default class Map extends React.Component {
     if (Object.keys(this.props.guessResults.data).length) {
       if (prevProps.guessResults.data.id !== this.props.guessResults.data.id) {
 
-        // Remove old non answer layers
-        const nonAnswerLayers = this.state.layers.filter(layer => !layer.answer);
-        if (nonAnswerLayers.length) {nonAnswerLayers.forEach(layer => layer.remove());}
-
         // Get data from existing layer if it exists, and remove old non answer layers
         const layerData = this.props.guessResults.data;
         let currentLayer = this.state.layers.filter(v => v.id === layerData.id)[0];
@@ -160,6 +156,11 @@ export default class Map extends React.Component {
           const isAnswer = this.props.guessResults.hasOwnProperty('new');
           currentLayer = Map.newLayer(layerData, isAnswer).addTo(this.map);
 
+          // Update the layer state with the currentLayer
+          this.setState({
+            layers: [...this.state.layers, currentLayer]
+          })
+
         }
 
         // Open only the current layers popup and fly to it's location
@@ -167,12 +168,6 @@ export default class Map extends React.Component {
         this.map.flyTo({
           center: currentLayer.getLngLat()
         });
-
-        // Set the layer state so it only includes answers and the current layer
-        const answerLayers = this.state.layers.filter(layer => layer.answer);
-        this.setState({
-          layers: [...answerLayers, currentLayer]
-        })
 
       }
     }
