@@ -55,7 +55,7 @@ export default class App extends React.Component {
     })
   }
 
-  componentWillMount() {
+  componentDidMount() {
 
     // Get current logged in user information
     ajax.getUser(user => {
