@@ -14,7 +14,6 @@ export default class GamePlayContainer extends React.Component {
     this.state = {
       gameComponent: this.setGameComponent(),
       guessInput: '',
-      guessMessage: ''
     };
 
     // Bind methods
@@ -49,11 +48,7 @@ export default class GamePlayContainer extends React.Component {
       guess: this.state.guessInput,
       success: data => {
 
-        // Update the guess results and add a message for the guess
         this.props.updateGuessResults(data);
-        this.setState({
-          guessMessage: data.msg
-        });
 
         // Update the progress if there's a new correct guess
         if (data.new) {
@@ -68,18 +63,6 @@ export default class GamePlayContainer extends React.Component {
 
   }
 
-  componentDidUpdate(prevProps, prevState) {
-
-    // Remove the guess message on user change and game change
-    if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
-      this.setState({
-        guessMessage: '',
-        guessInput: ''
-      });
-    }
-
-  }
-
   render() {
     const Game = this.state.gameComponent;
     return (
@@ -91,7 +74,6 @@ export default class GamePlayContainer extends React.Component {
           onSubmit={this.handleSubmit}
           selectedGame={this.props.selectedGame}
           guessResults={this.props.guessResults}
-          guessMessage={this.state.guessMessage}
         />
       </GamePlay>
 

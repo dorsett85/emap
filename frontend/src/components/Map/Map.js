@@ -134,7 +134,7 @@ export default class Map extends React.Component {
     if (!layer._popup.isOpen()) {layer.togglePopup();}
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState, snapshot) {
 
     // Reset layers on user change or game change
     if (prevProps.selectedGame.id !== this.props.selectedGame.id) {

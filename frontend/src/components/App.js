@@ -7,6 +7,7 @@ import LoginContainer from "./Landing/Login/LoginContainer";
 import RegisterContainer from "./Landing/Register/RegisterContainer";
 import LogoutContainer from "./Landing/Logout/LogoutContainer";
 import Map from './Map/Map';
+import SnackbarContainer from './Snackbar/SnackbarContainer';
 
 import ajax from 'assets/utils/ajaxRequests';
 import 'assets/css/styles.scss';
@@ -96,6 +97,10 @@ export default class App extends React.Component {
         <Map
           user={this.state.user}
           selectedGame={this.state.selectedGame}
+          guessResults={this.state.guessResults}
+        />
+        <SnackbarContainer
+          user={this.state.user}
           guessResults={this.state.guessResults}
         />
       </div>

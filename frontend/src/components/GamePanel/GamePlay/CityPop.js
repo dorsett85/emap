@@ -98,11 +98,6 @@ const CityPop = props => {
           </Button>
         </FormGroup>
       </form>
-      {props.guessMessage && (
-        <Typography variant={'subheading'}>
-          {props.guessMessage}
-        </Typography>
-      )}
       {table}
     </div>
   );
