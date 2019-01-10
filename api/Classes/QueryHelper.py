@@ -62,8 +62,14 @@ class QueryHelper:
             UPDATE api_user_game SET last_played = false
             WHERE user_id = %(user_id)s;
             
-            UPDATE api_user_game SET last_played = true
-            WHERE user_id = %(user_id)s and game_id = %(game_id)s;
+            -- Set the game if it's not null
+            DO $$
+            BEGIN
+            IF %(game_id)s != 0 THEN
+                UPDATE api_user_game SET last_played = true
+                WHERE user_id = %(user_id)s and game_id = %(game_id)s;
+            END IF;
+            END $$;
         ''', query_input)
 
     @classmethod

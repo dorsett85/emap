@@ -139,7 +139,7 @@ def game_guess(request, game_id):
 
     if not qh:
         guess_result.update({
-            'msg': 'No matching search results',
+            'msg': f'{user_guess} not found or not in the top 100',
         })
         return JsonResponse(guess_result)
 

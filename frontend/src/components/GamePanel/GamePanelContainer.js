@@ -44,7 +44,10 @@ export default class GamePanelContainer extends React.Component {
 
     } else {
       // This is a click on the same game that collapses the panel, so de-select the game
-      this.props.setGame({data: {}})
+      this.props.setGame({data: {}});
+      ajax.setLastGame({
+        gameId: 0
+      });
     }
 
   };

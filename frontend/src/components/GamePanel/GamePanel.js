@@ -16,7 +16,7 @@ const styles = theme => ({
   panelContainer: {
     position: 'absolute',
     width: 350,
-    height: '100vh',
+    maxHeight: '100vh',
     overflowY: 'auto',
     backgroundColor: 'white',
     boxShadow: theme.shadows[15],
@@ -33,7 +33,8 @@ const styles = theme => ({
     fontFamily: 'Mali'
   },
   gameExpansionPanelsDiv: {
-    paddingTop: 10
+    paddingTop: 10,
+    paddingBottom: 10
   },
   expandedGameTitle: {
     fontWeight: 'bold'
