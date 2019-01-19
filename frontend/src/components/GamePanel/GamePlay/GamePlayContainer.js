@@ -14,6 +14,7 @@ export default class GamePlayContainer extends React.Component {
     this.state = {
       gameComponent: this.setGameComponent(),
       guessInput: '',
+      showProgress: null
     };
 
     // Bind methods
@@ -49,6 +50,10 @@ export default class GamePlayContainer extends React.Component {
       success: data => {
 
         this.props.updateGuessResults(data);
+        this.setState(
+          {showProgress: false},
+          () => this.setState({showProgress: true}) // Reset showProgress so the grow animation fires
+        );
 
         // Update the progress if there's a new correct guess
         if (data.new) {
@@ -63,11 +68,24 @@ export default class GamePlayContainer extends React.Component {
 
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+
+    // Reset showProgress on game change
+    if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
+      this.setState({
+        showProgress: null
+      })
+    }
+
+  }
+
   render() {
     const Game = this.state.gameComponent;
     return (
       <GamePlay
         selectedGame={this.props.selectedGame}
+        showProgress={this.state.showProgress}
+        guessResults={this.props.guessResults}
       >
         <Game
           onInput={this.handleInput}

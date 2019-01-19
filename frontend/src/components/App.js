@@ -40,8 +40,11 @@ export default class App extends React.Component {
 
   setGame(game) {
     this.setState({
-      selectedGame: game
-    });
+      selectedGame: {
+        ...game,
+        showModal: Boolean(!game.id)
+      },
+    })
   }
 
   setGameProgress(data) {
@@ -70,6 +73,8 @@ export default class App extends React.Component {
             this.setGame({...user.last_played, ...data});
           }
         })
+      } else {
+        this.setGame({data: {}});
       }
     });
 

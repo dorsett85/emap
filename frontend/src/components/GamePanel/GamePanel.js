@@ -2,10 +2,10 @@ import React from 'react';
 import Slide from "@material-ui/core/Slide";
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Grid from '@material-ui/core/Grid';
+import {Dialog, DialogTitle, DialogContent} from "@material-ui/core";
+import {List, ListItem} from "@material-ui/core";
+import {FormControl, InputLabel, Select, MenuItem} from '@material-ui/core';
 import CityIcon from "@material-ui/icons/LocationCity";
 import {withStyles} from '@material-ui/core/styles';
 
@@ -13,14 +13,16 @@ import {withStyles} from '@material-ui/core/styles';
 import GamePlayContainer from './GamePlay/GamePlayContainer';
 
 const styles = theme => ({
-  panelContainer: {
+  container: {
     position: 'absolute',
+    zIndex: 10
+  },
+  gamePanelContainer: {
     width: 350,
     maxHeight: '100vh',
     overflowY: 'auto',
     backgroundColor: 'white',
-    boxShadow: theme.shadows[15],
-    zIndex: 10
+    boxShadow: theme.shadows[15]
   },
   paper: {
     color: theme.palette.common.white,
@@ -32,9 +34,14 @@ const styles = theme => ({
   maliFont: {
     fontFamily: 'Mali'
   },
-  gameExpansionPanelsDiv: {
-    paddingTop: 10,
-    paddingBottom: 10
+  gamePanelGrid: {
+    margin: theme.spacing.unit * 2
+  },
+  selectInputItem: {
+    display: 'flex'
+  },
+  selectInputItemText: {
+    paddingLeft: theme.spacing.unit
   },
   expandedGameTitle: {
     fontWeight: 'bold'
@@ -45,60 +52,94 @@ const styles = theme => ({
   }
 });
 
+function Transition(props) {
+  return <Slide direction="down" {...props} />;
+}
 
 const GamePanel = props => {
   const {classes} = props;
+  const showGamePanel = Boolean(props.user.id && !props.selectedGame.showModal);
+  const showGameSelectModal = Boolean(props.user.id && props.selectedGame.showModal);
 
   return (
-    <Slide direction={'right'} in={Boolean(props.user.id)} mountOnEnter unmountOnExit>
-      <div className={classes.panelContainer}>
+    <div className={classes.container}>
+      <Slide direction={'right'} in={showGamePanel} mountOnEnter unmountOnExit>
+        <div className={classes.gamePanelContainer}>
 
-        <Paper square classes={{root: classes.paper}}>
-          <Typography variant="h4" color="inherit" classes={{root: classes.maliFont}}>
-            World Geography
-          </Typography>
-          <Typography variant={'subtitle1'} color={'inherit'} classes={{root: classes.maliFont}}>
-            Test your knowledge
-          </Typography>
-        </Paper>
+          <Paper square classes={{root: classes.paper}}>
+            <Typography variant="h4" color="inherit" classes={{root: classes.maliFont}}>
+              World Geography
+            </Typography>
+            <Typography variant={'subtitle1'} color={'inherit'} classes={{root: classes.maliFont}}>
+              Test your knowledge
+            </Typography>
+          </Paper>
 
-        {/* TODO Add game search */}
+          {/* TODO Add game search */}
 
-        <div className={classes.gameExpansionPanelsDiv}>
-          {props.games.map(game => {
-            return (
-              <ExpansionPanel
-                key={game.id}
-                expanded={props.selectedGame.id === game.id}
-                onChange={props.handleGameClick(game.id)}
-              >
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon/>}>
-                  <CityIcon/>&nbsp;&nbsp;
-                  <Typography
-                    className={props.selectedGame.id === game.id ? classes.expandedGameTitle : ''}
-                    variant={'subtitle1'}
-                  >
-                    {game.title}
-                  </Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails className={classes.expandedPanel}>
-                  {props.selectedGame.id === game.id && (
-                    <GamePlayContainer
-                      user={props.user}
-                      selectedGame={props.selectedGame}
-                      setGameProgress={props.setGameProgress}
-                      guessResults={props.guessResults}
-                      updateGuessResults={props.updateGuessResults}
-                    />
-                  )}
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            )
-          })}
+          <Grid container>
+            <Grid item xs={12} className={classes.gamePanelGrid}>
+              <FormControl fullWidth>
+                <InputLabel htmlFor="select-game">Select Game</InputLabel>
+                <Select
+                  value={props.selectedGame.id || ''}
+                  onChange={props.handleGameSelect}
+                  inputProps={{
+                    name: 'selectGame',
+                    id: 'select-game',
+                  }}
+                >
+                  {props.games.map(game => (
+                    <MenuItem key={game.id} value={game.id}>
+                      <div className={classes.selectInputItem}>
+                        <CityIcon/>
+                        <Typography variant={"subtitle1"} className={classes.selectInputItemText}>
+                          {game.title}
+                        </Typography>
+                      </div>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {props.selectedGame.id && (
+                <GamePlayContainer
+                  user={props.user}
+                  selectedGame={props.selectedGame}
+                  setGameProgress={props.setGameProgress}
+                  guessResults={props.guessResults}
+                  updateGuessResults={props.updateGuessResults}
+                />
+              )}
+            </Grid>
+          </Grid>
         </div>
+      </Slide>
 
-      </div>
-    </Slide>
+      <Dialog
+        open={showGameSelectModal}
+        TransitionComponent={Transition}
+      >
+        <DialogTitle>
+          Select a game to get started
+        </DialogTitle>
+        <DialogContent>
+          <List component={'nav'}>
+            {props.games.map(game => (
+              <ListItem
+                key={game.id}
+                button
+                onClick={() => props.handleGameSelect(game.id)}
+              >
+                <CityIcon/>
+                <Typography variant={"subtitle1"} className={classes.selectInputItemText}>
+                  {game.title}
+                </Typography>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 
 };

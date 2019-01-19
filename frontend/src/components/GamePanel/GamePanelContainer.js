@@ -13,17 +13,18 @@ export default class GamePanelContainer extends React.Component {
     };
 
     // Bind methods
-    this.handleGameClick = this.handleGameClick.bind(this);
+    this.handleGameSelect = this.handleGameSelect.bind(this);
   }
 
-  handleGameClick = gameId => () => {
+  handleGameSelect(e) {
 
-    // Filter the game array by the clicked on panel and remove old guess results
+    // Get game id depending on where click came from
+    const gameId = e.target ? e.target.value : e;
     const selectedGame = this.state.games.filter(v => v.id === gameId)[0];
     this.props.updateGuessResults({data: {}});
 
-    // Check if the clicked on game is different
-    if (gameId !== this.props.selectedGame.id) {
+    // Check if a game is selected or "None"
+    if (gameId) {
 
       // Set the clicked on game with its progress
       ajax.getGameProgress({
@@ -43,14 +44,14 @@ export default class GamePanelContainer extends React.Component {
       });
 
     } else {
-      // This is a click on the same game that collapses the panel, so de-select the game
+      // This is a selection of "None", so unset the game
       this.props.setGame({data: {}});
       ajax.setLastGame({
         gameId: 0
       });
     }
 
-  };
+  }
 
   componentDidMount() {
     ajax.getGames({
@@ -68,7 +69,7 @@ export default class GamePanelContainer extends React.Component {
         user={this.props.user}
         games={this.state.games}
         expanded={this.state.expanded}
-        handleGameClick={this.handleGameClick}
+        handleGameSelect={this.handleGameSelect}
         setGame={this.props.setGame}
         setGameProgress={this.props.setGameProgress}
         selectedGame={this.props.selectedGame}

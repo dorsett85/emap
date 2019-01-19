@@ -3,6 +3,10 @@ import FormGroup from '@material-ui/core/FormGroup';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -17,6 +21,9 @@ const styles = theme => ({
   gameForm: {
     paddingTop: 15,
     paddingBottom: 10
+  },
+  textInput: {
+    height: 8
   },
   table: {
     marginTop: 10
@@ -86,7 +93,8 @@ const CityPop = props => {
             variant={'outlined'}
             label={'Search for a BIG city'}
             onInput={props.onInput}
-            placeholder={'Type a city'}
+            placeholder={'e.g., Tokyo'}
+            InputProps={{classes: {input: classes.textInput}}}
             InputLabelProps={{
               shrink: true,
             }}
