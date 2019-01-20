@@ -1,5 +1,0 @@
-name_id,title,description,num_answers,difficulty
-cityPopTop10, Cities - Top 10 Population,Guess the top ten biggest cities in the world,10,easy
-cityAreaTop10, Cities - Top 10 Area,Guess the top ten biggest cities by area in the world,10,hard
-cityEduTop10, Cities - Top 10 Education,Guess the top ten most educated cities in the world,10,medium
-cityIncTop10, Cities - Top 10 Income,Guess the top ten richest cities in the world,10,medium

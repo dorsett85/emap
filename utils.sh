@@ -5,7 +5,7 @@
 #
 # 1. Apply settings and setup the postgresql database in development or production
 #   - Run 'utils.sh setup -d' or 'sh utils.sh setup -p'
-#   - * Running 'sh utils.sh -p' will create the database using a db dump file
+#   - * Running 'sh utils.sh setup -p' will create the database using a db dump file
 # 2. Add database migrations
 #   - Run 'utils.sh migrate -d' or 'sh utils.sh migrate -p'
 # 3. Drop the database and start from scratch
@@ -41,10 +41,10 @@ if [ $1 = 'setup' ]; then
 
         # load in data
         psql -U postgres -d emap -c "\copy api_game(name, title, description, num_answers, difficulty) \
-        FROM 'api/database/data/games.csv' WITH DELIMITER ',' CSV HEADER"
+        FROM 'api/data/games.csv' WITH DELIMITER ',' CSV HEADER"
 
         psql -U postgres -d emap -c "\copy api_city(name, lat, lon, country, population) \
-        FROM 'api/database/data/worldcities100.csv' WITH DELIMITER ',' CSV HEADER"
+        FROM 'api/data/worldcities100.csv' WITH DELIMITER ',' CSV HEADER"
 
         # Create super user
         python manage.py createsuperuser
@@ -110,6 +110,8 @@ elif [ $1 = 'updatesettings' ]; then
 ##### Messages if no arguments match
 elif [ -z ${1+x} ]; then
     echo 'You must specifiy a utility to run'
+    read
 else
     echo "First argument didn't match any utilities"
+    read
 fi
