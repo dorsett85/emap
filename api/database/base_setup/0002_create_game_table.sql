@@ -2,7 +2,7 @@
 -- Created by Clayton on 11/2/2018
 
 CREATE TABLE api_game (
-  ID serial primary key,
+  id serial primary key,
   name varchar not null UNIQUE,
   title varchar not null,
   description varchar not null,

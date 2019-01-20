@@ -2,7 +2,7 @@
 -- Created by Clayton on 11/17/2018
 
 CREATE TABLE api_city (
-  ID serial primary key,
+  id serial primary key,
   name varchar not null,
   lat float not null,
   lon float not null,

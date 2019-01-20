@@ -2,7 +2,7 @@
 -- Created by Clayton on 11/17/2018
 
 CREATE TABLE api_user_game (
-  ID SERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   user_id INT REFERENCES auth_user(id),
   game_id INT REFERENCES api_game(id),
   last_played BOOLEAN DEFAULT FALSE
