@@ -17,6 +17,9 @@ GRANT ALL PRIVILEGES ON TABLE api_country_id_seq TO clayton;
 -- Values copied from create_individual_country_geojson.py console output
 INSERT INTO api_country (name, iso_a3, lat, lon, population, area)
 VALUES
+  ('The Bahamas', 'BHS', 24.29036702, -76.62843038, 303770, 13940),
+  ('Bosnia and Herzegovina', 'BIH', 44.17450125, 17.76876733, 4498976, 51129),
+  ('Belarus', 'BLR', 53.53131377, 28.03209307, 10293011, 207600),
   ('Aruba', 'ABW', 12.52088038, -69.98267711, 71891, 193),
   ('Afghanistan', 'AFG', 33.83523073, 66.00473366, 31056997, 647500),
   ('Angola', 'AGO', -12.29336054, 17.53736768, 12127071, 1246700),
@@ -38,9 +41,6 @@ VALUES
   ('Bangladesh', 'BGD', 23.86731158, 90.23812743, 147365352, 144000),
   ('Bulgaria', 'BGR', 42.76890318, 25.21552909, 7385367, 110910),
   ('Bahrain', 'BHR', 26.04205135, 50.54196932, 698585, 665),
-  ('The Bahamas', 'BHS', 24.29036702, -76.62843038, 303770, 13940),
-  ('Bosnia and Herzegovina', 'BIH', 44.17450125, 17.76876733, 4498976, 51129),
-  ('Belarus', 'BLR', 53.53131377, 28.03209307, 10293011, 207600),
   ('Belize', 'BLZ', 17.20027509, -88.71010486, 287730, 22966),
   ('Bermuda', 'BMU', 32.31367802, -64.7545589, 65773, 53),
   ('Bolivia', 'BOL', -16.70814787, -64.68538645, 8989046, 1098580),

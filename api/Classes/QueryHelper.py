@@ -31,6 +31,7 @@ class QueryHelper:
             return cls('''
                 SELECT id, name, title, description, num_answers, difficulty 
                 FROM api_game
+                ORDER BY title
             ''')
         else:
             return cls('''
@@ -42,6 +43,7 @@ class QueryHelper:
                         INNER JOIN auth_user au on aug.user_id = au.id
                     WHERE au.id = '%s'
                 )
+                ORDER BY title
             ''', [user_id])
 
     @classmethod

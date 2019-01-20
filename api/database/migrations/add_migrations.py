@@ -12,7 +12,7 @@ This script will add any new migrations to the default app database connection
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'emap.settings')
 
 # Get the migration list
-qh = QH('SELECT file FROM api_migration').fetchall_array()
+qh = QH('SELECT file, migrated FROM api_migration').fetchall_array()
 
 # Get all of the migration files
 path = os.path.abspath(f'{os.getcwd()}/api/database/migrations')
@@ -20,13 +20,19 @@ files = [os.path.join(path, file) for file in os.listdir(path) if file.endswith(
 
 
 # Function to add migration to table
-def add_migration(file_path):
+def add_migration(file_path, new):
     file_name = os.path.basename(file_path)
     QH(open(file).read())
-    QH('''
-        INSERT INTO api_migration (file, migrated)
-        VALUES (%s, TRUE)
-    ''', [file_name])
+    if new:
+        QH('''
+            INSERT INTO api_migration (file, migrated)
+            VALUES (%s, TRUE)
+        ''', [file_name])
+    else:
+        QH('''
+            UPDATE api_migration set migrated = true
+            WHERE file = %s
+        ''', [file_name])
     print(f'{file_name} successfully migrated')
 
 
@@ -35,11 +41,13 @@ new_migrations = False
 print('')
 for file in files:
     if qh:
-        if os.path.basename(file) not in [row['file'] for row in qh]:
-            add_migration(file)
+        not_migrated = [row['file'] for row in qh if row['file'] == os.path.basename(file) and not row['migrated']]
+        not_in_table = os.path.basename(file) not in [row['file'] for row in qh]
+        if not_migrated or not_in_table:
+            add_migration(file, not_in_table)
             new_migrations = True
     else:
-        add_migration(file)
+        add_migration(file, True)
         new_migrations = True
 
 if not new_migrations:

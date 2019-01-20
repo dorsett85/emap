@@ -13,7 +13,7 @@ GRANT ALL PRIVILEGES ON TABLE api_user_game_id_seq TO clayton;
 
 -- Add rows when a new user is created that matches all of the games
 CREATE OR REPLACE FUNCTION add_user_games()
-  RETURNS TRIGGER AS
+RETURNS TRIGGER AS
 $BODY$
 DECLARE
   game INT;
