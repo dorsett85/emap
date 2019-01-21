@@ -23,33 +23,22 @@ export default class GamePanelContainer extends React.Component {
     const selectedGame = this.state.games.filter(v => v.id === gameId)[0];
     this.props.updateGuessResults({data: {}});
 
-    // Check if a game is selected or "None"
-    if (gameId) {
+    // Set the clicked on game with its progress
+    ajax.getGameProgress({
+      gameId: gameId,
+      success: data => {
+        this.props.setGame({
+          ...selectedGame,
+          ...data
+        });
 
-      // Set the clicked on game with its progress
-      ajax.getGameProgress({
-        gameId: gameId,
-        success: data => {
-          this.props.setGame({
-            ...selectedGame,
-            ...data
-          });
+        // Set as last selected game for this user
+        ajax.setLastGame({
+          gameId: gameId
+        });
 
-          // Set as last selected game for this user
-          ajax.setLastGame({
-            gameId: gameId
-          });
-
-        }
-      });
-
-    } else {
-      // This is a selection of "None", so unset the game
-      this.props.setGame({data: {}});
-      ajax.setLastGame({
-        gameId: 0
-      });
-    }
+      }
+    });
 
   }
 

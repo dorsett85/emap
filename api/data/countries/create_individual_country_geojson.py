@@ -21,7 +21,6 @@ with open('api/data/countries/country_data.csv') as miscellaneous_f:
 # Loop over individual features (e.g., country data) and process with additional datasets
 country_table_values = []
 for feature in geojson_data['features']:
-    geojson = f'api/data/countries/{feature["properties"]["ADMIN"]}.geojson'
     for centroid_row in centroid_data:
         if feature['properties']['ISO_A3'] == centroid_row['ISO_A3']:
             for misc_row in misc_data:
@@ -34,6 +33,7 @@ for feature in geojson_data['features']:
                     country_table_values.append(sql_text)
 
                     # Save the json file if it doesn't exist
+                    geojson = f"api/data/countries/{centroid_row['Country']}.geojson"
                     if not os.path.isfile(geojson):
                         with open(geojson, 'w') as fp:
                             json.dump(feature, fp)

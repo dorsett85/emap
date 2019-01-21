@@ -83,10 +83,22 @@ export default class Map extends React.Component {
         .setLngLat([layer.lon, layer.lat])
         .setPopup(Map.popupInfo(layer, popupOptions));
 
-    } else {
+    } else if (layer.map_type === 'geojson_polygon') {
 
       //TODO add other map type layers
+            // Set up marker and popup options
+      const markerOptions = {
+        color: answer ? styles.answerColor : styles.nonAnswerColor
+      };
+      const popupOptions = {
+        answer: answer,
+        info: ['population', 'area', 'rank']
+      };
 
+      // Create layer
+      newLayer = new mapboxgl.Marker(markerOptions)
+        .setLngLat([layer.lon, layer.lat])
+        .setPopup(Map.popupInfo(layer, popupOptions));
     }
 
     // Add an id, map type, and answer property for later reference
@@ -155,6 +167,22 @@ export default class Map extends React.Component {
           // Check if the new guess is an answer to differentiate color
           const isAnswer = this.props.guessResults.hasOwnProperty('new');
           currentLayer = Map.newLayer(layerData, isAnswer).addTo(this.map);
+          // if (layerData.geojson) {
+          //   console.log(layerData);
+          //   this.map.addLayer({
+          //     id: String(layerData.id),
+          //     type: 'fill',
+          //     source: {
+          //       type: 'geojson',
+          //       data: layerData.geojson
+          //     },
+          //     layout: {},
+          //     paint: {
+          //       'fill-color': '#088',
+          //       'fill-opacity': 0.8
+          //     }
+          //   })
+          // }
 
           // Update the layer state with the currentLayer
           this.setState({

@@ -3,6 +3,7 @@ import React from 'react';
 // Custom components
 import GamePlay from './GamePlay';
 import CitiesPop from './CityPop';
+import CountryPop from './CountryPop';
 import GamePlayTemp from './GamePlayTemp';
 
 import ajax from 'assets/utils/ajaxRequests';
@@ -28,6 +29,8 @@ export default class GamePlayContainer extends React.Component {
       switch (this.props.selectedGame.name) {
         case 'cityPopTop10':
           return <CitiesPop {...props} />;
+        case 'countryAreaTop10':
+          return <CountryPop {...props}/>;
         default:
           return <GamePlayTemp {...props} />;
       }
@@ -45,7 +48,6 @@ export default class GamePlayContainer extends React.Component {
 
     ajax.submitGuess({
       gameId: this.props.selectedGame.id,
-      gameName: this.props.selectedGame.name,
       guess: this.state.guessInput,
       success: data => {
 

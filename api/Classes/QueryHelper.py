@@ -26,6 +26,11 @@ class QueryHelper:
         return self.results
 
     @classmethod
+    def get_game_name(cls, game_id):
+        query = cls('SELECT name FROM api_game WHERE id = %s', [game_id])
+        return query.fetchall_dict()['name']
+
+    @classmethod
     def get_games(cls, user_id=None):
         if user_id is None:
             return cls('''
@@ -64,18 +69,75 @@ class QueryHelper:
             UPDATE api_user_game SET last_played = false
             WHERE user_id = %(user_id)s;
             
-            -- Set the game if it's not null
-            DO $$
-            BEGIN
-            IF %(game_id)s != 0 THEN
-                UPDATE api_user_game SET last_played = true
-                WHERE user_id = %(user_id)s and game_id = %(game_id)s;
-            END IF;
-            END $$;
+            UPDATE api_user_game SET last_played = true
+            WHERE user_id = %(user_id)s and game_id = %(game_id)s;
         ''', query_input)
 
     @classmethod
-    def get_all_game_answers(cls, query_input):
+    def get_game_progress(cls, query_input):
+        if query_input['game_name'] == 'cityPopTop10':
+            return cls('''
+                SELECT ac.id, ac.name, ac.lat, ac.lon, ac.country, ac.population, 'marker' AS map_type, ac.rank
+                FROM (
+                    SELECT id, name, lat, lon, country, population, 
+                           rank() OVER (ORDER BY population DESC) AS rank
+                    FROM api_city
+                ) as ac
+                    INNER JOIN (
+                        SELECT answer_id
+                        FROM api_user_game_answer as auga
+                        WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
+                    ) AS auga2
+                    ON ac.id = auga2.answer_id
+            ''', query_input)
+        elif query_input['game_name'] == 'countryAreaTop10':
+            return cls('''
+                SELECT ac.id, ac.name, ac.lat, ac.lon, ac.population, ac.area, 'geojson_polygon' AS map_type, ac.rank
+                FROM (
+                    SELECT id, name, lat, lon, population, area,
+                           rank() OVER (ORDER BY area DESC) AS rank
+                    FROM api_country
+                ) as ac
+                    INNER JOIN (
+                        SELECT answer_id
+                        FROM api_user_game_answer as auga
+                        WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
+                    ) AS auga2
+                    ON ac.id = auga2.answer_id
+            ''', query_input)
+        else:
+            # TODO placeholder, add queries for other games
+            return cls('''
+                SELECT answer_id
+                FROM api_user_game_answer
+                WHERE game_id = %(game_id)s AND user_id = %(user_id)s
+            ''', query_input)
+
+    @classmethod
+    def get_game_guess(cls, query_input):
+        if query_input['game_name'] == 'cityPopTop10':
+            return cls('''
+                SELECT id, name, lat, lon, country, population, 'marker' as map_type, rank
+                FROM (
+                    SELECT id, name, lat, lon, country, population, 
+                           rank() OVER (ORDER BY population DESC) AS rank
+                    FROM api_city
+                ) as ac
+                WHERE lower(name) = %(user_guess)s
+            ''', query_input)
+        elif query_input['game_name'] == 'countryAreaTop10':
+            return cls('''
+                SELECT id, name, lat, lon, population, area, 'geojson_polygon' as map_type, rank
+                FROM (
+                    SELECT id, name, lat, lon, population, area, 
+                           rank() OVER (ORDER BY area DESC) AS rank
+                    FROM api_country
+                ) as ac
+                WHERE lower(name) = %(user_guess)s
+            ''', query_input)
+
+    @classmethod
+    def get_game_answers(cls, query_input):
         if query_input['game_name'] == "cityPopTop10":
             return cls('''
                 SELECT ac.id, lower(ac.name) AS answer, auga2.answer_id -- Make sure to rename the column as answer!!
@@ -89,6 +151,19 @@ class QueryHelper:
                 ORDER BY ac.population DESC
                 LIMIT 10            
             ''', query_input)
+        elif query_input['game_name'] == 'countryAreaTop10':
+            return cls('''
+                SELECT ac.id, lower(ac.name) AS answer, auga2.answer_id -- Make sure to rename the column as answer!!
+                FROM api_country AS ac
+                    LEFT JOIN (
+                        SELECT answer_id
+                        FROM api_user_game_answer AS auga
+                        WHERE auga.user_id = %(user_id)s AND auga.game_id = %(game_id)s
+                    ) AS auga2
+                    ON ac.id = auga2.answer_id
+                ORDER BY ac.area DESC
+                LIMIT 10  
+            ''', query_input)
         else:
             return None
 
@@ -97,21 +172,4 @@ class QueryHelper:
         return cls('''
             INSERT INTO api_user_game_answer(user_id, answer_id, game_id)
             VALUES (%(user_id)s, %(answer_id)s, %(game_id)s)
-        ''', query_input)
-
-    @classmethod
-    def get_game_progress(cls, query_input):
-        return cls('''
-            SELECT ac.id, ac.name, ac.lat, ac.lon, ac.country, ac.population, 'marker' AS map_type, ac.rank
-            FROM (
-                SELECT id, name, lat, lon, country, population, 
-                       rank() OVER (ORDER BY population DESC) AS rank
-                FROM api_city
-            ) as ac
-                INNER JOIN (
-                    SELECT answer_id
-                    FROM api_user_game_answer as auga
-                    WHERE auga.game_id = %(game_id)s AND auga.user_id = %(user_id)s
-                ) AS auga2
-                ON ac.id = auga2.answer_id
         ''', query_input)

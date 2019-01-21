@@ -2,6 +2,9 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from json import load as jload
+
+import os
 
 from .Classes.QueryHelper import QueryHelper as QH
 
@@ -80,11 +83,7 @@ def get_games(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    # Check which games to return based on user
-    if not request.user.is_authenticated:
-        games = QH.get_games().fetchall_array()
-    else:
-        games = QH.get_games(request.user.id).fetchall_array()
+    games = QH.get_games(request.user.id).fetchall_array()
 
     return JsonResponse({'games': games})
 
@@ -93,26 +92,34 @@ def get_game_progress(request, game_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    if request.user.is_authenticated:
-        game_progress = QH.get_game_progress({
-            'user_id': request.user.id,
-            'game_id': game_id
-        }).fetchall_array()
+    game_name = QH.get_game_name(game_id)
 
-        if game_progress:
-            return JsonResponse({'progress': game_progress})
+    game_progress = QH.get_game_progress({
+        'user_id': request.user.id,
+        'game_id': game_id,
+        'game_name': game_name
+    }).fetchall_array()
 
-    # At this point the user is not logged in or has no game progress
-    return JsonResponse({'progress': []})
+    if not game_progress:
+        return JsonResponse({'progress': []})
+
+    # Check the game type to see if we need to add additional data to the response
+    if game_name == 'countryAreaTop10':
+        for item in game_progress:
+            path = f"{os.path.dirname(__file__)}/data/countries/{item['name']}.geojson"
+            with open(path) as f:
+                item.update({
+                    'geojson': jload(f)
+                })
+
+    return JsonResponse({'progress': game_progress if game_progress else []})
 
 
 def set_last_played(request, game_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    # If a user is logged in, set their last game
-    if request.user.is_authenticated:
-        QH.set_last_played({'user_id': request.user.id, 'game_id': game_id})
+    QH.set_last_played({'user_id': request.user.id, 'game_id': game_id})
 
     return JsonResponse({'game_id': game_id})
 
@@ -121,8 +128,8 @@ def game_guess(request, game_id):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
-    game_name = request.POST.get('gameName')
-    user_guess = request.POST.get('guess')
+    game_name = QH.get_game_name(game_id)
+    user_guess = request.POST.get('guess').lower()
     user_id = request.user.id
 
     # Instantiate object to return with guess results
@@ -131,11 +138,10 @@ def game_guess(request, game_id):
     }
 
     # Check if there is any result in the database
-    qh = QH('''
-        SELECT id, name, lat, lon, country, population, 'marker' as map_type
-        FROM api_city 
-        WHERE lower(name) = %s
-    ''', [user_guess.lower()]).fetchall_dict()
+    qh = QH.get_game_guess({
+        'game_name': game_name,
+        'user_guess': user_guess
+    }).fetchall_dict()
 
     if not qh:
         guess_result.update({
@@ -149,16 +155,16 @@ def game_guess(request, game_id):
     })
 
     # Get answers for the selected game to see if a guess matches
-    game_answers = QH.get_all_game_answers({
+    game_answers = QH.get_game_answers({
         'user_id': user_id,
         'game_id': game_id,
         'game_name': game_name
     }).fetchall_array()
 
     # Check if the guess is in the answers and if it's already been guessed
-    if user_guess.lower() in [row['answer'] for row in game_answers]:
+    if user_guess in [row['answer'] for row in game_answers]:
         for row in game_answers:
-            if row['answer_id'] is None and row['answer'] == user_guess.lower():
+            if row['answer_id'] is None and row['answer'] == user_guess:
                 # Add answer to the database if it hasn't been guessed
                 QH.add_user_game_answer({
                     'user_id': user_id,
@@ -178,5 +184,14 @@ def game_guess(request, game_id):
         guess_result.update({
             'msg': f"{user_guess} is not in the top 10",
         })
+
+    # Check the game type to see if we need to add additional data to the response
+    if game_name == 'countryAreaTop10':
+        country_name = guess_result['data']['name']
+        path = f"{os.path.dirname(__file__)}/data/countries/{country_name}.geojson"
+        with open(path) as f:
+            guess_result['data'].update({
+                'geojson': jload(f)
+            })
 
     return JsonResponse(guess_result)

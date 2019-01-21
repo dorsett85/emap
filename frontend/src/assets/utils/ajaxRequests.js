@@ -255,7 +255,6 @@ export default class ajaxRequests {
    *
    * @param {Object}      request
    * @param {number}      request.gameId
-   * @param {string}      request.gameName
    * @param {string}      request.guess
    * @param {function}    request.success
    * @param {function}    [request.error]
@@ -264,9 +263,10 @@ export default class ajaxRequests {
     ajaxRequests.baseFetch({
       url: `/api/games/${request.gameId}/guess`,
       ...ajaxRequests.postOptions({
-        body: `gameName=${request.gameName}&guess=${request.guess}`
+        body: `&guess=${request.guess}`
       }),
-      success: request.success
+      success: request.success,
+      error: request.error
     });
   }
 

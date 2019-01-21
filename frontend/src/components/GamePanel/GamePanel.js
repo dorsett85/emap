@@ -6,11 +6,11 @@ import Grid from '@material-ui/core/Grid';
 import {Dialog, DialogTitle, DialogContent} from "@material-ui/core";
 import {List, ListItem} from "@material-ui/core";
 import {FormControl, InputLabel, Select, MenuItem} from '@material-ui/core';
-import CityIcon from "@material-ui/icons/LocationCity";
 import {withStyles} from '@material-ui/core/styles';
 
 // Custom components
 import GamePlayContainer from './GamePlay/GamePlayContainer';
+import GameIcon from './GameIcon';
 
 const styles = theme => ({
   container: {
@@ -92,7 +92,7 @@ const GamePanel = props => {
                   {props.games.map(game => (
                     <MenuItem key={game.id} value={game.id}>
                       <div className={classes.selectInputItem}>
-                        <CityIcon/>
+                        <GameIcon name={game.name}/>
                         <Typography variant={"subtitle1"} className={classes.selectInputItemText}>
                           {game.title}
                         </Typography>
@@ -130,7 +130,7 @@ const GamePanel = props => {
                 button
                 onClick={() => props.handleGameSelect(game.id)}
               >
-                <CityIcon/>
+                <GameIcon name={game.name}/>
                 <Typography variant={"subtitle1"} className={classes.selectInputItemText}>
                   {game.title}
                 </Typography>

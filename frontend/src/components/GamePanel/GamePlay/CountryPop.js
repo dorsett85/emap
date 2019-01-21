@@ -61,7 +61,7 @@ const CityPop = props => {
         <TableHead className={classes.tableHead}>
           <TableRowSm>
             <TableCellSm className={classes.tableHeadCell}>City</TableCellSm>
-            <TableCellSm className={classes.tableHeadCell}>Population</TableCellSm>
+            <TableCellSm className={classes.tableHeadCell}>Area Area (sq. mi.)</TableCellSm>
             <TableCellSm className={classes.tableHeadCell}>Rank</TableCellSm>
           </TableRowSm>
         </TableHead>
@@ -70,7 +70,7 @@ const CityPop = props => {
             return (
               <TableRowSm className={classes.oddTableRow} key={row.id}>
                 <TableCellSm component={'th'} scope={'row'}>{row.name}</TableCellSm>
-                <TableCellSm>{row.population}</TableCellSm>
+                <TableCellSm>{row.area}</TableCellSm>
                 <TableCellSm>{row.rank}</TableCellSm>
               </TableRowSm>
             );
@@ -86,9 +86,9 @@ const CityPop = props => {
         <FormGroup>
           <TextField
             variant={'outlined'}
-            label={'Search for a BIG city'}
+            label={'Search for a BIG country'}
             onInput={props.onInput}
-            placeholder={'e.g., Tokyo'}
+            placeholder={'e.g., Russia'}
             InputProps={{classes: {input: classes.textInput}}}
             InputLabelProps={{
               shrink: true,
@@ -97,7 +97,7 @@ const CityPop = props => {
           <Button
             variant={'contained'}
             type={'submit'}>
-            Find City
+            Find Country
           </Button>
         </FormGroup>
       </form>
