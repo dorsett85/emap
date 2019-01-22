@@ -142,8 +142,9 @@ def game_guess(request, game_id):
     }).fetchall_dict()
 
     if not qh:
+        addon_message = ' or not in the top 100' if game_name == 'cityPopTop10' else ''
         guess_result.update({
-            'msg': f'{user_guess} not found or not in the top 100',
+            'msg': f'{user_guess} not found{addon_message}',
         })
         return JsonResponse(guess_result)
 

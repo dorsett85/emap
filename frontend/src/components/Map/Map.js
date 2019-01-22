@@ -33,7 +33,7 @@ export default class Map extends React.Component {
 
   }
 
-  static newLayer(layer, answer = true) {
+  static addLayer(layer, answer = true) {
     let newLayer;
 
     // Create map layer depending on type
@@ -45,19 +45,22 @@ export default class Map extends React.Component {
       };
       const popupOptions = {
         answer: answer,
-        info: ['country', 'population', 'rank']
+        info: ['country', 'population', 'rank'],
+        offset: 36
       };
 
       // Create layer
       newLayer = new mapboxgl.Marker(markerOptions)
         .setLngLat([layer.lon, layer.lat])
         .setPopup(Map.popupInfo(layer, popupOptions));
-
       newLayer.id = layer.id;
+
+      // Add it to the map
+      newLayer.addTo(this.map);
 
     } else if (layer.map_type === 'geojson_polygon') {
 
-      newLayer = {
+      const newLayerOptions = {
         id: layer.iso_a3,
         type: 'fill',
         source: {
@@ -68,9 +71,29 @@ export default class Map extends React.Component {
         paint: {
           'fill-color': answer ? styles.answerColor : styles.nonAnswerColor,
           'fill-opacity': 0.8
-        },
-        lonLat: [layer.lon, layer.lat]
+        }
+      };
+
+      // Add layer to the map
+      // Make sure the geojson layer is below the map label
+      const layers = this.map.getStyle().layers;
+      // Find the index of the first symbol layer in the map style
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].type === 'symbol') {
+          this.map.addLayer(newLayerOptions, layers[i].id);
+          break;
+        }
       }
+
+      // Add a popup and open on click
+      newLayer = this.map.getLayer(newLayerOptions.id);
+      newLayer.lonLat = [layer.lon, layer.lat];
+      newLayer._popup = Map.popupInfo(layer, {
+          answer: answer,
+          info: ['area', 'population', 'rank']
+        })
+          .setLngLat(newLayer.lonLat);
+      this.map.on('click', newLayer.id, () => newLayer._popup.addTo(this.map));
 
     }
 
@@ -104,7 +127,7 @@ export default class Map extends React.Component {
 
     // Return new popup
     return new mapboxgl.Popup({
-      offset: 36,
+      offset: options.offset ? options.offset : 0,
       closeButton: false,
       className: options.answer ? styles.mapPopupAnswer : styles.mapPopupNonAnswer
     }).setHTML(html);
@@ -114,58 +137,36 @@ export default class Map extends React.Component {
     // Close other popups before opening the current one
     this.state.layers.forEach(l => {
       if (l._popup.isOpen()) {
-        l.togglePopup();
+        l._popup.remove();
       }
     });
-    if (!layer._popup.isOpen()) {
-      layer.togglePopup();
-    }
+    layer._popup.addTo(this.map);
   }
 
   static removeLayer(layer) {
     if (layer.marker) {
       layer.remove();
     } else if (layer.geojson_polygon) {
+      layer._popup.remove();
       this.map.removeLayer(layer.id);
       this.map.removeSource(layer.id);
     }
   }
 
-  addLayer(layer) {
-
-    // Add layer based on type
-    if (layer.marker) {
-
-      layer.addTo(this.map);
-
-    } else if (layer.geojson_polygon) {
-
-      // Make sure the geojson layer is below the map label
-      const layers = this.map.getStyle().layers;
-      // Find the index of the first symbol layer in the map style
-      for (let i = 0; i < layers.length; i++) {
-        if (layers[i].type === 'symbol') {
-          this.map.addLayer(layer, layers[i].id);
-          break;
-        }
-      }
-
-
-    }
-
-  }
-
   resetMap() {
 
+    // Bind methods
+    Map.removeLayer = Map.removeLayer.bind(this);
+    Map.addLayer = Map.addLayer.bind(this);
+
     // Remove old layers
-    this.state.layers.forEach(Map.removeLayer.bind(this));
+    this.state.layers.forEach(Map.removeLayer);
 
     // Repopulate layers if a selected game has progress
     const layers = [];
     if (this.props.selectedGame.id) {
       this.props.selectedGame.progress.forEach(layer => {
-        const newLayer = Map.newLayer(layer);
-        this.addLayer(newLayer);
+        const newLayer = Map.addLayer(layer);
         layers.push(newLayer);
       });
     }
@@ -200,8 +201,7 @@ export default class Map extends React.Component {
 
           // Check if the new guess is an answer to differentiate color
           const isAnswer = this.props.guessResults.hasOwnProperty('new');
-          currentLayer = Map.newLayer(layerData, isAnswer);
-          this.addLayer(currentLayer, false);
+          currentLayer = Map.addLayer(layerData, isAnswer);
 
           // Update the layer state with the currentLayer
           this.setState({
@@ -211,7 +211,7 @@ export default class Map extends React.Component {
         }
 
         // Toggle popup and fly to the guessed location
-        if (currentLayer.marker) {this.popupToggle(currentLayer);}
+        this.popupToggle(currentLayer);
         const lonLat = currentLayer.marker ? currentLayer.getLngLat() : currentLayer.lonLat;
         this.map.flyTo({
           center: lonLat

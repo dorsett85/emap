@@ -3,6 +3,7 @@ import Slide from "@material-ui/core/Slide";
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import {Dialog, DialogTitle, DialogContent} from "@material-ui/core";
 import {List, ListItem} from "@material-ui/core";
 import {FormControl, InputLabel, Select, MenuItem} from '@material-ui/core';
@@ -43,12 +44,8 @@ const styles = theme => ({
   selectInputItemText: {
     paddingLeft: theme.spacing.unit
   },
-  expandedGameTitle: {
-    fontWeight: 'bold'
-  },
-  expandedPanel: {
-    paddingLeft: 0,
-    paddingRight: 0
+  progressBar: {
+    marginTop: theme.spacing.unit * 3
   }
 });
 
@@ -56,10 +53,30 @@ function Transition(props) {
   return <Slide direction="down" {...props} />;
 }
 
+
 const GamePanel = props => {
   const {classes} = props;
   const showGamePanel = Boolean(props.user.id && !props.selectedGame.showModal);
   const showGameSelectModal = Boolean(props.user.id && props.selectedGame.showModal);
+
+  // Show loader if the game hasn't been set
+  let gameContent;
+  if (props.fetching) {
+    gameContent = (
+      <LinearProgress className={classes.progressBar}/>
+    );
+  } else {
+    gameContent = props.selectedGame.id && (
+      <GamePlayContainer
+        user={props.user}
+        fetching={props.fetching}
+        selectedGame={props.selectedGame}
+        setGameProgress={props.setGameProgress}
+        guessResults={props.guessResults}
+        updateGuessResults={props.updateGuessResults}
+      />
+    )
+  }
 
   return (
     <div className={classes.container}>
@@ -82,7 +99,7 @@ const GamePanel = props => {
               <FormControl fullWidth>
                 <InputLabel htmlFor="select-game">Select Game</InputLabel>
                 <Select
-                  value={props.selectedGame.id || ''}
+                  value={props.currentGameId}
                   onChange={props.handleGameSelect}
                   inputProps={{
                     name: 'selectGame',
@@ -101,15 +118,7 @@ const GamePanel = props => {
                   ))}
                 </Select>
               </FormControl>
-              {props.selectedGame.id && (
-                <GamePlayContainer
-                  user={props.user}
-                  selectedGame={props.selectedGame}
-                  setGameProgress={props.setGameProgress}
-                  guessResults={props.guessResults}
-                  updateGuessResults={props.updateGuessResults}
-                />
-              )}
+              {gameContent}
             </Grid>
           </Grid>
         </div>

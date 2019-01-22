@@ -72,6 +72,8 @@ export default class App extends React.Component {
             this.setGame({...user.last_played, ...data});
           }
         })
+      } else {
+        this.setGame({})
       }
 
     });
