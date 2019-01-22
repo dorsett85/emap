@@ -26,41 +26,11 @@ export default class Map extends React.Component {
       });
 
       this.map.on('load', () => {
-        this.addGameProgress(this.state.layers);
+        this.resetMap();
       });
 
     });
 
-  }
-
-  resetMap() {
-    // Remove old layers
-    if (this.state.layers.length) {
-      this.state.layers.forEach(layer => layer.remove());
-    }
-
-    // Repopulate layers if a selected game has progress
-    const layers = [];
-    if (this.props.selectedGame.id && this.props.selectedGame.progress.length) {
-      this.props.selectedGame.progress.forEach(layer => {
-        layers.push(Map.newLayer(layer));
-      });
-      this.addGameProgress(layers);
-    }
-
-    // Reset the layer state
-    this.setState({
-      layers: layers
-    })
-
-  }
-
-  addGameProgress(layers) {
-    if (layers.length && this.map.loaded()) {
-      layers.forEach(layer => {
-        layer.addTo(this.map);
-      })
-    }
   }
 
   static newLayer(layer, answer = true) {
@@ -83,26 +53,28 @@ export default class Map extends React.Component {
         .setLngLat([layer.lon, layer.lat])
         .setPopup(Map.popupInfo(layer, popupOptions));
 
+      newLayer.id = layer.id;
+
     } else if (layer.map_type === 'geojson_polygon') {
 
-      //TODO add other map type layers
-            // Set up marker and popup options
-      const markerOptions = {
-        color: answer ? styles.answerColor : styles.nonAnswerColor
-      };
-      const popupOptions = {
-        answer: answer,
-        info: ['population', 'area', 'rank']
-      };
+      newLayer = {
+        id: layer.iso_a3,
+        type: 'fill',
+        source: {
+          type: 'geojson',
+          data: layer.geojson
+        },
+        layout: {},
+        paint: {
+          'fill-color': answer ? styles.answerColor : styles.nonAnswerColor,
+          'fill-opacity': 0.8
+        },
+        lonLat: [layer.lon, layer.lat]
+      }
 
-      // Create layer
-      newLayer = new mapboxgl.Marker(markerOptions)
-        .setLngLat([layer.lon, layer.lat])
-        .setPopup(Map.popupInfo(layer, popupOptions));
     }
 
-    // Add an id, map type, and answer property for later reference
-    newLayer.id = layer.id;
+    // Add a map type and answer property for later reference
     newLayer[layer.map_type] = true;
     newLayer.answer = answer;
 
@@ -141,9 +113,68 @@ export default class Map extends React.Component {
   popupToggle(layer) {
     // Close other popups before opening the current one
     this.state.layers.forEach(l => {
-      if (l._popup.isOpen()) {l.togglePopup();}
+      if (l._popup.isOpen()) {
+        l.togglePopup();
+      }
     });
-    if (!layer._popup.isOpen()) {layer.togglePopup();}
+    if (!layer._popup.isOpen()) {
+      layer.togglePopup();
+    }
+  }
+
+  static removeLayer(layer) {
+    if (layer.marker) {
+      layer.remove();
+    } else if (layer.geojson_polygon) {
+      this.map.removeLayer(layer.id);
+      this.map.removeSource(layer.id);
+    }
+  }
+
+  addLayer(layer) {
+
+    // Add layer based on type
+    if (layer.marker) {
+
+      layer.addTo(this.map);
+
+    } else if (layer.geojson_polygon) {
+
+      // Make sure the geojson layer is below the map label
+      const layers = this.map.getStyle().layers;
+      // Find the index of the first symbol layer in the map style
+      for (let i = 0; i < layers.length; i++) {
+        if (layers[i].type === 'symbol') {
+          this.map.addLayer(layer, layers[i].id);
+          break;
+        }
+      }
+
+
+    }
+
+  }
+
+  resetMap() {
+
+    // Remove old layers
+    this.state.layers.forEach(Map.removeLayer.bind(this));
+
+    // Repopulate layers if a selected game has progress
+    const layers = [];
+    if (this.props.selectedGame.id) {
+      this.props.selectedGame.progress.forEach(layer => {
+        const newLayer = Map.newLayer(layer);
+        this.addLayer(newLayer);
+        layers.push(newLayer);
+      });
+    }
+
+    // Reset the layer state
+    this.setState({
+      layers: layers
+    })
+
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -154,35 +185,23 @@ export default class Map extends React.Component {
     }
 
     // Check guess results and update
-    if (Object.keys(this.props.guessResults.data).length) {
-      if (prevProps.guessResults.data.id !== this.props.guessResults.data.id) {
+    if (this.props.guessResults.data) {
+      const prevGuessId = !prevProps.guessResults.data ? null : prevProps.guessResults.data.id;
+      if (prevGuessId !== this.props.guessResults.data.id) {
 
         // Get data from existing layer if it exists, and remove old non answer layers
         const layerData = this.props.guessResults.data;
-        let currentLayer = this.state.layers.filter(v => v.id === layerData.id)[0];
+        let currentLayer = this.state.layers.filter(v => {
+          return v.id === (layerData.map_type === 'marker' ? layerData.id : layerData.iso_a3)
+        })[0];
 
         // Check for existing marker
         if (!currentLayer) {
 
           // Check if the new guess is an answer to differentiate color
           const isAnswer = this.props.guessResults.hasOwnProperty('new');
-          currentLayer = Map.newLayer(layerData, isAnswer).addTo(this.map);
-          // if (layerData.geojson) {
-          //   console.log(layerData);
-          //   this.map.addLayer({
-          //     id: String(layerData.id),
-          //     type: 'fill',
-          //     source: {
-          //       type: 'geojson',
-          //       data: layerData.geojson
-          //     },
-          //     layout: {},
-          //     paint: {
-          //       'fill-color': '#088',
-          //       'fill-opacity': 0.8
-          //     }
-          //   })
-          // }
+          currentLayer = Map.newLayer(layerData, isAnswer);
+          this.addLayer(currentLayer, false);
 
           // Update the layer state with the currentLayer
           this.setState({
@@ -191,10 +210,11 @@ export default class Map extends React.Component {
 
         }
 
-        // Open only the current layers popup and fly to it's location
-        this.popupToggle(currentLayer);
+        // Toggle popup and fly to the guessed location
+        if (currentLayer.marker) {this.popupToggle(currentLayer);}
+        const lonLat = currentLayer.marker ? currentLayer.getLngLat() : currentLayer.lonLat;
         this.map.flyTo({
-          center: currentLayer.getLngLat()
+          center: lonLat
         });
 
       }

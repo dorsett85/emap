@@ -19,10 +19,9 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       user: {},
+      mapLoaded: false,
       selectedGame: {},
-      guessResults: {
-        data: {}
-      }
+      guessResults: {}
     };
 
     // Bind methods
@@ -73,9 +72,8 @@ export default class App extends React.Component {
             this.setGame({...user.last_played, ...data});
           }
         })
-      } else {
-        this.setGame({data: {}});
       }
+
     });
 
   }

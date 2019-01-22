@@ -133,9 +133,7 @@ def game_guess(request, game_id):
     user_id = request.user.id
 
     # Instantiate object to return with guess results
-    guess_result = {
-        'data': {}
-    }
+    guess_result = {}
 
     # Check if there is any result in the database
     qh = QH.get_game_guess({

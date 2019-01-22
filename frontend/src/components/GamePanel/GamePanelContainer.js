@@ -18,10 +18,10 @@ export default class GamePanelContainer extends React.Component {
 
   handleGameSelect(e) {
 
-    // Get game id depending on where click came from
+    // Get game id depending on where click came from (e.g., initial modal or select menu)
     const gameId = e.target ? e.target.value : e;
     const selectedGame = this.state.games.filter(v => v.id === gameId)[0];
-    this.props.updateGuessResults({data: {}});
+    this.props.updateGuessResults({});
 
     // Set the clicked on game with its progress
     ajax.getGameProgress({

@@ -92,9 +92,10 @@ class QueryHelper:
             ''', query_input)
         elif query_input['game_name'] == 'countryAreaTop10':
             return cls('''
-                SELECT ac.id, ac.name, ac.lat, ac.lon, ac.population, ac.area, 'geojson_polygon' AS map_type, ac.rank
+                SELECT ac.id, ac.name, ac.iso_a3, ac.lat, ac.lon, ac.population, ac.area, 
+                       'geojson_polygon' AS map_type, ac.rank
                 FROM (
-                    SELECT id, name, lat, lon, population, area,
+                    SELECT id, name, iso_a3, lat, lon, population, area,
                            rank() OVER (ORDER BY area DESC) AS rank
                     FROM api_country
                 ) as ac
@@ -127,9 +128,9 @@ class QueryHelper:
             ''', query_input)
         elif query_input['game_name'] == 'countryAreaTop10':
             return cls('''
-                SELECT id, name, lat, lon, population, area, 'geojson_polygon' as map_type, rank
+                SELECT id, name, iso_a3, lat, lon, population, area, 'geojson_polygon' as map_type, rank
                 FROM (
-                    SELECT id, name, lat, lon, population, area, 
+                    SELECT id, name, iso_a3, lat, lon, population, area, 
                            rank() OVER (ORDER BY area DESC) AS rank
                     FROM api_country
                 ) as ac
