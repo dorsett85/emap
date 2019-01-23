@@ -89,10 +89,10 @@ export default class Map extends React.Component {
       newLayer = this.map.getLayer(newLayerOptions.id);
       newLayer.lonLat = [layer.lon, layer.lat];
       newLayer._popup = Map.popupInfo(layer, {
-          answer: answer,
-          info: ['area', 'population', 'rank']
-        })
-          .setLngLat(newLayer.lonLat);
+        answer: answer,
+        info: ['area', 'population', 'rank']
+      })
+        .setLngLat(newLayer.lonLat);
       this.map.on('click', newLayer.id, () => newLayer._popup.addTo(this.map));
       this.map.on('mouseenter', newLayer.id, () => this.map.getCanvas().style.cursor = 'pointer');
       this.map.on('mouseleave', newLayer.id, () => this.map.getCanvas().style.cursor = '');
