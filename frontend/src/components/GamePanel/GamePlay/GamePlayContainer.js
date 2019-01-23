@@ -3,7 +3,7 @@ import React from 'react';
 // Custom components
 import GamePlay from './GamePlay';
 import CitiesPop from './CityPop';
-import CountryPop from './CountryPop';
+import CountryPop from './CountryArea';
 import GamePlayTemp from './GamePlayTemp';
 
 import ajax from 'assets/utils/ajaxRequests';

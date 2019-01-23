@@ -36,7 +36,7 @@ const styles = theme => ({
     fontFamily: 'Mali'
   },
   gamePanelGrid: {
-    margin: theme.spacing.unit * 2
+    padding: theme.spacing.unit * 2
   },
   selectInputItem: {
     display: 'flex'

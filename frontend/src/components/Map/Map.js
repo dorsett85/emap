@@ -94,6 +94,8 @@ export default class Map extends React.Component {
         })
           .setLngLat(newLayer.lonLat);
       this.map.on('click', newLayer.id, () => newLayer._popup.addTo(this.map));
+      this.map.on('mouseenter', newLayer.id, () => this.map.getCanvas().style.cursor = 'pointer');
+      this.map.on('mouseleave', newLayer.id, () => this.map.getCanvas().style.cursor = '');
 
     }
 
@@ -111,7 +113,8 @@ export default class Map extends React.Component {
     const popupInfo = [];
     for (const k in layer) {
       if (layer.hasOwnProperty(k) && options.info.includes(k)) {
-        popupInfo.push(`<p>${k}: ${layer[k]}</p>`);
+        const val = typeof layer[k] === 'number' ? layer[k].toLocaleString() : layer[k];
+        popupInfo.push(`<p>${k}: ${val}</p>`);
       }
     }
 
