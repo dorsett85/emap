@@ -19,7 +19,6 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       user: {},
-      mapLoaded: false,
       selectedGame: {},
       guessResults: {}
     };
@@ -39,10 +38,7 @@ export default class App extends React.Component {
 
   setGame(game) {
     this.setState({
-      selectedGame: {
-        ...game,
-        showModal: Boolean(!game.id)
-      },
+      selectedGame: {...game}
     })
   }
 
@@ -59,25 +55,8 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-
     // Get current logged in user information
-    ajax.getUser(user => {
-      this.setUser(user);
-
-      // If a user and game is returned get the progress for that game
-      if (user.id && user.last_played) {
-        ajax.getGameProgress({
-          gameId: user.last_played.id,
-          success: data => {
-            this.setGame({...user.last_played, ...data});
-          }
-        })
-      } else {
-        this.setGame({})
-      }
-
-    });
-
+    ajax.getUser(user => this.setUser(user));
   }
 
   render() {
@@ -92,8 +71,12 @@ export default class App extends React.Component {
           updateGuessResults={this.updateGuessResults}
         />
         <Landing user={this.state.user}>
-          <LoginContainer />
-          <RegisterContainer />
+          <LoginContainer
+            setUser={this.setUser}
+          />
+          <RegisterContainer
+            setUser={this.setUser}
+          />
           <LogoutContainer
             setUser={this.setUser}
             setGame={this.setGame}

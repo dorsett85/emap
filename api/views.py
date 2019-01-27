@@ -2,6 +2,7 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.middleware.csrf import get_token
 from json import load as jload
 
 import os
@@ -19,23 +20,19 @@ def get_user(request):
     if not request.is_ajax():
         return HttpResponse('Must be an ajax request')
 
+    # Set the csrf token for the first time
+    get_token(request)
+
     response = {
-        'set': True
+        'set_user': True
     }
 
     if request.user.is_authenticated:
         response.update({
             'id': request.user.id,
-            'name': request.user.username
+            'name': request.user.username,
+            'last_played': QH.get_last_played(request.user.id).fetchall_dict()
         })
-
-        # Check user's last played game
-        last_played = QH.get_last_played(request.user.id).fetchall_dict()
-
-        if last_played:
-            response.update({
-                'last_played': last_played
-            })
 
     return JsonResponse(response)
 
@@ -47,7 +44,12 @@ def login_user(request):
     user = authenticate(username=request.POST.get('username'), password=request.POST.get('password'))
     if user is not None:
         login(request=request, user=user)
-        return JsonResponse({'id': user.id, 'name': user.username})
+        return JsonResponse({
+            'set_user': True,
+            'id': user.id,
+            'name': user.username,
+            'last_played': QH.get_last_played(user.id).fetchall_dict()
+        })
     else:
         return JsonResponse({'invalid': 'Invalid username or password'})
 
@@ -68,7 +70,11 @@ def register_user(request):
     User.objects.create_user(username=username, password=password)
     user = authenticate(username=username, password=password)
     login(request, user=user)
-    return JsonResponse({'id': user.id, 'name': user.username})
+    return JsonResponse({
+        'set_user': True,
+        'id': user.id,
+        'name': user.username,
+    })
 
 
 def logout_user(request):
@@ -76,7 +82,7 @@ def logout_user(request):
         return HttpResponse('Must be an ajax request')
 
     logout(request)
-    return JsonResponse({'set': True})
+    return JsonResponse({'set_user': True})
 
 
 def get_games(request):

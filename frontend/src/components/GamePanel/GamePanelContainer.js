@@ -11,7 +11,8 @@ export default class GamePanelContainer extends React.Component {
     this.state = {
       games: [],
       currentGameId: '',
-      fetching: true
+      fetching: false,
+      showModal: false
     };
 
     // Bind methods
@@ -34,7 +35,8 @@ export default class GamePanelContainer extends React.Component {
     // Set the select menu to the new game and start the progress bar
     this.setState({
       currentGameId: gameId,
-      fetching: true
+      fetching: true,
+      showModal: false
     });
 
     // Set the clicked on game with its progress
@@ -44,6 +46,9 @@ export default class GamePanelContainer extends React.Component {
         this.props.setGame({
           ...selectedGame,
           ...data
+        });
+        this.setState({
+          fetching: false
         });
 
         // Set as last selected game for this user
@@ -67,12 +72,36 @@ export default class GamePanelContainer extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.selectedGame.id !== this.props.selectedGame.id) {
-      this.setState({
-        currentGameId: this.props.selectedGame.id ? this.props.selectedGame.id : '',
-        fetching: false
-      })
+
+    // Set game based on the user and their last game
+    const user = this.props.user;
+    if (prevProps.user.id !== user.id) {
+      if (user.id && user.last_played) {
+
+        this.setState({
+          currentGameId: user.last_played.id,
+          fetching: true
+        });
+        ajax.getGameProgress({
+          gameId: user.last_played.id,
+          success: data => {
+            this.props.setGame({...user.last_played, ...data});
+            this.setState({
+              fetching: false
+            })
+          }
+        })
+
+      } else {
+        this.props.setGame({});
+        this.setState({
+          currentGameId: '',
+          showModal: Boolean(user.id)
+        })
+      }
+
     }
+
   }
 
   render() {
@@ -82,6 +111,7 @@ export default class GamePanelContainer extends React.Component {
         games={this.state.games}
         currentGameId={this.state.currentGameId}
         fetching={this.state.fetching}
+        showModal={this.state.showModal}
         handleGameSelect={this.handleGameSelect}
         setGameProgress={this.props.setGameProgress}
         selectedGame={this.props.selectedGame}

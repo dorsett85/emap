@@ -48,11 +48,9 @@ export default class LoginContainer extends React.Component {
     ajax.login({
       username: this.state.username,
       password: this.state.password,
-      success: data => {
-        if (!data.invalid) {
-          // Backend at this point has logged in the user
-          // need to reload the page so the csrf token resets!!
-          location.reload();
+      success: user => {
+        if (!user.invalid) {
+          this.props.setUser(user);
         } else if (data.invalid) {
           this.setState({
             loginError: data.invalid

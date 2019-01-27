@@ -42,7 +42,7 @@ const Landing = props => {
   const {classes} = props;
 
   return (
-    (Boolean(props.user.set) && (
+    (Boolean(props.user.set_user) && (
       <div className={classes.panelContainer}>
         <Zoom in={!Boolean(props.user.id)} mountOnEnter unmountOnExit>
           <div className={classes.landingDiv}>

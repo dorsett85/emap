@@ -1,4 +1,4 @@
-import csrf from 'assets/utils/getCsrfToken';
+import getCsrfToken from 'assets/utils/getCsrfToken';
 
 
 export default class ajaxRequests {
@@ -83,7 +83,7 @@ export default class ajaxRequests {
           'content-type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRFToken': csrf
+          'X-CSRFToken': getCsrfToken()
         },
         credentials: 'include'
       }
@@ -116,7 +116,7 @@ export default class ajaxRequests {
           'content-type': 'application/x-www-form-urlencoded',
           'Accept': 'application/json',
           'X-Requested-With': 'XMLHttpRequest',
-          'X-CSRFToken': csrf
+          'X-CSRFToken': getCsrfToken()
         },
         credentials: 'include'
       }

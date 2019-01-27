@@ -74,10 +74,11 @@ export default class RegisterContainer extends React.Component {
             registeredMsg: data.name + ' successfully registered'
           });
 
-          // need to reload the page so the csrf token resets!!
+          // Delay to show registered message for setting the user
           setTimeout(() => {
-            location.reload()
+            this.props.setUser(data)
           }, 1500)
+
         } else if (data.invalid) {
           this.setState({
             registerError: data.invalid

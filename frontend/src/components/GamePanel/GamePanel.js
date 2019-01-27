@@ -56,8 +56,6 @@ function Transition(props) {
 
 const GamePanel = props => {
   const {classes} = props;
-  const showGamePanel = Boolean(props.user.id && !props.selectedGame.showModal);
-  const showGameSelectModal = Boolean(props.user.id && props.selectedGame.showModal);
 
   // Show loader if the game hasn't been set
   let gameContent;
@@ -80,7 +78,7 @@ const GamePanel = props => {
 
   return (
     <div className={classes.container}>
-      <Slide direction={'right'} in={showGamePanel} mountOnEnter unmountOnExit>
+      <Slide direction={'right'} in={Boolean(props.user.id && props.currentGameId)} mountOnEnter unmountOnExit>
         <div className={classes.gamePanelContainer}>
 
           <Paper square classes={{root: classes.paper}}>
@@ -125,7 +123,7 @@ const GamePanel = props => {
       </Slide>
 
       <Dialog
-        open={showGameSelectModal}
+        open={props.showModal}
         TransitionComponent={Transition}
       >
         <DialogTitle>
