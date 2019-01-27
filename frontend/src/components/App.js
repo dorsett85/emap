@@ -38,7 +38,7 @@ export default class App extends React.Component {
 
   setGame(game) {
     this.setState({
-      selectedGame: {...game}
+      selectedGame: game
     })
   }
 
