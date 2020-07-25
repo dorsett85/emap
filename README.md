@@ -6,15 +6,15 @@ Mapbox app with Django and React.js
 
 Required software
 1. python 3.6 (newer versions may have issues installing requirements.txt)
-2. nginx
-3. node 12
-4. postgres
+2. node 12
+3. postgres
 
 ### production setup (ssh'd into server as sudo root user 'clayton')
 
-Required software
+Required software (in addition to those required below the initial setup)
 1. python3.6-dev
 2. python3.6-venv
+3. nginx
 
 ```bash
 cd /var/www/
