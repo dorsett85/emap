@@ -18,7 +18,8 @@ Required software (in addition to those required below the initial setup)
 
 ```bash
 cd /var/www/
-git clone git@github.com:dorsett85/emap
+sudo git clone git@github.com:dorsett85/emap
+sudo chown -R clayton:clayton emap/
 cd emap/
 
 # Create emap database with 
